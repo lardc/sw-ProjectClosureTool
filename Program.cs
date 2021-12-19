@@ -294,7 +294,6 @@ namespace project_1
                                 reader.Read();
                                 if (reader.CurrentDepth.Equals(2))
                                 { // значения () []
-                                    // ЗАПОЛНИТЬ таблицу ----->
                                     Trl.Fill();
                                     Trl.Curr_Clear();
                                     Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
@@ -317,14 +316,8 @@ namespace project_1
                         break;
                 }
             }
-            //string jsonStr = "";
-            //Trl.TableDept(2, jsonStr);
-            Trl.TableDept(2);
-            //Trl.TableDept(4);
 
-            //ExcelFile workbook = new ExcelFile();
-            //ExcelWorksheet worksheetE = workbook.Worksheets.Add("Estimations");
-            //ExcelWorksheet worksheetP = workbook.Worksheets.Add("Points");
+            Trl.TableDept(2);
             Trl.FillExcel();
         }
 

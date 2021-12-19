@@ -17,7 +17,7 @@ namespace project_1
     {
         const int iAllUnit = 1000; //max к-во обрабатываемых блоков
         static double[,,] Xi = new double[2, iDep * (iTeams + 1) + 1, iAllUnit + 1];
-        // лист, столбец (ярлыки), строка (блок, Total - 0 строка, Unit - с 1-й
+        // лист, столбец (ярлыки), строка (блок, Total - 0 строка, Unit - с 1-й)
 
         public static string[] Departments = { "Technical Solution", "Development", "Debugging", "Commissioning", "Documentation" };
         const int iDep = 5;

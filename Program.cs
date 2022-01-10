@@ -6,13 +6,6 @@ using System.Linq;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
-//using System.Net;
-//using System.Net.Http;
-//using System.Net.Http.Json;
-//using System.Threading.Tasks;
-//using RestSharp;
-//using Newtonsoft.Json;
-
 namespace project_1
 {
     public class Trl
@@ -43,15 +36,11 @@ namespace project_1
         static double Curr_Estim;  // тек. оценочное значение
         static double Curr_Point;  // тек. реальное значение
 
-        static string[,,] sDept = new string[2, iTeams + 1, iAllUnit + 1];
-
         // Формирование таблиц оценочных и реальных значений
         public static void xiFill()
         {
             if (iCurr_Depart >= 0 && iCurr_Team >= 0 && iCurr_Unit >= 0)
             {
-                //    if (Curr_Estim > 0 || Curr_Point > 0) // Обрабатывать ли карточки, имеющие одно значение?
-                //    {
                 if (Curr_Estim > 0)
                 {
                     iTotal = iCurr_Depart * (iTeams + 1) + iTeams;
@@ -61,15 +50,6 @@ namespace project_1
                     Xi[0, iTotal, CurrUnit] += Curr_Estim;
                     Xi[0, iCurrTD, 0] += Curr_Estim;
                     Xi[0, iTotal, 0] += Curr_Estim;
-                    /*
-                        Console.WriteLine($"iTotal = {iTotal}");
-                        Console.WriteLine($"iCurrTD = {iCurrTD}");
-                        Console.WriteLine($"CurrUnit = {CurrUnit}");
-                        Console.WriteLine($"Xi[0,{iCurrTD},{CurrUnit}] = {Xi[0, iCurrTD, CurrUnit]}");
-                        Console.WriteLine($"Xi[0,{iTotal},{CurrUnit}] = {Xi[0, iTotal, CurrUnit]}");
-                        Console.WriteLine($"Xi[0,{iCurrTD},0] = {Xi[0, iCurrTD, 0]}");
-                        Console.WriteLine($"Xi[0,{iTotal},0] = {Xi[0, iTotal, 0]}");
-                    */
                 }
                 if (Curr_Point > 0)
                 {
@@ -80,26 +60,12 @@ namespace project_1
                     Xi[1, iTotal, CurrUnit] += Curr_Point;
                     Xi[1, iCurrTD, 0] += Curr_Point;
                     Xi[1, iTotal, 0] += Curr_Point;
-                    /*
-                        Console.WriteLine($"iTotal = {iTotal}");
-                        Console.WriteLine($"iCurrTD = {iCurrTD}");
-                        Console.WriteLine($"CurrUnit = {CurrUnit}");
-                        Console.WriteLine($"Xi[1,{iCurrTD},{CurrUnit}] = {Xi[0, iCurrTD, CurrUnit]}");
-                        Console.WriteLine($"Xi[1,{iTotal},{CurrUnit}] = {Xi[0, iTotal, CurrUnit]}");
-                        Console.WriteLine($"Xi[1,{iCurrTD},0] = {Xi[0, iCurrTD, 0]}");
-                        Console.WriteLine($"Xi[1,{iTotal},0] = {Xi[0, iTotal, 0]}");
-                    */
                 }
-                //}
-                //else 
-                //{
-                //    Console.WriteLine("");
-                //}
             }
             Curr_Clear();
         }
 
-        //Очистка значений счётчиков
+        //Очистка значений счётчиков по текущему блоку
         public static void Curr_Clear()
         {
             iCurr_Depart = -1;
@@ -168,49 +134,21 @@ namespace project_1
             {
                 string s_unit = rr.Substring(0, s_idot).Trim();
                 Search_Unit(s_unit);
-                //Console.WriteLine($"{s_unit} = {iCurr_Unit}   <<{rr}>>");
 
                 if (s_ioro >= 0 && s_iorc >= 0)
                 {
                     string s_uiro = rr.Substring(s_ioro + 1, s_iorc - s_ioro - 1).Trim();
                     double d_ior = double.Parse(s_uiro);
                     Curr_Estim = d_ior;
-                    //Console.WriteLine($" Curr_Estim()  = {Curr_Estim}");
                 }
                 if (s_isqo >= 0 && s_isqc >= 0)
                 {
                     string s_uisq = rr.Substring(s_isqo + 1, s_isqc - s_isqo - 1).Trim();
                     double d_isq = double.Parse(s_uisq);
                     Curr_Point = d_isq;
-                    //Console.WriteLine($" Curr_Point[]  = {Curr_Point}");
                 }
             }
         }
-
-        public static void TableDept(int iDept)
-        {
-            for (int i = 0; i < iAll; i++)
-            {
-                for (int j = 0; j <= iTeams; j++)
-                {
-                    sDept[0, j, i] = $"{ Xi[0, iDept * (iTeams + 1) + j, i]}";
-                    //Console.Write($"{ sDept[0, j, i] }\t");
-                }
-                //Console.WriteLine();
-            }
-            //Console.WriteLine();
-            for (int i = 0; i < iAll; i++)
-            {
-                for (int j = 0; j <= iTeams; j++)
-                {
-                    sDept[1, j, i] = $"{ Xi[1, iDept * (iTeams + 1) + j, i]}";
-                    //Console.Write($"{ sDept[0, j, i] }\t");
-                }
-                //Console.WriteLine();
-            }
-        }
-
-
 
         // Запись оценочных и реальных значений в Excel-файл
         public static void FillExcel()
@@ -242,108 +180,64 @@ namespace project_1
                     excel_result.Workbook.Properties.Author = "KM";
                     excel_result.Workbook.Properties.Title = "Trello";
                     excel_result.Workbook.Properties.Created = DateTime.Now;
-                    // Лист для записи оценочных значений
-                    ExcelWorksheet estWorksheet = excel_result.Workbook.Worksheets[0];
-                    for (int iD = 0; iD < iDep; iD++)
-                    {
-                        for (int i = 0; i <= iAll; i++)
-                        {
-                            if (i == iAll)
-                                estWorksheet.Cells[i + 4, 1].Value = "Total";
-                            else
-                                estWorksheet.Cells[i + 4, 1].Value = All_Unit[i];
-                            for (int j = 0; j <= iTeams; j++)
-                            {
-                                int jD = iD * (iTeams + 1) + j;
-                                if (i == iAll)
-                                    estWorksheet.Cells[i + 4, jD + 2].Value = Xi[0, jD, 0];
-                                else
-                                {
-                                    estWorksheet.Cells[i + 4, jD + 2].Value = Xi[0, jD, i + 1];
-                                    if (j < iTeams)
-                                    {
-                                        estWorksheet.Cells[i + 4, jD + 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                        estWorksheet.Cells[i + 4, jD + 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
-                                    }
-                                }
-                            }
-                        }
-
-                    }
                     double minimumSize = 5;
-                    estWorksheet.Cells[estWorksheet.Dimension.Address].AutoFitColumns(minimumSize);
-                    // Лист для записи реальных значений
-                    ExcelWorksheet ptWorksheet = excel_result.Workbook.Worksheets[1];
-                    for (int iD = 0; iD < iDep; iD++)
+                    for (int WorkSht = 0; WorkSht <= 1; WorkSht++)
                     {
-                        for (int i = 0; i <= iAll; i++)
+                        // Лист для записи оценочных значений WorkSht = 0
+                        // Лист для записи реальных значений WorkSht = 1
+                        ExcelWorksheet estWorksheet = excel_result.Workbook.Worksheets[WorkSht];
+                        for (int iD = 0; iD < iDep; iD++)
                         {
-                            if (i == iAll)
-                                ptWorksheet.Cells[i + 4, 1].Value = "Total";
-                            else
-                                ptWorksheet.Cells[i + 4, 1].Value = All_Unit[i];
-                            for (int j = 0; j <= iTeams; j++)
+                            for (int i = 0; i <= iAll; i++)
                             {
-                                int jD = iD * (iTeams + 1) + j;
                                 if (i == iAll)
-                                    ptWorksheet.Cells[i + 4, jD + 2].Value = Xi[1, jD, 0];
+                                    estWorksheet.Cells[i + 4, 1].Value = "Total";
                                 else
+                                    estWorksheet.Cells[i + 4, 1].Value = All_Unit[i];
+                                for (int j = 0; j <= iTeams; j++)
                                 {
-                                    ptWorksheet.Cells[i + 4, jD + 2].Value = Xi[1, jD, i + 1];
-                                    if (j < iTeams)
+                                    int jD = iD * (iTeams + 1) + j;
+                                    if (i == iAll)
+                                        estWorksheet.Cells[i + 4, jD + 2].Value = Xi[WorkSht, jD, 0];
+                                    else
                                     {
-                                        ptWorksheet.Cells[i + 4, jD + 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                        ptWorksheet.Cells[i + 4, jD + 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
+                                        estWorksheet.Cells[i + 4, jD + 2].Value = Xi[WorkSht, jD, i + 1];
+                                        if (j < iTeams)
+                                        {
+                                            estWorksheet.Cells[i + 4, jD + 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                            estWorksheet.Cells[i + 4, jD + 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
+                                        }
                                     }
                                 }
                             }
                         }
+                        estWorksheet.Cells[estWorksheet.Dimension.Address].AutoFitColumns(minimumSize);
                     }
-                    ptWorksheet.Cells[ptWorksheet.Dimension.Address].AutoFitColumns(minimumSize);
-
                     excel_result.Save();
                 }
             }
         }
     }
-
-    //public class Data
-    //{
-    //    public String id { get; set; }
-    //    public bool display { get; set; }
-    //    public bool entities { get; set; }
-    //    public String fields { get; set; }
-    //    public bool member { get; set; }
-    //}
-
     public class Program
     {
-        //private static object args;
-        //private static Stream createStream;
-        //private static String fileName;
-        //Data data = new Data();
-
         private static readonly byte[] s_nameUtf8 = Encoding.UTF8.GetBytes("name");
 
         static void Main(String[] args)
         {
-            // Ключ и токен для авторизации
+            Trl.Curr_Clear();
+            /// Ключ и токен для авторизации
+            /// Запрос карточек доски
+            /// Получение ответа в виде потока
+            /// Запись ответа в память виде строки
+            /// Кодировка в UTF-8
             string APIKey = "4b02fbde8c00369dc53e25222e864941";
             string MyTrelloToken = "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07";
-            // Запрос карточек доски
             System.Net.WebRequest reqGET = System.Net.WebRequest.Create("https://trello.com/1/boards/dXURQTbH/cards/?key=" + APIKey + "&token=" + MyTrelloToken);
-            // Получение ответа в виде потока
             System.Net.WebResponse resp = reqGET.GetResponse();
             System.IO.Stream stream = resp.GetResponseStream();
             System.IO.StreamReader read_stream = new System.IO.StreamReader(stream);
-            // Запись ответа в память виде строки
             string readToEnd_string = read_stream.ReadToEnd();
-            //Console.WriteLine(readToEnd_string);
-            // Кодировка в UTF-8
             ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(readToEnd_string);
-            //Console.WriteLine(s_readToEnd_stringUtf8.ToString());
-
-            Trl.Curr_Clear();
 
             var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
             // Тип считанного токена
@@ -366,14 +260,11 @@ namespace project_1
                             {
                                 // Чтение токена
                                 reader.Read();
-
                                 // Блок? 
                                 if (reader.CurrentDepth.Equals(2))
                                 {
                                     // Формирование таблиц оценочных и реальных значений для предыдущей карточки
                                     Trl.xiFill();
-                                    // Подготовка для обработки текущей карточки
-                                    Trl.Curr_Clear();
                                     // Запись оценочных и реальных значений для текущей карточки
                                     Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
                                 }
@@ -390,62 +281,5 @@ namespace project_1
             Trl.xiFill();
             Trl.FillExcel();
         }
-
-        //static async Task<String> TrelloRequestAsync(String url)
-        //{
-        //    var tcs = new TaskCompletionSource<String>();
-        //    try
-        //    {
-
-        //        var client = new RestClient(url);
-
-        //        client.GetAsync(new RestRequest(), (response, handle) =>
-        //        {
-        //            Console.WriteLine("GetAsync");
-
-        //            if ((int)response.StatusCode >= 400)
-        //            {
-        //                tcs.SetException(new Exception(response.StatusDescription));
-        //                //Console.Write(">=400");
-        //            }
-        //            else
-        //            {
-        //                tcs.SetResult(response.Content);
-        //                //Console.Write("<400");
-        //            }
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        tcs.SetException(ex);
-        //    }
-
-
-        //fileName = @"C:\Users\mb17k\Desktop\project\project1_NET5\response_cards.json";
-        //using FileStream openStream = System.IO.File.OpenRead(fileName);
-
-        //String JsonResponseString = openStream.ToString();
-        //Data deserializedData = JsonConvert.DeserializeObject<Data>(JsonResponseString);
-
-        //catch (InvalidOperationException e)
-        //{
-
-        //}
-        //catch (HttpRequestException e)
-        //{
-
-        //}
-        //catch (TaskCanceledException e)
-        //{
-
-        //}
-
-        //return await tcs.Task;
-        //}
-
-        //private static Task PostAsJsonAsync(String url, String id)
-        //{
-        //    throw new NotImplementedException();
-        //}
     }
 }

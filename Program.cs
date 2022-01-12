@@ -3,41 +3,63 @@ using System.IO;
 using System.Text;
 using System.Text.Json;
 using System.Linq;
-using OfficeOpenXml;
 using OfficeOpenXml.Style;
 
 namespace project_1
 {
-    public class Trl
+    public static class API_Req
     {
-        const int iAllUnit = 1000; // максимальное к-во обрабатываемых блоков
-        static double[,,] Xi = new double[2, iDep * (iTeams + 1), iAllUnit + 1];
+        public static string readToEnd_string;
+        /// Ключ и токен для авторизации
+        /// Запрос карточек доски
+        /// Получение ответа в виде потока
+        /// Запись ответа в память виде строки
+        /// Кодировка в UTF-8
+        public static void Request(string APIKey, string MyTrelloToken)
+        {
+            System.Net.WebRequest reqGET = System.Net.WebRequest.Create("https://trello.com/1/boards/dXURQTbH/cards/?key=" + APIKey + "&token=" + MyTrelloToken);
+            System.Net.WebResponse resp = reqGET.GetResponse();
+            System.IO.Stream stream = resp.GetResponseStream();
+            System.IO.StreamReader read_stream = new System.IO.StreamReader(stream);
+            readToEnd_string = read_stream.ReadToEnd();
+        }
+    }
+
+    public abstract class TableResp
+    {
+        public abstract void xiFill();
+
+        public const int iAllUnits = 1000; // максимальное к-во обрабатываемых блоков
+        public static double[,,] Xi = new double[2, iDep * (iTeams + 1), iAllUnits + 1];
         // 2-Estimations, Points (лист отчета)
         // 35 столбцов таблицы (Total по Department + макс. к-во пар Department/Team)
-        // 1000 строки All_Unit + 1(Total)
+        // 1000 строки All_Units + 1(Total)
         // Total - 0 строка, блоки - начинать с 1-й
 
-        public static string[] Department = { "Technical Solution", "Development", "Debugging", "Commissioning", "Documentation" };
-        const int iDep = 5;
-        static int iCurr_Depart = -1; // текущая стадия (0-4)
+        public static string[] Departments = { "Technical Solution", "Development", "Debugging", "Commissioning", "Documentation" };
+        public const int iDep = 5;
+        public static int iCurr_Depart = -1; // текущая стадия (0-4)
 
         public static string[] Teams = { "Electronics Team", "Firmware Team", "Remote Team", "Mechanics Team", "Commissioning Team", "Software Team" };
-        const int iTeams = 6;
-        static int iCurr_Team = -1; // текущая команда (0-5)
+        public const int iTeams = 6;
+        public static int iCurr_Team = -1; // текущая команда (0-5)
 
-        static string[] All_Unit = new string[iAllUnit]; //0 - сумма по столбцу, 1-1000 - сумма по блоку
-        static int iAll = 0;  // всего блоков обнаружено
-        static int iCurr_Unit = -1; // текущий блок
+        public static string[] All_Units = new string[iAllUnits + 1]; //0 - сумма по столбцу, 1-1000 - сумма по блоку
+        public static int iAll = 0;  // всего блоков обнаружено
+        public static int iCurr_Unit = -1; // текущий блок
 
-        static int iTotal;
-        static int iCurrTD;
-        static int CurrUnit;
+        public static int iTotal;
+        public static int iCurrTD;
+        public static int CurrUnit;
 
-        static double Curr_Estim;  // тек. оценочное значение
-        static double Curr_Point;  // тек. реальное значение
+        public static double Curr_Estim;  // тек. оценочное значение
+        public static double Curr_Point;  // тек. реальное значение
+    }
 
+    public class Trl : TableResp
+    {
         // Формирование таблиц оценочных и реальных значений
-        public static void xiFill()
+        public override void xiFill()
         {
             if (iCurr_Depart >= 0 && iCurr_Team >= 0 && iCurr_Unit >= 0)
             {
@@ -79,13 +101,13 @@ namespace project_1
         public static void Search_Depart_Teams(string rr)
         {
             if (iCurr_Unit < 0) return;
-            if (Department.Contains(rr))
+            if (Departments.Contains(rr))
             {
-                if (iCurr_Depart < 0) { iCurr_Depart = Array.IndexOf(Department, rr); }
+                if (iCurr_Depart < 0) { iCurr_Depart = Array.IndexOf(Departments, rr); }
                 // уже есть стадия к текущей карточке
                 else
                 {
-                    Console.WriteLine($"Повтор: карточке из блока {All_Unit[iCurr_Unit] } соответствует более одной стадии ({rr} и {Department[iCurr_Depart]}) ");
+                    Console.WriteLine($"Повтор: карточке из блока {All_Units[iCurr_Unit] } соответствует более одной стадии ({rr} и {Departments[iCurr_Depart]}) ");
                     Curr_Clear();
                 };
             }
@@ -95,7 +117,7 @@ namespace project_1
                 // уже есть команда к текущей карточке
                 else
                 {
-                    Console.WriteLine($"Повтор: карточке из блока {All_Unit[iCurr_Unit] } соответствует более одной команды ({rr} и {Teams[iCurr_Team]}) ");
+                    Console.WriteLine($"Повтор: карточке из блока {All_Units[iCurr_Unit] } соответствует более одной команды ({rr} и {Teams[iCurr_Team]}) ");
                     Curr_Clear();
                 }
             }
@@ -106,11 +128,11 @@ namespace project_1
         {
             if (iAll <= 1000)
             {
-                if (All_Unit.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Unit, rr); }
+                if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr); }
                 else
                 {
                     iCurr_Unit = iAll;
-                    All_Unit[iCurr_Unit] = rr;
+                    All_Units[iCurr_Unit] = rr;
                     iAll++;
                 }
             }
@@ -185,7 +207,7 @@ namespace project_1
                     {
                         // Лист для записи оценочных значений WorkSht = 0
                         // Лист для записи реальных значений WorkSht = 1
-                        ExcelWorksheet estWorksheet = excel_result.Workbook.Worksheets[WorkSht];
+                        OfficeOpenXml.ExcelWorksheet estWorksheet = excel_result.Workbook.Worksheets[WorkSht];
                         for (int iD = 0; iD < iDep; iD++)
                         {
                             for (int i = 0; i <= iAll; i++)
@@ -193,7 +215,7 @@ namespace project_1
                                 if (i == iAll)
                                     estWorksheet.Cells[i + 4, 1].Value = "Total";
                                 else
-                                    estWorksheet.Cells[i + 4, 1].Value = All_Unit[i];
+                                    estWorksheet.Cells[i + 4, 1].Value = All_Units[i];
                                 for (int j = 0; j <= iTeams; j++)
                                 {
                                     int jD = iD * (iTeams + 1) + j;
@@ -225,23 +247,13 @@ namespace project_1
         static void Main(String[] args)
         {
             Trl.Curr_Clear();
-            /// Ключ и токен для авторизации
-            /// Запрос карточек доски
-            /// Получение ответа в виде потока
-            /// Запись ответа в память виде строки
-            /// Кодировка в UTF-8
-            string APIKey = "4b02fbde8c00369dc53e25222e864941";
-            string MyTrelloToken = "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07";
-            System.Net.WebRequest reqGET = System.Net.WebRequest.Create("https://trello.com/1/boards/dXURQTbH/cards/?key=" + APIKey + "&token=" + MyTrelloToken);
-            System.Net.WebResponse resp = reqGET.GetResponse();
-            System.IO.Stream stream = resp.GetResponseStream();
-            System.IO.StreamReader read_stream = new System.IO.StreamReader(stream);
-            string readToEnd_string = read_stream.ReadToEnd();
-            ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(readToEnd_string);
-
+            API_Req.Request("4b02fbde8c00369dc53e25222e864941", "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07");
+            ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.readToEnd_string);
             var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
             // Тип считанного токена
             JsonTokenType tokenType;
+
+            var xiFillAbstr = new Trl();
 
             while (reader.Read())
             {
@@ -264,7 +276,7 @@ namespace project_1
                                 if (reader.CurrentDepth.Equals(2))
                                 {
                                     // Формирование таблиц оценочных и реальных значений для предыдущей карточки
-                                    Trl.xiFill();
+                                    xiFillAbstr.xiFill();
                                     // Запись оценочных и реальных значений для текущей карточки
                                     Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
                                 }
@@ -278,7 +290,7 @@ namespace project_1
                         break;
                 }
             }
-            Trl.xiFill();
+            xiFillAbstr.xiFill();
             Trl.FillExcel();
         }
     }

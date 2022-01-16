@@ -4,12 +4,15 @@ using System.Text;
 using System.Text.Json;
 using System.Linq;
 using OfficeOpenXml.Style;
+using OfficeOpenXml;
 
 namespace project_1
 {
     public static class API_Req
     {
-        public static string readToEnd_string;
+        private static string readToEnd_string;
+        public static string ReadToEnd_string { get => readToEnd_string; set => readToEnd_string = value; }
+
         /// Ключ и токен для авторизации
         /// Запрос карточек доски
         /// Получение ответа в виде потока
@@ -20,46 +23,98 @@ namespace project_1
             System.Net.WebRequest reqGET = System.Net.WebRequest.Create("https://trello.com/1/boards/dXURQTbH/cards/?key=" + APIKey + "&token=" + MyTrelloToken);
             System.Net.WebResponse resp = reqGET.GetResponse();
             System.IO.Stream stream = resp.GetResponseStream();
-            System.IO.StreamReader read_stream = new System.IO.StreamReader(stream);
-            readToEnd_string = read_stream.ReadToEnd();
+            System.IO.StreamReader read_stream = new(stream);
+            ReadToEnd_string = read_stream.ReadToEnd();
         }
     }
 
     public abstract class TableResp
     {
-        public abstract void xiFill();
+        public abstract void XiFill();
+
+        public abstract void FillExcel();
+
+        private static OfficeOpenXml.ExcelPackage excel_result;
+
+        public static void FillExcelSheets(int WorkShtN)
+        {
+            for (int WorkSht = 0; WorkSht < WorkShtN; WorkSht++)
+            {
+                // Лист для записи оценочных значений WorkSht = 0
+                // Лист для записи реальных значений WorkSht = 1
+                OfficeOpenXml.ExcelWorksheet estWorksheet = Excel_result.Workbook.Worksheets[WorkSht];
+                for (int iD = 0; iD < iDep; iD++)
+                {
+                    for (int i = 0; i <= iAll; i++)
+                    {
+                        if (i == iAll)
+                            estWorksheet.Cells[i + 4, 1].Value = "Total";
+                        else
+                            estWorksheet.Cells[i + 4, 1].Value = All_Units[i];
+                        for (int j = 0; j <= iTeams; j++)
+                        {
+                            int jD = iD * (iTeams + 1) + j;
+                            if (i == iAll)
+                                estWorksheet.Cells[i + 4, jD + 2].Value = Xi[WorkSht, jD, 0];
+                            else
+                            {
+                                estWorksheet.Cells[i + 4, jD + 2].Value = Xi[WorkSht, jD, i + 1];
+                                if (j < iTeams)
+                                {
+                                    estWorksheet.Cells[i + 4, jD + 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                                    estWorksheet.Cells[i + 4, jD + 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
+                                }
+                            }
+                        }
+                    }
+                }
+                estWorksheet.Cells[estWorksheet.Dimension.Address].AutoFitColumns(MinimumSize);
+            }
+        }
 
         public const int iAllUnits = 1000; // максимальное к-во обрабатываемых блоков
-        public static double[,,] Xi = new double[2, iDep * (iTeams + 1), iAllUnits + 1];
+        private static double[,,] xi = new double[2, iDep * (iTeams + 1), iAllUnits + 1];
         // 2-Estimations, Points (лист отчета)
         // 35 столбцов таблицы (Total по Department + макс. к-во пар Department/Team)
         // 1000 строки All_Units + 1(Total)
         // Total - 0 строка, блоки - начинать с 1-й
 
-        public static string[] Departments = { "Technical Solution", "Development", "Debugging", "Commissioning", "Documentation" };
+        private static string[] departments = { "Technical Solution", "Development", "Debugging", "Commissioning", "Documentation" };
         public const int iDep = 5;
         public static int iCurr_Depart = -1; // текущая стадия (0-4)
 
-        public static string[] Teams = { "Electronics Team", "Firmware Team", "Remote Team", "Mechanics Team", "Commissioning Team", "Software Team" };
+        private static string[] teams = { "Electronics Team", "Firmware Team", "Remote Team", "Mechanics Team", "Commissioning Team", "Software Team" };
         public const int iTeams = 6;
         public static int iCurr_Team = -1; // текущая команда (0-5)
 
-        public static string[] All_Units = new string[iAllUnits + 1]; //0 - сумма по столбцу, 1-1000 - сумма по блоку
+        private static string[] all_Units = new string[iAllUnits + 1]; //0 - сумма по столбцу, 1-1000 - сумма по блоку
         public static int iAll = 0;  // всего блоков обнаружено
         public static int iCurr_Unit = -1; // текущий блок
 
         public static int iTotal;
         public static int iCurrTD;
-        public static int CurrUnit;
+        private static int currUnit;
 
-        public static double Curr_Estim;  // тек. оценочное значение
-        public static double Curr_Point;  // тек. реальное значение
+        private static double curr_Estim;  // тек. оценочное значение
+        private static double curr_Point;  // тек. реальное значение
+
+        private static double minimumSize;
+
+        public static ExcelPackage Excel_result { get => excel_result; set => excel_result = value; }
+        public static double[,,] Xi { get => xi; set => xi = value; }
+        public static string[] Departments { get => departments; set => departments = value; }
+        public static string[] Teams { get => teams; set => teams = value; }
+        public static string[] All_Units { get => all_Units; set => all_Units = value; }
+        public static int CurrUnit { get => currUnit; set => currUnit = value; }
+        public static double Curr_Estim { get => curr_Estim; set => curr_Estim = value; }
+        public static double Curr_Point { get => curr_Point; set => curr_Point = value; }
+        public static double MinimumSize { get => minimumSize; set => minimumSize = value; }
     }
 
     public class Trl : TableResp
     {
         // Формирование таблиц оценочных и реальных значений
-        public override void xiFill()
+        public override void XiFill()
         {
             if (iCurr_Depart >= 0 && iCurr_Team >= 0 && iCurr_Unit >= 0)
             {
@@ -173,7 +228,7 @@ namespace project_1
         }
 
         // Запись оценочных и реальных значений в Excel-файл
-        public static void FillExcel()
+        public override void FillExcel()
         {
             string fstrin = "json_into_xlsx_t.xltx";
             if (!File.Exists(fstrin))
@@ -185,7 +240,7 @@ namespace project_1
             else
             {
                 string fstrout = "json_into_xlsx.xlsx";
-                FileInfo fin = new FileInfo(fstrin);
+                FileInfo fin = new(fstrin);
                 if (File.Exists(fstrout))
                 {
                     try { File.Delete(fstrout); }
@@ -196,46 +251,15 @@ namespace project_1
                         return;
                     }
                 }
-                FileInfo fout = new FileInfo(fstrout);
-                using (var excel_result = new OfficeOpenXml.ExcelPackage(fout, fin))
+                FileInfo fout = new(fstrout);
+                using (Excel_result = new OfficeOpenXml.ExcelPackage(fout, fin))
                 {
-                    excel_result.Workbook.Properties.Author = "KM";
-                    excel_result.Workbook.Properties.Title = "Trello";
-                    excel_result.Workbook.Properties.Created = DateTime.Now;
-                    double minimumSize = 5;
-                    for (int WorkSht = 0; WorkSht <= 1; WorkSht++)
-                    {
-                        // Лист для записи оценочных значений WorkSht = 0
-                        // Лист для записи реальных значений WorkSht = 1
-                        OfficeOpenXml.ExcelWorksheet estWorksheet = excel_result.Workbook.Worksheets[WorkSht];
-                        for (int iD = 0; iD < iDep; iD++)
-                        {
-                            for (int i = 0; i <= iAll; i++)
-                            {
-                                if (i == iAll)
-                                    estWorksheet.Cells[i + 4, 1].Value = "Total";
-                                else
-                                    estWorksheet.Cells[i + 4, 1].Value = All_Units[i];
-                                for (int j = 0; j <= iTeams; j++)
-                                {
-                                    int jD = iD * (iTeams + 1) + j;
-                                    if (i == iAll)
-                                        estWorksheet.Cells[i + 4, jD + 2].Value = Xi[WorkSht, jD, 0];
-                                    else
-                                    {
-                                        estWorksheet.Cells[i + 4, jD + 2].Value = Xi[WorkSht, jD, i + 1];
-                                        if (j < iTeams)
-                                        {
-                                            estWorksheet.Cells[i + 4, jD + 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                            estWorksheet.Cells[i + 4, jD + 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        estWorksheet.Cells[estWorksheet.Dimension.Address].AutoFitColumns(minimumSize);
-                    }
-                    excel_result.Save();
+                    Excel_result.Workbook.Properties.Author = "KM";
+                    Excel_result.Workbook.Properties.Title = "Trello";
+                    Excel_result.Workbook.Properties.Created = DateTime.Now;
+                    MinimumSize = 5;
+                    FillExcelSheets(2);
+                    Excel_result.Save();
                 }
             }
         }
@@ -248,12 +272,13 @@ namespace project_1
         {
             Trl.Curr_Clear();
             API_Req.Request("4b02fbde8c00369dc53e25222e864941", "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07");
-            ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.readToEnd_string);
+            ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
             var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
             // Тип считанного токена
             JsonTokenType tokenType;
 
             var xiFillAbstr = new Trl();
+            var FillExcelSheetsSt = new Trl();
 
             while (reader.Read())
             {
@@ -276,7 +301,7 @@ namespace project_1
                                 if (reader.CurrentDepth.Equals(2))
                                 {
                                     // Формирование таблиц оценочных и реальных значений для предыдущей карточки
-                                    xiFillAbstr.xiFill();
+                                    xiFillAbstr.XiFill();
                                     // Запись оценочных и реальных значений для текущей карточки
                                     Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
                                 }
@@ -290,8 +315,8 @@ namespace project_1
                         break;
                 }
             }
-            xiFillAbstr.xiFill();
-            Trl.FillExcel();
+            xiFillAbstr.XiFill();
+            FillExcelSheetsSt.FillExcel();
         }
     }
 }

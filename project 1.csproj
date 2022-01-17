@@ -5,6 +5,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>project_1</RootNamespace>
     <Platforms>AnyCPU;x64</Platforms>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -12,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,10 +22,6 @@
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="4.5.3.3" />
-    <PackageReference Include="GemBox.Spreadsheet" Version="47.0.1321" />
-    <PackageReference Include="Microsoft.Graph" Version="4.10.0" />
-    <PackageReference Include="RestSharp" Version="106.13.0" />
-    <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="19.3.0.54" />
   </ItemGroup>
 
   <ItemGroup>

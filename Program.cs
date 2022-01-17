@@ -268,8 +268,9 @@ namespace project_1
     {
         private static readonly byte[] s_nameUtf8 = Encoding.UTF8.GetBytes("name");
 
-        static void Main(String[] args)
+        static void Main()
         {
+            Console.WriteLine("Start");
             Trl.Curr_Clear();
             API_Req.Request("4b02fbde8c00369dc53e25222e864941", "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07");
             ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
@@ -317,6 +318,8 @@ namespace project_1
             }
             xiFillAbstr.XiFill();
             FillExcelSheetsSt.FillExcel();
+            Console.WriteLine("Press any key");
+            Console.ReadKey();
         }
     }
 }

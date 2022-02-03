@@ -13,6 +13,7 @@ namespace project_1
     {
         private static string readToEnd_string;
 
+        public static string boardURL;
         public static string boardCode;
         public static string APIKey;
         public static string MyTrelloToken;
@@ -230,8 +231,7 @@ namespace project_1
         // Запись оценочных и реальных значений для обнаруженного блока
         public static void Fill_Unit_Curr_Val(string rr)
         {
-            int s_idot;
-            s_idot = rr.IndexOf('.', 0);
+            int s_idot = rr.IndexOf('.', 0);
             int s_ioro = rr.IndexOf('(', 0);
             int s_iorc = rr.IndexOf(')', 0);
             int s_isqo = rr.IndexOf('[', 0);
@@ -267,12 +267,29 @@ namespace project_1
             }
         }
 
+        public static void ReadArgs(string rr)
+        {
+            int s_ib = rr.IndexOf("b");
+            if (rr.Contains("https://trello.com/1/boards/"))
+            {
+                string s_bc = rr.Substring(s_ib + 7, rr.Length - (s_ib + 7)).Trim();
+                API_Req.boardCode = s_bc;
+            }
+            else 
+            {
+                Console.WriteLine("Введённый аргумент не является URL доски");
+                Console.WriteLine("Press any key");
+                Console.ReadKey();
+                return;
+            }
+        }
+
         // Запись оценочных и реальных значений в Excel-файл
         public override void FillExcel()
         {
             if (iAll == 0)
             {
-                Console.WriteLine($"В доске {API_Req.boardCode} нет ни одного значения. Файл не сформирован.");
+                Console.WriteLine($"В доске {API_Req.boardURL} нет ни одного значения. Файл не сформирован.");
                 Console.WriteLine("Press any key");
                 return;
             }
@@ -335,7 +352,7 @@ namespace project_1
 
             if (args.Length == 0)
             {
-                Console.WriteLine("Ожидается аргумент - код доски. Выход.");
+                Console.WriteLine("Ожидается аргумент - URL доски. Выход.");
                 Console.WriteLine("Press any key");
                 Console.ReadKey();
                 return;
@@ -347,9 +364,14 @@ namespace project_1
                 Console.ReadKey();
                 return;
             }
-            else { API_Req.boardCode = args[0]; }
+            else 
+            { 
+                API_Req.boardURL = args[0];
+                Console.WriteLine(API_Req.boardURL);
+                Trl.ReadArgs(API_Req.boardURL);
+                Console.WriteLine(API_Req.boardCode);
+            }
 
-            Console.WriteLine(API_Req.boardCode);
             string APIKey = "4b02fbde8c00369dc53e25222e864941";
             string MyTrelloToken = "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07";
             API_Req.Request(APIKey, MyTrelloToken);
@@ -379,8 +401,6 @@ namespace project_1
                             {
                                 // Чтение токена
                                 reader.Read();
-
-
 
                                 // Блок? 
                                 if (reader.CurrentDepth.Equals(2))

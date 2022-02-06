@@ -6,6 +6,7 @@ using System.Linq;
 using OfficeOpenXml.Style;
 using OfficeOpenXml;
 using System.Diagnostics;
+using Microsoft.IdentityModel.SecurityTokenService;
 
 namespace project_1
 {
@@ -275,7 +276,7 @@ namespace project_1
                 string s_bc = rr.Substring(s_ib + 7, rr.Length - (s_ib + 7)).Trim();
                 API_Req.boardCode = s_bc;
             }
-            else 
+            else
             {
                 Console.WriteLine("Введённый аргумент не является URL доски");
                 Console.WriteLine("Press any key");
@@ -328,6 +329,13 @@ namespace project_1
                 }
             }
         }
+        public static void EMessage(string eM)
+        {
+            int s_err = eM.IndexOf("error", 0);
+            int s_dot = eM.IndexOf(".", 0);
+            string s_mess = eM.Substring(s_err, s_dot - s_err).Trim();
+            Console.WriteLine(s_mess);
+        }
     }
     public class Program
     {
@@ -349,32 +357,67 @@ namespace project_1
         {
             Console.WriteLine("Start");
             Trl.Curr_Clear();
+            API_Req.boardURL = "https://trello.com/1/boards/dXURQTbH";
+            string APIKey = "4b02fbde8c00369dc53e25222e864941";
+            string MyTrelloToken = "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07";
 
-            if (args.Length == 0)
+            if (args.Length == 0) { }
+            else if (args.Length == 1)
             {
-                Console.WriteLine("Ожидается аргумент - URL доски. Выход.");
-                Console.WriteLine("Press any key");
-                Console.ReadKey();
-                return;
-            }
-            else if (args.Length > 1)
-            {
-                Console.WriteLine("Более одного аргумента");
-                Console.WriteLine("Press any key");
-                Console.ReadKey();
-                return;
-            }
-            else 
-            { 
                 API_Req.boardURL = args[0];
                 Console.WriteLine(API_Req.boardURL);
                 Trl.ReadArgs(API_Req.boardURL);
                 Console.WriteLine(API_Req.boardCode);
             }
+            else if (args.Length == 3)
+            {
+                API_Req.boardURL = args[0];
+                Console.WriteLine(API_Req.boardURL);
+                Trl.ReadArgs(API_Req.boardURL);
+                Console.WriteLine(API_Req.boardCode);
+                APIKey = args[1];
+                MyTrelloToken = args[2];
+            }
+            else
+            {
+                Console.WriteLine("Некорректное количество аргументов");
+                Console.WriteLine("Press any key");
+                Console.ReadKey();
+                return;
+            }
 
-            string APIKey = "4b02fbde8c00369dc53e25222e864941";
-            string MyTrelloToken = "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07";
-            API_Req.Request(APIKey, MyTrelloToken);
+            try
+            {
+                API_Req.Request(APIKey, MyTrelloToken);
+            }
+            catch (Exception e)
+            {
+                if (e.Message.Contains("400"))
+                {
+                    Trl.EMessage(e.Message);
+                    Console.WriteLine("Недопустимый url доски");
+                    Console.WriteLine("Press any key");
+                    Console.ReadKey();
+                    return;
+                }
+                if (e.Message.Contains("401"))
+                {
+                    Trl.EMessage(e.Message);
+                    Console.WriteLine("Нет доступа к доске");
+                    Console.WriteLine("Press any key");
+                    Console.ReadKey();
+                    return;
+                }
+                if (e.Message.Contains("404"))
+                {
+                    Trl.EMessage(e.Message);
+                    Console.WriteLine("Доска не найдена");
+                    Console.WriteLine("Press any key");
+                    Console.ReadKey();
+                    return;
+                }
+            }
+
             ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
             var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
 
@@ -433,7 +476,6 @@ namespace project_1
             }
             xiFillAbstr.XiFill();
             FillExcelSheetsSt.FillExcel();
-            Console.WriteLine();
             Console.WriteLine("Press any key");
             Console.ReadKey();
         }

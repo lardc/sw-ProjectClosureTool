@@ -6,7 +6,6 @@ using System.Linq;
 using OfficeOpenXml.Style;
 using OfficeOpenXml;
 using System.Diagnostics;
-using Microsoft.IdentityModel.SecurityTokenService;
 
 namespace project_1
 {
@@ -355,6 +354,7 @@ namespace project_1
 
         static void Main(string[] args)
         {
+            Console.Read();
             Console.WriteLine("Start");
             Trl.Curr_Clear();
             API_Req.boardURL = "https://trello.com/1/boards/dXURQTbH";

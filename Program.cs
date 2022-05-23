@@ -239,6 +239,14 @@ namespace project_1
 
             if (s_idot >= 0)
             {
+                if (s_ioro >= 0 && s_iorc == 0)
+                {
+                    strErr[iErr++] = $"В карточке <{rr}> нет закрывающей круглой скобки";
+                }
+                if (s_isqo >= 0 && s_isqc == 0)
+                {
+                    strErr[iErr++] = $"В карточке <{rr}> нет закрывающей квадратной скобки";
+                }
                 string s_unit = rr.Substring(0, s_idot).Trim();
                 Search_Unit(s_unit);
 

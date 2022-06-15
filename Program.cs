@@ -312,7 +312,6 @@ namespace project_1
             }
             else
             {
-                //string BName=
                 string DTyear = DateTime.Now.Year.ToString();
                 string DTmonth = DateTime.Now.Month.ToString();
                 string DTday = DateTime.Now.Day.ToString();

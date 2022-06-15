@@ -25,9 +25,9 @@ namespace project_1
         /// Получение ответа в виде потока
         /// Запись ответа в память виде строки
         /// Кодировка в UTF-8
-        public static void Request(string APIKey, string MyTrelloToken)
+        public static void Request(string APIKey, string MyTrelloToken, string CardFilter, string CardFields, string boardCode)
         {
-            System.Net.WebRequest reqGET = System.Net.WebRequest.Create("https://trello.com/1/boards/" + boardCode + "/cards/?key=" + APIKey + "&token=" + MyTrelloToken);
+            System.Net.WebRequest reqGET = System.Net.WebRequest.Create(boardURL + boardCode + CardFilter + "/?key=" + APIKey + "&token=" + MyTrelloToken + CardFields);
             System.Net.WebResponse resp = reqGET.GetResponse();
             System.IO.Stream stream = resp.GetResponseStream();
             System.IO.StreamReader read_stream = new(stream);
@@ -187,7 +187,7 @@ namespace project_1
                 // уже есть стадия к текущей карточке
                 else
                 {
-                    strErr[iErr++] = $"Повтор: карточке из блока <{All_Units[iCurr_Unit] }> соответствует более одной стадии ({rr} и {Departments[iCurr_Depart]}) ";
+                    strErr[iErr++] = $"Повтор: карточке из блока <{All_Units[iCurr_Unit]}> соответствует более одной стадии ({rr} и {Departments[iCurr_Depart]}) ";
                     errUnit = true;
                 };
             }
@@ -197,7 +197,7 @@ namespace project_1
                 // уже есть команда к текущей карточке
                 else
                 {
-                    strErr[iErr++] = $"Повтор: карточке из блока <{All_Units[iCurr_Unit] }> соответствует более одной команды ({rr} и {Teams[iCurr_Team]}) ";
+                    strErr[iErr++] = $"Повтор: карточке из блока <{All_Units[iCurr_Unit]}> соответствует более одной команды ({rr} и {Teams[iCurr_Team]}) ";
                     errUnit = true;
                 }
             }
@@ -268,6 +268,7 @@ namespace project_1
                     errUnit = true;
                 }
             }
+            else if (rr == "Labels" || rr == "ЭМ") { Console.WriteLine($"Служебная карточка <{rr}>"); }
             else
             {
                 strErr[iErr++] = $"В карточке <{rr}> нет имени блока";
@@ -311,7 +312,14 @@ namespace project_1
             }
             else
             {
-                string fstrout = "json_into_xlsx.xlsx";
+                //string BName=
+                string DTyear = DateTime.Now.Year.ToString();
+                string DTmonth = DateTime.Now.Month.ToString();
+                string DTday = DateTime.Now.Day.ToString();
+                string DThour = DateTime.Now.Hour.ToString();
+                string DTminute = DateTime.Now.Minute.ToString();
+                string DTsecond = DateTime.Now.Second.ToString();
+                string fstrout = $"{API_Req.boardCode}_D{DTyear}-{DTmonth}-{DTday}_T{DThour}-{DTminute}-{DTsecond}.xlsx";
                 FileInfo fin = new(fstrin);
                 if (File.Exists(fstrout))
                 {
@@ -362,26 +370,27 @@ namespace project_1
 
         static void Main(string[] args)
         {
-            Console.Read();
+            //Console.Read();
             Console.WriteLine("Start");
             Trl.Curr_Clear();
-            API_Req.boardURL = "https://trello.com/1/boards/dXURQTbH";
+            API_Req.boardURL = "https://trello.com/1/boards/";
+            API_Req.boardCode = "dXURQTbH";
             string APIKey = "4b02fbde8c00369dc53e25222e864941";
             string MyTrelloToken = "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07";
+            string CardFilter = "/cards/open";
+            string CardFields = "&fiels=id,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,url&limit=1000";
 
             if (args.Length == 0) { }
             else if (args.Length == 1)
             {
-                API_Req.boardURL = args[0];
-                Console.WriteLine(API_Req.boardURL);
-                Trl.ReadArgs(API_Req.boardURL);
+                API_Req.boardCode = args[0];
+                Trl.ReadArgs(API_Req.boardCode);
                 Console.WriteLine(API_Req.boardCode);
             }
             else if (args.Length == 3)
             {
-                API_Req.boardURL = args[0];
-                Console.WriteLine(API_Req.boardURL);
-                Trl.ReadArgs(API_Req.boardURL);
+                API_Req.boardCode = args[0];
+                Trl.ReadArgs(API_Req.boardCode);
                 Console.WriteLine(API_Req.boardCode);
                 APIKey = args[1];
                 MyTrelloToken = args[2];
@@ -396,7 +405,7 @@ namespace project_1
 
             try
             {
-                API_Req.Request(APIKey, MyTrelloToken);
+                API_Req.Request(APIKey, MyTrelloToken, CardFilter, CardFields, API_Req.boardCode);
             }
             catch (Exception e)
             {
@@ -452,7 +461,6 @@ namespace project_1
                             {
                                 // Чтение токена
                                 reader.Read();
-
                                 // Блок? 
                                 if (reader.CurrentDepth.Equals(2))
                                 {

@@ -276,23 +276,6 @@ namespace project_1
             }
         }
 
-        public static void ReadArgs(string rr)
-        {
-            int s_ib = rr.IndexOf("b");
-            if (rr.Contains("https://trello.com/1/boards/"))
-            {
-                string s_bc = rr.Substring(s_ib + 7, rr.Length - (s_ib + 7)).Trim();
-                API_Req.boardCode = s_bc;
-            }
-            else
-            {
-                Console.WriteLine("Введённый аргумент не является URL доски");
-                Console.WriteLine("Press any key");
-                Console.ReadKey();
-                return;
-            }
-        }
-
         // Запись оценочных и реальных значений в Excel-файл
         public override void FillExcel()
         {
@@ -383,13 +366,11 @@ namespace project_1
             else if (args.Length == 1)
             {
                 API_Req.boardCode = args[0];
-                Trl.ReadArgs(API_Req.boardCode);
                 Console.WriteLine(API_Req.boardCode);
             }
             else if (args.Length == 3)
             {
                 API_Req.boardCode = args[0];
-                Trl.ReadArgs(API_Req.boardCode);
                 Console.WriteLine(API_Req.boardCode);
                 APIKey = args[1];
                 MyTrelloToken = args[2];

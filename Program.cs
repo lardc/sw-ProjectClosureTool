@@ -247,25 +247,35 @@ namespace project_1
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет закрывающей квадратной скобки";
                 }
-                string s_unit = rr.Substring(0, s_idot).Trim();
-                Search_Unit(s_unit);
 
-                if (s_ioro >= 0 && s_iorc >= 0)
+                if (s_ioro >= s_idot && s_iorc >= s_idot)
+                //if (s_ioro >= 0 && s_iorc >= 0)
                 {
                     string s_uiro = rr.Substring(s_ioro + 1, s_iorc - s_ioro - 1).Trim();
                     double d_ior = double.Parse(s_uiro);
                     Curr_Estim = d_ior;
                 }
-                if (s_isqo >= 0 && s_isqc >= 0)
+                if (s_isqo >= s_idot && s_isqc >= s_idot)
+                //if (s_isqo >= 0 && s_isqc >= 0)
                 {
                     string s_uisq = rr.Substring(s_isqo + 1, s_isqc - s_isqo - 1).Trim();
                     double d_isq = double.Parse(s_uisq);
                     Curr_Point = d_isq;
                 }
-                if (Curr_Estim == 0 && Curr_Point == 0)
+                if (Curr_Estim == 0 && Curr_Point == 0 && s_idot <= Math.Max(s_ioro, s_isqo))
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет значений";
                     errUnit = true;
+                }
+                if (s_idot >= Math.Max(s_ioro, s_isqo) && Math.Max(s_ioro, s_isqo) > 0)
+                {
+                    strErr[iErr++] = $"В карточке <{rr}> нет имени блока";
+                    errUnit = true;
+                }
+                else
+                {
+                    string s_unit = rr.Substring(0, s_idot).Trim();
+                    Search_Unit(s_unit);
                 }
             }
             else if (rr == "Labels" || rr == "ЭМ") { Console.WriteLine($"Служебная карточка <{rr}>"); }
@@ -281,7 +291,7 @@ namespace project_1
         {
             if (iAll == 0)
             {
-                Console.WriteLine($"В доске {API_Req.boardURL} нет ни одного значения. Файл не сформирован.");
+                Console.WriteLine($"В доске {API_Req.boardURL}{API_Req.boardCode} нет ни одного значения. Файл не сформирован.");
                 Console.WriteLine("Press any key");
                 return;
             }
@@ -295,12 +305,13 @@ namespace project_1
             }
             else
             {
-                string DTyear = DateTime.Now.Year.ToString();
-                string DTmonth = DateTime.Now.Month.ToString();
-                string DTday = DateTime.Now.Day.ToString();
-                string DThour = DateTime.Now.Hour.ToString();
-                string DTminute = DateTime.Now.Minute.ToString();
-                string DTsecond = DateTime.Now.Second.ToString();
+                DateTime DTnow = DateTime.Now;
+                string DTyear = DTnow.Year.ToString();
+                string DTmonth = DTnow.Month.ToString();
+                string DTday = DTnow.Day.ToString();
+                string DThour = DTnow.Hour.ToString();
+                string DTminute = DTnow.Minute.ToString();
+                string DTsecond = DTnow.Second.ToString();
                 string fstrout = $"{API_Req.boardCode}_D{DTyear}-{DTmonth}-{DTday}_T{DThour}-{DTminute}-{DTsecond}.xlsx";
                 FileInfo fin = new(fstrin);
                 if (File.Exists(fstrout))
@@ -360,6 +371,7 @@ namespace project_1
             string APIKey = "4b02fbde8c00369dc53e25222e864941";
             string MyTrelloToken = "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07";
             string CardFilter = "/cards/open";
+            //string CardFields = "&fiels=id,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,url&limit=2";
             string CardFields = "&fiels=id,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,url&limit=1000";
 
             if (args.Length == 0) { }

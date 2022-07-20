@@ -183,6 +183,7 @@ namespace project_1
             }
             if (Departments.Contains(rr))
             {
+                // if (iCurr_Depart < 1) { iCurr_Depart = Array.IndexOf(Departments, rr); }
                 if (iCurr_Depart < 0) { iCurr_Depart = Array.IndexOf(Departments, rr); }
                 // уже есть стадия к текущей карточке
                 else
@@ -213,6 +214,7 @@ namespace project_1
         {
             if (iAll <= 1000)
             {
+                // if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr) + 1; }
                 if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr); }
                 else
                 {
@@ -262,7 +264,8 @@ namespace project_1
                     double d_isq = double.Parse(s_uisq);
                     Curr_Point = d_isq;
                 }
-                if (Curr_Estim == 0 && Curr_Point == 0 && s_idot <= Math.Max(s_ioro, s_isqo))
+                if (Curr_Estim == 0 && Curr_Point == 0 && ((s_idot <= Math.Min(s_ioro, s_isqo) && Math.Min(s_ioro, s_isqo) > 0) || (s_idot <= Math.Max(s_ioro, s_isqo) && Math.Min(s_ioro, s_isqo) == 0)))
+                //if (Curr_Estim == 0 && Curr_Point == 0 && s_idot <= Math.Max(s_ioro, s_isqo))
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет значений";
                     errUnit = true;

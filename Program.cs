@@ -116,6 +116,7 @@ namespace project_1
         private static double minimumSize;
 
         public static int iErr = 0;
+        public static int iStartErr = 0;
 
         public static string[] strErr = new string[1000];
 
@@ -169,6 +170,7 @@ namespace project_1
             Curr_Estim = 0;
             Curr_Point = 0;
             errUnit = false;
+            iStartErr = iErr;
         }
 
         // Формирование списка стадий и команд
@@ -179,8 +181,11 @@ namespace project_1
                 //Ярлык без блока
                 strErr[iErr++] = $"Ярлык <{rr}> не привязан к блоку";
                 errUnit = true;
+                Console.WriteLine($"iCurr_Unit == {iCurr_Unit}");
+                Console.WriteLine($"Ярлык <{rr}> не привязан к блоку");
                 return;
             }
+
             if (Departments.Contains(rr))
             {
                 // if (iCurr_Depart < 1) { iCurr_Depart = Array.IndexOf(Departments, rr); }
@@ -188,8 +193,13 @@ namespace project_1
                 // уже есть стадия к текущей карточке
                 else
                 {
-                    strErr[iErr++] = $"Повтор: карточке из блока <{All_Units[iCurr_Unit]}> соответствует более одной стадии ({rr} и {Departments[iCurr_Depart]}) ";
+                    //strErr[iErr++] = $"Повтор: карточке из блока <{All_Units[iCurr_Unit]}> соответствует более одной стадии ({rr} и {Departments[iCurr_Depart]}) ";
+                    strErr[iErr++] = $"Повтор: карточке соответствует более одной стадии";
+                    //strErr[iErr++] = $"Повтор: карточке соответствует более одной стадии ({rr} и {Departments[iCurr_Depart]}) ";
                     errUnit = true;
+                    Console.WriteLine($"iCurr_Depart == {iCurr_Depart}");
+                    Console.WriteLine($"Повтор: карточке соответствует более одной стадии");
+                    //Console.WriteLine($"Повтор: карточке соответствует более одной стадии ({rr} и {Departments[iCurr_Depart]}) ");
                 };
             }
             else if (Teams.Contains(rr))
@@ -198,14 +208,19 @@ namespace project_1
                 // уже есть команда к текущей карточке
                 else
                 {
-                    strErr[iErr++] = $"Повтор: карточке из блока <{All_Units[iCurr_Unit]}> соответствует более одной команды ({rr} и {Teams[iCurr_Team]}) ";
+                    strErr[iErr++] = $"Повтор: карточке соответствует более одной команды";
+                    //strErr[iErr++] = $"Повтор: карточке соответствует более одной команды ({rr} и {Teams[iCurr_Team]}) ";
                     errUnit = true;
+                    Console.WriteLine($"iCurr_Team == {iCurr_Team}");
+                    Console.WriteLine($"Повтор: карточке соответствует более одной команды");
+                    //Console.WriteLine($"Повтор: карточке соответствует более одной команды ({rr} и {Teams[iCurr_Team]}) ");
                 }
             }
             else
             {
                 strErr[iErr++] = $"Ярлык <{rr}> не соответствует полям таблицы";
                 errUnit = true;
+                Console.WriteLine($"Ярлык <{rr}> не соответствует полям таблицы");
             }
         }
 
@@ -214,7 +229,7 @@ namespace project_1
         {
             if (iAll <= 1000)
             {
-                // if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr) + 1; }
+                //if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr) + 1; }
                 if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr); }
                 else
                 {
@@ -227,6 +242,8 @@ namespace project_1
             {
                 strErr[iErr++] = "Количество блоков превышено";
                 errUnit = true;
+                Console.WriteLine($"iAll == {iAll}");
+                Console.WriteLine("Количество блоков превышено");
             }
         }
 
@@ -244,10 +261,16 @@ namespace project_1
                 if (s_ioro >= 0 && s_iorc == 0)
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет закрывающей круглой скобки";
+                    Console.WriteLine($"s_ioro == {s_ioro}");
+                    Console.WriteLine($"s_iorc == {s_iorc}");
+                    Console.WriteLine($"В карточке <{rr}> нет закрывающей круглой скобки");
                 }
                 if (s_isqo >= 0 && s_isqc == 0)
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет закрывающей квадратной скобки";
+                    Console.WriteLine($"s_isqo == {s_isqo}");
+                    Console.WriteLine($"s_isqc == {s_isqc}");
+                    Console.WriteLine($"В карточке <{rr}> нет закрывающей квадратной скобки");
                 }
 
                 if (s_ioro >= s_idot && s_iorc >= s_idot)
@@ -269,11 +292,21 @@ namespace project_1
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет значений";
                     errUnit = true;
+                    Console.WriteLine($"Curr_Estim == {Curr_Estim}");
+                    Console.WriteLine($"Curr_Point == {Curr_Point}");
+                    Console.WriteLine($"s_idot == {s_idot}");
+                    Console.WriteLine($"s_ioro == {s_ioro}");
+                    Console.WriteLine($"s_isqo == {s_isqo}");
+                    Console.WriteLine($"В карточке <{rr}> нет значений");
                 }
                 if (s_idot >= Math.Max(s_ioro, s_isqo) && Math.Max(s_ioro, s_isqo) > 0)
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет имени блока";
                     errUnit = true;
+                    Console.WriteLine($"s_idot == {s_idot}");
+                    Console.WriteLine($"s_ioro == {s_ioro}");
+                    Console.WriteLine($"s_isqo == {s_isqo}");
+                    Console.WriteLine($"В карточке <{rr}> нет имени блока");
                 }
                 else
                 {
@@ -281,11 +314,18 @@ namespace project_1
                     Search_Unit(s_unit);
                 }
             }
-            else if (rr == "Labels" || rr == "ЭМ") { Console.WriteLine($"Служебная карточка <{rr}>"); }
+            else if (rr == "Labels" || rr == "ЭМ")
+            {
+                Console.WriteLine($"Служебная карточка <{rr}>");
+                iErr = iStartErr - 1;
+                errUnit = false;
+
+            }
             else
             {
                 strErr[iErr++] = $"В карточке <{rr}> нет имени блока";
                 errUnit = true;
+                Console.WriteLine($"В карточке <{rr}> нет имени блока");
             }
         }
 
@@ -430,6 +470,8 @@ namespace project_1
                 }
             }
 
+            //Console.WriteLine(API_Req.ReadToEnd_string); // что прочли - отладка
+
             ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
             var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
 
@@ -459,10 +501,10 @@ namespace project_1
                                 // Блок? 
                                 if (reader.CurrentDepth.Equals(2))
                                 {
-                                    // Формирование таблиц оценочных и реальных значений для предыдущей карточки
-                                    xiFillAbstr.XiFill();
                                     // Запись оценочных и реальных значений для текущей карточки
                                     Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
+                                    // Формирование таблиц оценочных и реальных значений для текущей карточки
+                                    xiFillAbstr.XiFill();
 
                                     TableResp.currCardName = reader.GetString().ToString();
                                 }

@@ -118,6 +118,10 @@ namespace project_1
         public static int iErr = 0;
         public static int iStartErr = 0;
 
+        public static int bgs;
+        public static int cRe;
+        public static int iLa;
+
         public static string[] strErr = new string[1000];
 
         public static ExcelPackage Excel_result { get => excel_result; set => excel_result = value; }
@@ -136,7 +140,23 @@ namespace project_1
         // Формирование таблиц оценочных и реальных значений
         public override void XiFill()
         {
+            if (iCurr_Depart >= 0 || iCurr_Team >= 0 || iCurr_Unit >= 0)
+            {
+                if (Trl.bgs == 0)
+                {
+                    strErr[iErr++] = "Нет начала карточки";
+                    strErr[iErr++] = currShortUrl;
+                    if (iLa > 0) { iErr -= 1; }
+                }
+                if (Trl.cRe == 0)
+                {
+                    strErr[iErr++] = "Нет конца карточки";
+                    strErr[iErr++] = currShortUrl;
+                    if (iLa > 0) { iErr -= 1; }
+                }
+            }
             if (errUnit) { strErr[iErr++] = currShortUrl; }
+
             if (iCurr_Depart >= 0 && iCurr_Team >= 0 && iCurr_Unit >= 0)
             {
                 if (Curr_Estim > 0)
@@ -169,37 +189,26 @@ namespace project_1
             iCurr_Unit = -1;
             Curr_Estim = 0;
             Curr_Point = 0;
+            iLa = 0;
             errUnit = false;
             iStartErr = iErr;
+            bgs = 0;
+            cRe = 0;
         }
 
         // Формирование списка стадий и команд
         public static void Search_Depart_Teams(string rr)
         {
-            if (iCurr_Unit < 0)
-            {
-                //Ярлык без блока
-                strErr[iErr++] = $"Ярлык <{rr}> не привязан к блоку";
-                errUnit = true;
-                Console.WriteLine($"iCurr_Unit == {iCurr_Unit}");
-                Console.WriteLine($"Ярлык <{rr}> не привязан к блоку");
-                return;
-            }
-
             if (Departments.Contains(rr))
             {
-                // if (iCurr_Depart < 1) { iCurr_Depart = Array.IndexOf(Departments, rr); }
                 if (iCurr_Depart < 0) { iCurr_Depart = Array.IndexOf(Departments, rr); }
                 // уже есть стадия к текущей карточке
                 else
                 {
-                    //strErr[iErr++] = $"Повтор: карточке из блока <{All_Units[iCurr_Unit]}> соответствует более одной стадии ({rr} и {Departments[iCurr_Depart]}) ";
                     strErr[iErr++] = $"Повтор: карточке соответствует более одной стадии";
-                    //strErr[iErr++] = $"Повтор: карточке соответствует более одной стадии ({rr} и {Departments[iCurr_Depart]}) ";
                     errUnit = true;
                     Console.WriteLine($"iCurr_Depart == {iCurr_Depart}");
                     Console.WriteLine($"Повтор: карточке соответствует более одной стадии");
-                    //Console.WriteLine($"Повтор: карточке соответствует более одной стадии ({rr} и {Departments[iCurr_Depart]}) ");
                 };
             }
             else if (Teams.Contains(rr))
@@ -209,11 +218,9 @@ namespace project_1
                 else
                 {
                     strErr[iErr++] = $"Повтор: карточке соответствует более одной команды";
-                    //strErr[iErr++] = $"Повтор: карточке соответствует более одной команды ({rr} и {Teams[iCurr_Team]}) ";
                     errUnit = true;
                     Console.WriteLine($"iCurr_Team == {iCurr_Team}");
                     Console.WriteLine($"Повтор: карточке соответствует более одной команды");
-                    //Console.WriteLine($"Повтор: карточке соответствует более одной команды ({rr} и {Teams[iCurr_Team]}) ");
                 }
             }
             else
@@ -229,7 +236,6 @@ namespace project_1
         {
             if (iAll <= 1000)
             {
-                //if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr) + 1; }
                 if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr); }
                 else
                 {
@@ -274,21 +280,18 @@ namespace project_1
                 }
 
                 if (s_ioro >= s_idot && s_iorc >= s_idot)
-                //if (s_ioro >= 0 && s_iorc >= 0)
                 {
                     string s_uiro = rr.Substring(s_ioro + 1, s_iorc - s_ioro - 1).Trim();
                     double d_ior = double.Parse(s_uiro);
                     Curr_Estim = d_ior;
                 }
                 if (s_isqo >= s_idot && s_isqc >= s_idot)
-                //if (s_isqo >= 0 && s_isqc >= 0)
                 {
                     string s_uisq = rr.Substring(s_isqo + 1, s_isqc - s_isqo - 1).Trim();
                     double d_isq = double.Parse(s_uisq);
                     Curr_Point = d_isq;
                 }
                 if (Curr_Estim == 0 && Curr_Point == 0 && ((s_idot <= Math.Min(s_ioro, s_isqo) && Math.Min(s_ioro, s_isqo) > 0) || (s_idot <= Math.Max(s_ioro, s_isqo) && Math.Min(s_ioro, s_isqo) == 0)))
-                //if (Curr_Estim == 0 && Curr_Point == 0 && s_idot <= Math.Max(s_ioro, s_isqo))
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет значений";
                     errUnit = true;
@@ -319,7 +322,7 @@ namespace project_1
                 Console.WriteLine($"Служебная карточка <{rr}>");
                 iErr = iStartErr - 1;
                 errUnit = false;
-
+                iLa = 1;
             }
             else
             {
@@ -392,6 +395,8 @@ namespace project_1
     {
         private static readonly byte[] s_nameUtf8 = Encoding.UTF8.GetBytes("name");
         private static readonly byte[] s_UrlUtf8 = Encoding.UTF8.GetBytes("shortUrl");
+        private static readonly byte[] s_badgesUtf8 = Encoding.UTF8.GetBytes("badges");
+        private static readonly byte[] s_cardRoleUtf8 = Encoding.UTF8.GetBytes("cardRole");
 
         public static void StartExtractor()
         {
@@ -414,8 +419,7 @@ namespace project_1
             string APIKey = "4b02fbde8c00369dc53e25222e864941";
             string MyTrelloToken = "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07";
             string CardFilter = "/cards/open";
-            //string CardFields = "&fiels=id,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,url&limit=2";
-            string CardFields = "&fiels=id,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,url&limit=1000";
+            string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=1000";
 
             if (args.Length == 0) { }
             else if (args.Length == 1)
@@ -498,30 +502,66 @@ namespace project_1
                             {
                                 // Чтение токена
                                 reader.Read();
+
                                 // Блок? 
                                 if (reader.CurrentDepth.Equals(2))
                                 {
-                                    // Запись оценочных и реальных значений для текущей карточки
+                                    // Запись оценочных и реальных значений для карточки
                                     Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
-                                    // Формирование таблиц оценочных и реальных значений для текущей карточки
-                                    xiFillAbstr.XiFill();
-
-                                    TableResp.currCardName = reader.GetString().ToString();
+                                    Console.WriteLine($"name CurrentDepth = 2 <{reader.GetString()}>");
                                 }
                                 // Стадия? Команда?
-                                else
+                                else if (reader.CurrentDepth.Equals(4))
                                 {
                                     Trl.Search_Depart_Teams(reader.GetString().ToString());
+                                    Console.WriteLine($"name CurrentDepth = 4 <{reader.GetString()}>");
                                 }
                             }
                         }
                         else if (reader.ValueTextEquals(s_UrlUtf8))
                         {
+                            // Это токен "shortUrl"?
                             if (reader.GetString().StartsWith("shortUrl"))
                             {
                                 // Чтение токена
                                 reader.Read();
                                 TableResp.currShortUrl = reader.GetString().ToString();
+                            }
+                        }
+                        else if (reader.ValueTextEquals(s_badgesUtf8))
+                        {
+                            // Это токен "badges"?
+                            if (reader.GetString().StartsWith("badges"))
+                            {
+                                // Чтение токена
+                                reader.Read();
+                                Console.WriteLine("badges");
+                                TableResp.bgs++;
+                                if (TableResp.bgs > 1) { Console.WriteLine("Повторное обнаружение начала карточки"); }
+                            }
+                        }
+                        else if (reader.ValueTextEquals(s_cardRoleUtf8))
+                        {
+                            // Это токен "cardRole"?
+                            if (reader.GetString().StartsWith("cardRole"))
+                            {
+                                // Чтение токена
+                                reader.Read();
+                                Console.WriteLine("cardRole");
+                                Trl.cRe++;
+                                if (Trl.bgs == 0) { Console.WriteLine("Нет начала карточки"); }
+                                else if (Trl.bgs == 1)
+                                {
+                                    if (Trl.cRe > 1)
+                                    { Console.WriteLine("Повторное обнаружение конца карточки"); }
+                                    else
+                                    {
+                                        //// Анализ карточки
+                                    }
+                                }
+
+                                // Формирование таблиц оценочных и реальных значений для карточки
+                                xiFillAbstr.XiFill();
                             }
                         }
                         break;

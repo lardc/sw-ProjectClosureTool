@@ -82,8 +82,8 @@ namespace project_1
             for (int i = 0; i <= iErr; i++) { errWorksheet.Cells[i + 2, 1].Value = strErr[i]; }
         }
         // Количество блоков превышено ?
-        public const int iAllUnits = 2; // максимальное к-во обрабатываемых блоков
-        //public const int iAllUnits = 1000; // максимальное к-во обрабатываемых блоков
+        //public const int iAllUnits = 2; // максимальное к-во обрабатываемых блоков
+        public const int iAllUnits = 1000; // максимальное к-во обрабатываемых блоков
 
         private static double[,,] xi = new double[2, iDep * (iTeams + 1), iAllUnits + 5];
         // 2-Estimations, Points (лист отчета)

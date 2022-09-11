@@ -81,9 +81,11 @@ namespace project_1
 
             for (int i = 0; i <= iErr; i++) { errWorksheet.Cells[i + 2, 1].Value = strErr[i]; }
         }
+        // Количество блоков превышено ?
+        public const int iAllUnits = 2; // максимальное к-во обрабатываемых блоков
+        //public const int iAllUnits = 1000; // максимальное к-во обрабатываемых блоков
 
-        public const int iAllUnits = 1000; // максимальное к-во обрабатываемых блоков
-        private static double[,,] xi = new double[2, iDep * (iTeams + 1), iAllUnits + 1];
+        private static double[,,] xi = new double[2, iDep * (iTeams + 1), iAllUnits + 5];
         // 2-Estimations, Points (лист отчета)
         // 35 столбцов таблицы (Total по Department + макс. к-во пар Department/Team)
         // 1000 строки All_Units + 1(Total)
@@ -97,7 +99,7 @@ namespace project_1
         public const int iTeams = 6;
         public static int iCurr_Team = -1; // текущая команда (0-5)
 
-        private static string[] all_Units = new string[iAllUnits + 1]; //0 - сумма по столбцу, 1-1000 - сумма по блоку
+        private static string[] all_Units = new string[iAllUnits + 5]; //0 - сумма по столбцу, 1-1000 - сумма по блоку
         public static int iAll = 0;  // всего блоков обнаружено
         public static int iCurr_Unit = -1; // текущий блок
 
@@ -124,7 +126,8 @@ namespace project_1
 
         public static int iNone;
 
-        public static string[] strErr = new string[1000];
+        public static string[] strErr = new string[iAllUnits + 5];
+        //public static string[] strErr = new string[1000];
 
         public static ExcelPackage Excel_result { get => excel_result; set => excel_result = value; }
         public static double[,,] Xi { get => xi; set => xi = value; }
@@ -251,7 +254,7 @@ namespace project_1
         // Формирование списка блоков
         public static void Search_Unit(string rr)
         {
-            if (iAll <= 1000)
+            if (iAll < iAllUnits)
             {
                 if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr); }
                 else
@@ -263,10 +266,10 @@ namespace project_1
             }
             else
             {
-                strErr[iErr++] = "Количество блоков превышено";
+                strErr[iErr++] = "Количество блоков превышено ( >" + iAllUnits + ")";
                 errUnit = true;
-                //Console.WriteLine($"iAll == {iAll}");
-                //Console.WriteLine("Количество блоков превышено");
+                Console.WriteLine($"iAll == {iAll}");
+                Console.WriteLine("Количество блоков превышено");
             }
         }
 
@@ -281,14 +284,14 @@ namespace project_1
 
             if (s_idot >= 0)
             {
-                if (s_ioro >= 0 && s_iorc == 0)
+                if (s_ioro >= 0 && s_iorc < 0)
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет закрывающей круглой скобки";
                     //Console.WriteLine($"s_ioro == {s_ioro}");
                     //Console.WriteLine($"s_iorc == {s_iorc}");
                     //Console.WriteLine($"В карточке <{rr}> нет закрывающей круглой скобки");
                 }
-                if (s_isqo >= 0 && s_isqc == 0)
+                if (s_isqo >= 0 && s_isqc < 0)
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет закрывающей квадратной скобки";
                     //Console.WriteLine($"s_isqo == {s_isqo}");
@@ -356,7 +359,6 @@ namespace project_1
             if (iAll == iNone)
             {
                 Console.WriteLine($"В доске {API_Req.boardURL}{API_Req.boardCode} нет ни одного значения. Файл не сформирован.");
-                Console.WriteLine("Press any key");
                 return;
             }
             string fstrin = "json_into_xlsx_t.xltx";
@@ -437,6 +439,7 @@ namespace project_1
             string APIKey = "4b02fbde8c00369dc53e25222e864941";
             string MyTrelloToken = "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07";
             string CardFilter = "/cards/open";
+            //string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=2";
             string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=1000";
 
             if (args.Length == 0) { }

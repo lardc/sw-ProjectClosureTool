@@ -284,14 +284,14 @@ namespace project_1
 
             if (s_idot >= 0)
             {
-                if (s_ioro >= 0 && s_iorc < 0)
+                if (s_ioro >= 0 && s_iorc < s_ioro)
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет закрывающей круглой скобки";
                     //Console.WriteLine($"s_ioro == {s_ioro}");
                     //Console.WriteLine($"s_iorc == {s_iorc}");
                     //Console.WriteLine($"В карточке <{rr}> нет закрывающей круглой скобки");
                 }
-                if (s_isqo >= 0 && s_isqc < 0)
+                if (s_isqo >= 0 && s_isqc < s_isqo)
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет закрывающей квадратной скобки";
                     //Console.WriteLine($"s_isqo == {s_isqo}");

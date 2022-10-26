@@ -431,7 +431,7 @@ namespace project_1
 
         static void Main(string[] args)
         {
-            //Console.Read();
+            Console.Read();
             Console.WriteLine("Start");
             Trl.Curr_Clear();
             API_Req.boardURL = "https://trello.com/1/boards/";

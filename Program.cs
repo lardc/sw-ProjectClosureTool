@@ -11,14 +11,16 @@ namespace project_1
 {
     public static class API_Req
     {
-        private static string readToEnd_string;
+        //public static string readToEnd_string;
+        //private static string readToEnd_string;
 
         public static string boardURL;
         public static string boardCode;
         public static string APIKey;
         public static string MyTrelloToken;
 
-        public static string ReadToEnd_string { get => readToEnd_string; set => readToEnd_string = value; }
+        public static string ReadToEnd_string { get; set; }
+        //public static string ReadToEnd_string { get => readToEnd_string; set => readToEnd_string = value; }
 
         /// Ключ и токен для авторизации
         /// Запрос карточек доски
@@ -35,13 +37,14 @@ namespace project_1
         }
     }
 
-    public abstract class TableResp
+    public class TableResp
     {
-        public abstract void XiFill();
+        //public abstract void XiFill();
 
-        public abstract void FillExcel();
+        //public abstract void FillExcel();
 
-        private static OfficeOpenXml.ExcelPackage excel_result;
+        public static OfficeOpenXml.ExcelPackage excel_result;
+        //private static OfficeOpenXml.ExcelPackage excel_result;
 
         public static void FillExcelSheets(int WorkShtN)
         {
@@ -85,21 +88,21 @@ namespace project_1
         //public const int iAllUnits = 2; // максимальное к-во обрабатываемых блоков
         public const int iAllUnits = 1000; // максимальное к-во обрабатываемых блоков
 
-        private static double[,,] xi = new double[2, iDep * (iTeams + 1), iAllUnits + 5];
+        public static double[,,] Xi = new double[2, iDep * (iTeams + 1), iAllUnits + 5];
         // 2-Estimations, Points (лист отчета)
         // 35 столбцов таблицы (Total по Department + макс. к-во пар Department/Team)
         // 1000 строки All_Units + 1(Total)
         // Total - 0 строка, блоки - начинать с 1-й
 
-        private static string[] departments = { "Technical Solution", "Development", "Debugging", "Commissioning", "Documentation" };
+        public static string[] Departments = { "Technical Solution", "Development", "Debugging", "Commissioning", "Documentation" };
         public const int iDep = 5;
         public static int iCurr_Depart = -1; // текущая стадия (0-4)
 
-        private static string[] teams = { "Electronics Team", "Firmware Team", "Remote Team", "Mechanics Team", "Commissioning Team", "Software Team" };
+        public static string[] Teams = { "Electronics Team", "Firmware Team", "Remote Team", "Mechanics Team", "Commissioning Team", "Software Team" };
         public const int iTeams = 6;
         public static int iCurr_Team = -1; // текущая команда (0-5)
 
-        private static string[] all_Units = new string[iAllUnits + 5]; //0 - сумма по столбцу, 1-1000 - сумма по блоку
+        public static string[] All_Units = new string[iAllUnits + 5]; //0 - сумма по столбцу, 1-1000 - сумма по блоку
         public static int iAll = 0;  // всего блоков обнаружено
         public static int iCurr_Unit = -1; // текущий блок
 
@@ -108,14 +111,14 @@ namespace project_1
 
         public static int iTotal;
         public static int iCurrTD;
-        private static int currUnit;
+        public static int currUnit;
 
         public static bool errUnit = false;
 
-        private static double curr_Estim;  // текущее оценочное значение
-        private static double curr_Point;  // текущее реальное значение
+        public static double curr_Estim;  // текущее оценочное значение
+        public static double curr_Point;  // текущее реальное значение
 
-        private static double minimumSize;
+        public static double minimumSize;
 
         public static int iErr = 0;
         public static int iStartErr = 0;
@@ -129,21 +132,28 @@ namespace project_1
         public static string[] strErr = new string[iAllUnits + 5];
         //public static string[] strErr = new string[1000];
 
-        public static ExcelPackage Excel_result { get => excel_result; set => excel_result = value; }
-        public static double[,,] Xi { get => xi; set => xi = value; }
-        public static string[] Departments { get => departments; set => departments = value; }
-        public static string[] Teams { get => teams; set => teams = value; }
-        public static string[] All_Units { get => all_Units; set => all_Units = value; }
-        public static int CurrUnit { get => currUnit; set => currUnit = value; }
-        public static double Curr_Estim { get => curr_Estim; set => curr_Estim = value; }
-        public static double Curr_Point { get => curr_Point; set => curr_Point = value; }
-        public static double MinimumSize { get => minimumSize; set => minimumSize = value; }
+        public static ExcelPackage Excel_result { get; set; }
+        //public static ExcelPackage Excel_result { get => excel_result; set => excel_result = value; }
+        //public static double[,,] Xi { get; set; }
+        //public static double[,,] Xi { get => xi; set => xi = value; }
+        //public static string[] All_Units { get; set; }
+        //public static string[] All_Units { get => all_Units; set => all_Units = value; }
+        public static int CurrUnit { get; set; }
+        //public static int CurrUnit { get => currUnit; set => currUnit = value; }
+        public static double Curr_Estim { get; set; }
+        //public static double Curr_Estim { get => curr_Estim; set => curr_Estim = value; }
+        public static double Curr_Point { get; set; }
+        //public static double Curr_Point { get => curr_Point; set => curr_Point = value; }
+        public static double MinimumSize { get; set; }
+        //public static double MinimumSize { get => minimumSize; set => minimumSize = value; }
     }
 
     public class Trl : TableResp
+    //public class Trl : TableResp
     {
         // Формирование таблиц оценочных и реальных значений
-        public override void XiFill()
+        public static void XiFill()
+        //public ocerride void XiFill()
         {
             if (iCurr_Depart >= 0 || iCurr_Team >= 0 || iCurr_Unit >= 0)
             {
@@ -164,24 +174,8 @@ namespace project_1
 
             if (iCurr_Depart >= 0 && iCurr_Team >= 0 && iCurr_Unit >= 0)
             {
-                if (Curr_Estim > 0)
-                {
-                    iTotal = iCurr_Depart * (iTeams + 1) + iTeams;
-                    iCurrTD = iCurr_Depart * (iTeams + 1) + iCurr_Team;
-                    CurrUnit = iCurr_Unit + 1;
-                    Xi[0, iCurrTD, CurrUnit] += Curr_Estim;
-                    Xi[0, iCurrTD, 0] += Curr_Estim;
-                    Xi[0, iTotal, 0] += Curr_Estim;
-                }
-                if (Curr_Point > 0)
-                {
-                    iTotal = iCurr_Depart * (iTeams + 1) + iTeams;
-                    iCurrTD = iCurr_Depart * (iTeams + 1) + iCurr_Team;
-                    CurrUnit = iCurr_Unit + 1;
-                    Xi[1, iCurrTD, CurrUnit] += Curr_Point;
-                    Xi[1, iCurrTD, 0] += Curr_Point;
-                    Xi[1, iTotal, 0] += Curr_Point;
-                }
+                if (Curr_Estim > 0) { XiFill_Curr_Estim(); }
+                if (Curr_Point > 0) { XiFill_Curr_Point(); }
             }
 
             if (iCurr_Depart < 0 && iCurr_Unit >= 0)
@@ -199,6 +193,26 @@ namespace project_1
             }
 
             Curr_Clear();
+        }
+
+        public static void XiFill_Curr_Estim()
+        {
+            iTotal = iCurr_Depart * (iTeams + 1) + iTeams;
+            iCurrTD = iCurr_Depart * (iTeams + 1) + iCurr_Team;
+            CurrUnit = iCurr_Unit + 1;
+            Xi[0, iCurrTD, CurrUnit] += Curr_Estim;
+            Xi[0, iCurrTD, 0] += Curr_Estim;
+            Xi[0, iTotal, 0] += Curr_Estim;
+        }
+
+        public static void XiFill_Curr_Point()
+        {
+            iTotal = iCurr_Depart * (iTeams + 1) + iTeams;
+            iCurrTD = iCurr_Depart * (iTeams + 1) + iCurr_Team;
+            CurrUnit = iCurr_Unit + 1;
+            Xi[1, iCurrTD, CurrUnit] += Curr_Point;
+            Xi[1, iCurrTD, 0] += Curr_Point;
+            Xi[1, iTotal, 0] += Curr_Point;
         }
 
         //Очистка значений счётчиков по текущему блоку
@@ -219,35 +233,82 @@ namespace project_1
         // Формирование списка стадий и команд
         public static void Search_Depart_Teams(string rr)
         {
-            if (Departments.Contains(rr))
-            {
-                if (iCurr_Depart < 0) { iCurr_Depart = Array.IndexOf(Departments, rr); }
-                // уже есть стадия к текущей карточке
-                else
-                {
-                    strErr[iErr++] = $"Повтор: карточке соответствует более одной стадии";
-                    errUnit = true;
-                    //Console.WriteLine($"iCurr_Depart == {iCurr_Depart}");
-                    //Console.WriteLine($"Повтор: карточке соответствует более одной стадии");
-                };
-            }
-            else if (Teams.Contains(rr))
-            {
-                if (iCurr_Team < 0) { iCurr_Team = Array.IndexOf(Teams, rr); }
-                // уже есть команда к текущей карточке
-                else
-                {
-                    strErr[iErr++] = $"Повтор: карточке соответствует более одной команды";
-                    errUnit = true;
-                    //Console.WriteLine($"iCurr_Team == {iCurr_Team}");
-                    //Console.WriteLine($"Повтор: карточке соответствует более одной команды");
-                }
-            }
+            //try
+            //{
+            if (Departments.Contains(rr)) { Search_Departments(rr); }
+            else if (Teams.Contains(rr)) { Search_Teams(rr); }
             else
             {
                 strErr[iErr++] = $"Ярлык <{rr}> не соответствует полям таблицы";
                 errUnit = true;
-                //Console.WriteLine($"Ярлык <{rr}> не соответствует полям таблицы");
+                //Console.WriteLine($"Ярлык <{rr}>iCurr_Depart не соответствует полям таблицы");
+            }
+            //}
+            //catch (Exception ArgumentNullException)
+            //{
+            //    Console.WriteLine(ArgumentNullException.Message);
+            //    //Value cannot be null. (Parameter 'source')
+            //    Console.WriteLine("Press any key");
+            //    Console.ReadKey();
+            //    return;
+            //}
+        }
+
+        // Формирование списка стадий
+        public static void Search_Departments(string rr)
+        {
+            try
+            {
+                if (Departments.Contains(rr))
+                {
+                    //Console.WriteLine($"Department == {rr}");
+                    if (iCurr_Depart < 0) { iCurr_Depart = Array.IndexOf(Departments, rr); }
+                    // Value cannot be null. (Parameter 'source')
+                    // уже есть стадия к текущей карточке
+                    else
+                    {
+                        strErr[iErr++] = $"Повтор: карточке соответствует более одной стадии";
+                        errUnit = true;
+                        //Console.WriteLine($"iCurr_Depart == {iCurr_Depart}");
+                        //Console.WriteLine($"Повтор: карточке соответствует более одной стадии");
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                // Value cannot be null. (Parameter 'source')
+                Console.WriteLine("Press any key");
+                Console.ReadKey();
+                return;
+            }
+        }
+
+        // Формирование списка команд
+        public static void Search_Teams(string rr)
+        {
+            try
+            {
+                if (Teams.Contains(rr))
+                {
+                    //Console.WriteLine($"Team == {rr}");
+                    if (iCurr_Team < 0) { iCurr_Team = Array.IndexOf(Teams, rr); }
+                    // уже есть команда к текущей карточке
+                    else
+                    {
+                        strErr[iErr++] = $"Повтор: карточке соответствует более одной команды";
+                        errUnit = true;
+                        //Console.WriteLine($"iCurr_Team == {iCurr_Team}");
+                        //Console.WriteLine($"Повтор: карточке соответствует более одной команды");
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Press any key");
+                Console.ReadKey();
+                return;
             }
         }
 
@@ -256,19 +317,34 @@ namespace project_1
         {
             if (iAll < iAllUnits)
             {
-                if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr); }
-                else
+                try
                 {
-                    iCurr_Unit = iAll;
-                    All_Units[iCurr_Unit] = rr;
-                    iAll++;
+                    if (All_Units.Contains(rr))
+                    {
+                        iCurr_Unit = Array.IndexOf(All_Units, rr);
+                        //Console.WriteLine($"Unit == {All_Units[iCurr_Unit]}");
+                        //Console.WriteLine($"iCurr_Unit == {iCurr_Unit}");
+                    }
+                    else
+                    {
+                        iCurr_Unit = iAll;
+                        All_Units[iCurr_Unit] = rr;
+                        iAll++;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Press any key");
+                    Console.ReadKey();
+                    return;
                 }
             }
             else
             {
                 strErr[iErr++] = "Количество блоков превышено ( >" + iAllUnits + ")";
                 errUnit = true;
-                Console.WriteLine($"iAll == {iAll}");
+                //Console.WriteLine($"iAll == {iAll}");
                 Console.WriteLine("Количество блоков превышено");
             }
         }
@@ -354,7 +430,7 @@ namespace project_1
         }
 
         // Запись оценочных и реальных значений в Excel-файл
-        public override void FillExcel()
+        public static void FillExcel()
         {
             if (iAll == iNone)
             {
@@ -371,18 +447,12 @@ namespace project_1
             }
             else
             {
-                DateTime DTnow = DateTime.Now;
-                string DTyear = DTnow.Year.ToString();
-                string DTmonth = DTnow.Month.ToString();
-                string DTday = DTnow.Day.ToString();
-                string DThour = DTnow.Hour.ToString();
-                string DTminute = DTnow.Minute.ToString();
-                string DTsecond = DTnow.Second.ToString();
-                string fstrout = $"{API_Req.boardCode}_D{DTyear}-{DTmonth}-{DTday}_T{DThour}-{DTminute}-{DTsecond}.xlsx";
+                FillExcel_fstrout(fstrin);
                 FileInfo fin = new(fstrin);
-                if (File.Exists(fstrout))
+                //string fstrout = $"{API_Req.boardCode}_D{DTyear}-{DTmonth}-{DTday}_T{DThour}-{DTminute}-{DTsecond}.xlsx";
+                if (File.Exists(FillExcel_fstrout(fstrin)))
                 {
-                    try { File.Delete(fstrout); }
+                    try { File.Delete(FillExcel_fstrout(fstrin)); }
                     catch (IOException deleteError)
                     {
                         Console.WriteLine(deleteError.Message);
@@ -391,7 +461,7 @@ namespace project_1
                         return;
                     }
                 }
-                FileInfo fout = new(fstrout);
+                FileInfo fout = new(FillExcel_fstrout(fstrin));
                 using (Excel_result = new OfficeOpenXml.ExcelPackage(fout, fin))
                 {
                     Excel_result.Workbook.Properties.Author = "KM";
@@ -410,7 +480,21 @@ namespace project_1
             string s_mess = eM.Substring(s_err, s_dot - s_err).Trim();
             Console.WriteLine(s_mess);
         }
+        public static string FillExcel_fstrout(string fstrin)
+        {
+            DateTime DTnow = DateTime.Now;
+            string DTyear = DTnow.Year.ToString();
+            string DTmonth = DTnow.Month.ToString();
+            string DTday = DTnow.Day.ToString();
+            string DThour = DTnow.Hour.ToString();
+            string DTminute = DTnow.Minute.ToString();
+            string DTsecond = DTnow.Second.ToString();
+            //FileInfo fin = new(fstrin);
+            string fstrout = $"{API_Req.boardCode}_D{DTyear}-{DTmonth}-{DTday}_T{DThour}-{DTminute}-{DTsecond}.xlsx";
+            return fstrout;
+        }
     }
+
     public class Program
     {
         private static readonly byte[] s_nameUtf8 = Encoding.UTF8.GetBytes("name");
@@ -503,8 +587,8 @@ namespace project_1
             // Тип считанного токена
             JsonTokenType tokenType;
 
-            var xiFillAbstr = new Trl();
-            var FillExcelSheetsSt = new Trl();
+            //var xiFillAbstr = new Trl();
+            //var FillExcelSheetsSt = new Trl();
 
             while (reader.Read())
             {
@@ -534,6 +618,8 @@ namespace project_1
                                 // Стадия? Команда?
                                 else if (reader.CurrentDepth.Equals(4))
                                 {
+                                    //Trl.Search_Departments(reader.GetString().ToString());
+                                    //Trl.Search_Teams(reader.GetString().ToString());
                                     Trl.Search_Depart_Teams(reader.GetString().ToString());
                                     //Console.WriteLine($"name CurrentDepth = 4 <{reader.GetString()}>");
                                 }
@@ -580,16 +666,18 @@ namespace project_1
                                         //// Анализ карточки
                                     }
                                 }
-
                                 // Формирование таблиц оценочных и реальных значений для карточки
-                                xiFillAbstr.XiFill();
+                                Trl.XiFill();
+                                //xiFillAbstr.XiFill();
                             }
                         }
                         break;
                 }
             }
-            xiFillAbstr.XiFill();
-            FillExcelSheetsSt.FillExcel();
+            Trl.XiFill();
+            //xiFillAbstr.XiFill();
+            Trl.FillExcel();
+            //FillExcelSheetsSt.FillExcel();
             Console.WriteLine("Press any key");
             Console.ReadKey();
         }

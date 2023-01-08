@@ -5,22 +5,17 @@ using System.Text.Json;
 using System.Linq;
 using OfficeOpenXml.Style;
 using OfficeOpenXml;
-using System.Diagnostics;
 
 namespace project_1
 {
     public static class API_Req
     {
-        //public static string readToEnd_string;
-        //private static string readToEnd_string;
-
         public static string boardURL;
         public static string boardCode;
         public static string APIKey;
         public static string MyTrelloToken;
 
-        public static string ReadToEnd_string { get; set; }
-        //public static string ReadToEnd_string { get => readToEnd_string; set => readToEnd_string = value; }
+        public static string ReadToEnd_string;
 
         /// Ключ и токен для авторизации
         /// Запрос карточек доски
@@ -39,12 +34,7 @@ namespace project_1
 
     public class TableResp
     {
-        //public abstract void XiFill();
-
-        //public abstract void FillExcel();
-
         public static OfficeOpenXml.ExcelPackage excel_result;
-        //private static OfficeOpenXml.ExcelPackage excel_result;
 
         public static void FillExcelSheets(int WorkShtN)
         {
@@ -64,17 +54,7 @@ namespace project_1
                             estWorksheet.Cells[i + 4, 1].Value = All_Units[i];
                         for (int j = 0; j <= iTeams; j++)
                         {
-                            int jD = iD * (iTeams + 1) + j;
-                            if (i == iAll)
-                                estWorksheet.Cells[iAll + 4, jD + 2].Formula = "=SUM(" + estWorksheet.Cells[4, jD + 2].Address + ":" + estWorksheet.Cells[iAll + 3, jD + 2].Address + ")";
-                            else if (j < iTeams)
-                            {
-                                estWorksheet.Cells[i + 4, jD + 2].Value = Xi[WorkSht, jD, i + 1];
-                                estWorksheet.Cells[i + 4, jD + 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
-                                estWorksheet.Cells[i + 4, jD + 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
-                            }
-                            ExcelRange rg = estWorksheet.Cells[iAll + 5, 1, iAllUnits + 5, jD + 2];
-                            rg.Clear();
+                            FillExcelCells(i, j, iD, estWorksheet, WorkSht);
                         }
                     }
                 }
@@ -84,6 +64,22 @@ namespace project_1
 
             for (int i = 0; i <= iErr; i++) { errWorksheet.Cells[i + 2, 1].Value = strErr[i]; }
         }
+
+        public static void FillExcelCells(int i, int j, int iD, OfficeOpenXml.ExcelWorksheet estWorksheet, int WorkSht)
+        {
+            int jD = iD * (iTeams + 1) + j;
+            if (i == iAll)
+                estWorksheet.Cells[iAll + 4, jD + 2].Formula = "=SUM(" + estWorksheet.Cells[4, jD + 2].Address + ":" + estWorksheet.Cells[iAll + 3, jD + 2].Address + ")";
+            else if (j < iTeams)
+            {
+                estWorksheet.Cells[i + 4, jD + 2].Value = Xi[WorkSht, jD, i + 1];
+                estWorksheet.Cells[i + 4, jD + 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                estWorksheet.Cells[i + 4, jD + 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
+            }
+            ExcelRange rg = estWorksheet.Cells[iAll + 5, 1, iAllUnits + 5, jD + 2];
+            rg.Clear();
+        }
+
         // Количество блоков превышено ?
         //public const int iAllUnits = 2; // максимальное к-во обрабатываемых блоков
         public const int iAllUnits = 1000; // максимальное к-во обрабатываемых блоков
@@ -130,45 +126,49 @@ namespace project_1
         public static int iNone;
 
         public static string[] strErr = new string[iAllUnits + 5];
-        //public static string[] strErr = new string[1000];
 
         public static ExcelPackage Excel_result { get; set; }
-        //public static ExcelPackage Excel_result { get => excel_result; set => excel_result = value; }
-        //public static double[,,] Xi { get; set; }
-        //public static double[,,] Xi { get => xi; set => xi = value; }
-        //public static string[] All_Units { get; set; }
-        //public static string[] All_Units { get => all_Units; set => all_Units = value; }
         public static int CurrUnit { get; set; }
-        //public static int CurrUnit { get => currUnit; set => currUnit = value; }
         public static double Curr_Estim { get; set; }
-        //public static double Curr_Estim { get => curr_Estim; set => curr_Estim = value; }
         public static double Curr_Point { get; set; }
-        //public static double Curr_Point { get => curr_Point; set => curr_Point = value; }
         public static double MinimumSize { get; set; }
-        //public static double MinimumSize { get => minimumSize; set => minimumSize = value; }
     }
 
     public class Trl : TableResp
-    //public class Trl : TableResp
     {
+        // Проверка наличия зафиксированных стадий, команд или блоков
+        public static bool DepartTeamUnitExist()
+        {
+            return (iCurr_Depart >= 0 || iCurr_Team >= 0 || iCurr_Unit >= 0);
+        }
+
+        // Проверка наличия начала карточки
+        public static void Check_bgs()
+        {
+            if (Trl.bgs == 0)
+            {
+                strErr[iErr++] = "Нет начала карточки";
+                if (iLa < 1) { strErr[iErr++] = currShortUrl; }
+            }
+        }
+
+        // Проверка наличия конца карточки
+        public static void Check_cRe()
+        {
+            if (Trl.cRe == 0)
+            {
+                strErr[iErr++] = "Нет начала карточки";
+                if (iLa < 1) { strErr[iErr++] = currShortUrl; }
+            }
+        }
+
         // Формирование таблиц оценочных и реальных значений
         public static void XiFill()
-        //public ocerride void XiFill()
         {
-            if (iCurr_Depart >= 0 || iCurr_Team >= 0 || iCurr_Unit >= 0)
+            if (DepartTeamUnitExist())
             {
-                if (Trl.bgs == 0)
-                {
-                    strErr[iErr++] = "Нет начала карточки";
-                    strErr[iErr++] = currShortUrl;
-                    if (iLa > 0) { iErr -= 1; }
-                }
-                if (Trl.cRe == 0)
-                {
-                    strErr[iErr++] = "Нет конца карточки";
-                    strErr[iErr++] = currShortUrl;
-                    if (iLa > 0) { iErr -= 1; }
-                }
+                Check_bgs();
+                Check_cRe();
             }
             if (errUnit) { strErr[iErr++] = currShortUrl; }
 
@@ -182,14 +182,12 @@ namespace project_1
             {
                 strErr[iErr++] = "Нет ярлыка стадии";
                 strErr[iErr++] = currShortUrl;
-                //Console.WriteLine("Нет ярлыка стадии");
             }
 
             if (iCurr_Team < 0 && iCurr_Unit >= 0)
             {
                 strErr[iErr++] = "Нет ярлыка команды";
                 strErr[iErr++] = currShortUrl;
-                //Console.WriteLine("Нет ярлыка команды");
             }
 
             Curr_Clear();
@@ -223,7 +221,7 @@ namespace project_1
             iCurr_Unit = -1;
             Curr_Estim = 0;
             Curr_Point = 0;
-            iLa = 0;
+            iLa = 0; // Служебная карточка
             errUnit = false;
             iStartErr = iErr;
             bgs = 0;
@@ -233,25 +231,13 @@ namespace project_1
         // Формирование списка стадий и команд
         public static void Search_Depart_Teams(string rr)
         {
-            //try
-            //{
             if (Departments.Contains(rr)) { Search_Departments(rr); }
             else if (Teams.Contains(rr)) { Search_Teams(rr); }
             else
             {
                 strErr[iErr++] = $"Ярлык <{rr}> не соответствует полям таблицы";
                 errUnit = true;
-                //Console.WriteLine($"Ярлык <{rr}>iCurr_Depart не соответствует полям таблицы");
             }
-            //}
-            //catch (Exception ArgumentNullException)
-            //{
-            //    Console.WriteLine(ArgumentNullException.Message);
-            //    //Value cannot be null. (Parameter 'source')
-            //    Console.WriteLine("Press any key");
-            //    Console.ReadKey();
-            //    return;
-            //}
         }
 
         // Формирование списка стадий
@@ -261,23 +247,18 @@ namespace project_1
             {
                 if (Departments.Contains(rr))
                 {
-                    //Console.WriteLine($"Department == {rr}");
                     if (iCurr_Depart < 0) { iCurr_Depart = Array.IndexOf(Departments, rr); }
-                    // Value cannot be null. (Parameter 'source')
                     // уже есть стадия к текущей карточке
                     else
                     {
                         strErr[iErr++] = $"Повтор: карточке соответствует более одной стадии";
                         errUnit = true;
-                        //Console.WriteLine($"iCurr_Depart == {iCurr_Depart}");
-                        //Console.WriteLine($"Повтор: карточке соответствует более одной стадии");
                     };
                 }
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-                // Value cannot be null. (Parameter 'source')
                 Console.WriteLine("Press any key");
                 Console.ReadKey();
                 return;
@@ -291,15 +272,12 @@ namespace project_1
             {
                 if (Teams.Contains(rr))
                 {
-                    //Console.WriteLine($"Team == {rr}");
                     if (iCurr_Team < 0) { iCurr_Team = Array.IndexOf(Teams, rr); }
                     // уже есть команда к текущей карточке
                     else
                     {
                         strErr[iErr++] = $"Повтор: карточке соответствует более одной команды";
                         errUnit = true;
-                        //Console.WriteLine($"iCurr_Team == {iCurr_Team}");
-                        //Console.WriteLine($"Повтор: карточке соответствует более одной команды");
                     };
                 }
             }
@@ -319,12 +297,7 @@ namespace project_1
             {
                 try
                 {
-                    if (All_Units.Contains(rr))
-                    {
-                        iCurr_Unit = Array.IndexOf(All_Units, rr);
-                        //Console.WriteLine($"Unit == {All_Units[iCurr_Unit]}");
-                        //Console.WriteLine($"iCurr_Unit == {iCurr_Unit}");
-                    }
+                    if (All_Units.Contains(rr)) { iCurr_Unit = Array.IndexOf(All_Units, rr); }
                     else
                     {
                         iCurr_Unit = iAll;
@@ -344,7 +317,6 @@ namespace project_1
             {
                 strErr[iErr++] = "Количество блоков превышено ( >" + iAllUnits + ")";
                 errUnit = true;
-                //Console.WriteLine($"iAll == {iAll}");
                 Console.WriteLine("Количество блоков превышено");
             }
         }
@@ -363,16 +335,10 @@ namespace project_1
                 if (s_ioro >= 0 && s_iorc < s_ioro)
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет закрывающей круглой скобки";
-                    //Console.WriteLine($"s_ioro == {s_ioro}");
-                    //Console.WriteLine($"s_iorc == {s_iorc}");
-                    //Console.WriteLine($"В карточке <{rr}> нет закрывающей круглой скобки");
                 }
                 if (s_isqo >= 0 && s_isqc < s_isqo)
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет закрывающей квадратной скобки";
-                    //Console.WriteLine($"s_isqo == {s_isqo}");
-                    //Console.WriteLine($"s_isqc == {s_isqc}");
-                    //Console.WriteLine($"В карточке <{rr}> нет закрывающей квадратной скобки");
                 }
 
                 if (s_ioro >= s_idot && s_iorc >= s_idot)
@@ -391,22 +357,12 @@ namespace project_1
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет значений";
                     errUnit = true;
-                    //Console.WriteLine($"Curr_Estim == {Curr_Estim}");
-                    //Console.WriteLine($"Curr_Point == {Curr_Point}");
-                    //Console.WriteLine($"s_idot == {s_idot}");
-                    //Console.WriteLine($"s_ioro == {s_ioro}");
-                    //Console.WriteLine($"s_isqo == {s_isqo}");
-                    //Console.WriteLine($"В карточке <{rr}> нет значений");
                     iNone++;
                 }
                 if (s_idot >= Math.Max(s_ioro, s_isqo) && Math.Max(s_ioro, s_isqo) > 0)
                 {
                     strErr[iErr++] = $"В карточке <{rr}> нет имени блока";
                     errUnit = true;
-                    //Console.WriteLine($"s_idot == {s_idot}");
-                    //Console.WriteLine($"s_ioro == {s_ioro}");
-                    //Console.WriteLine($"s_isqo == {s_isqo}");
-                    //Console.WriteLine($"В карточке <{rr}> нет имени блока");
                 }
                 else
                 {
@@ -414,6 +370,7 @@ namespace project_1
                     Search_Unit(s_unit);
                 }
             }
+            // Обнаружение служебной карточки
             else if (rr == "Labels" || rr == "ЭМ")
             {
                 Console.WriteLine($"Служебная карточка <{rr}>");
@@ -425,7 +382,6 @@ namespace project_1
             {
                 strErr[iErr++] = $"В карточке <{rr}> нет имени блока";
                 errUnit = true;
-                //Console.WriteLine($"В карточке <{rr}> нет имени блока");
             }
         }
 
@@ -449,7 +405,6 @@ namespace project_1
             {
                 FillExcel_fstrout(fstrin);
                 FileInfo fin = new(fstrin);
-                //string fstrout = $"{API_Req.boardCode}_D{DTyear}-{DTmonth}-{DTday}_T{DThour}-{DTminute}-{DTsecond}.xlsx";
                 if (File.Exists(FillExcel_fstrout(fstrin)))
                 {
                     try { File.Delete(FillExcel_fstrout(fstrin)); }
@@ -489,10 +444,16 @@ namespace project_1
             string DThour = DTnow.Hour.ToString();
             string DTminute = DTnow.Minute.ToString();
             string DTsecond = DTnow.Second.ToString();
-            //FileInfo fin = new(fstrin);
             string fstrout = $"{API_Req.boardCode}_D{DTyear}-{DTmonth}-{DTday}_T{DThour}-{DTminute}-{DTsecond}.xlsx";
             return fstrout;
         }
+    }
+
+    public class ConfProg
+    {
+        public string BoardCode { get; set; }
+        public string APIKey { get; set; }
+        public string MyTrelloToken { get; set; }
     }
 
     public class Program
@@ -502,54 +463,38 @@ namespace project_1
         private static readonly byte[] s_badgesUtf8 = Encoding.UTF8.GetBytes("badges");
         private static readonly byte[] s_cardRoleUtf8 = Encoding.UTF8.GetBytes("cardRole");
 
-        public static void StartExtractor()
-        {
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.CreateNoWindow = false;
-            startInfo.UseShellExecute = false;
-            startInfo.FileName = "project 1.exe";
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.Arguments = "dXURQTbH";
-            Process.Start(startInfo);
-        }
-
         static void Main(string[] args)
         {
-            Console.Read();
-            Console.WriteLine("Start");
-            Trl.Curr_Clear();
-            API_Req.boardURL = "https://trello.com/1/boards/";
-            API_Req.boardCode = "dXURQTbH";
-            string APIKey = "4b02fbde8c00369dc53e25222e864941";
-            string MyTrelloToken = "717ed29e99fcd032275052b563319915f7ce0ec975c5a2abcd965ddd2cf91b07";
-            string CardFilter = "/cards/open";
-            //string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=2";
-            string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=1000";
-
-            if (args.Length == 0) { }
-            else if (args.Length == 1)
+            string fileName = "config.json";
+            if (!File.Exists(fileName))
             {
-                API_Req.boardCode = args[0];
-                Console.WriteLine(API_Req.boardCode);
-            }
-            else if (args.Length == 3)
-            {
-                API_Req.boardCode = args[0];
-                Console.WriteLine(API_Req.boardCode);
-                APIKey = args[1];
-                MyTrelloToken = args[2];
-            }
-            else
-            {
-                Console.WriteLine("Некорректное количество аргументов");
+                Console.WriteLine("Нет конфигурационного файла");
                 Console.WriteLine("Press any key");
                 Console.ReadKey();
                 return;
             }
+            string jsonString = File.ReadAllText(fileName);
+            ConfProg confProg = JsonSerializer.Deserialize<ConfProg>(jsonString)!;
+
+            Console.WriteLine($"boardCode: {confProg.BoardCode}");
+            Console.WriteLine($"APIKey: {confProg.APIKey}");
+            Console.WriteLine($"MyTrelloToken: {confProg.MyTrelloToken}");
+            Console.WriteLine("Press any key");
+            Console.ReadKey();
+            API_Req.boardURL = "https://trello.com/1/boards/";
+            API_Req.boardCode = confProg.BoardCode;
+            API_Req.APIKey = confProg.APIKey;
+            API_Req.MyTrelloToken = confProg.MyTrelloToken;
+            string CardFilter = "/cards/open";
+            //string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=2";
+            string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=1000";
+
+            Console.WriteLine("Start");
+            Trl.Curr_Clear();
 
             try
             {
-                API_Req.Request(APIKey, MyTrelloToken, CardFilter, CardFields, API_Req.boardCode);
+                API_Req.Request(API_Req.APIKey, API_Req.MyTrelloToken, CardFilter, CardFields, API_Req.boardCode);
             }
             catch (Exception e)
             {
@@ -579,105 +524,89 @@ namespace project_1
                 }
             }
 
-            //Console.WriteLine(API_Req.ReadToEnd_string); // что прочли - отладка
-
-            ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
-            var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
-
-            // Тип считанного токена
-            JsonTokenType tokenType;
-
-            //var xiFillAbstr = new Trl();
-            //var FillExcelSheetsSt = new Trl();
-
-            while (reader.Read())
+            try
             {
-                tokenType = reader.TokenType;
-                switch (tokenType)
+                ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
+                var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
+                while (reader.Read())
                 {
-                    // Тип токена - начало объекта JSON
-                    case JsonTokenType.StartObject:
-                        break;
-                    // Тип токена - название свойства
-                    case JsonTokenType.PropertyName:
-                        // Это токен "name"?
-                        if (reader.ValueTextEquals(s_nameUtf8))
-                        {
-                            if (reader.GetString().StartsWith("name"))
-                            {
-                                // Чтение токена
-                                reader.Read();
+                    // Тип считанного токена
+                    JsonTokenType tokenType;
 
-                                // Блок? 
-                                if (reader.CurrentDepth.Equals(2))
-                                {
-                                    // Запись оценочных и реальных значений для карточки
-                                    Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
-                                    //Console.WriteLine($"name CurrentDepth = 2 <{reader.GetString()}>");
-                                }
-                                // Стадия? Команда?
-                                else if (reader.CurrentDepth.Equals(4))
-                                {
-                                    //Trl.Search_Departments(reader.GetString().ToString());
-                                    //Trl.Search_Teams(reader.GetString().ToString());
-                                    Trl.Search_Depart_Teams(reader.GetString().ToString());
-                                    //Console.WriteLine($"name CurrentDepth = 4 <{reader.GetString()}>");
-                                }
-                            }
-                        }
-                        else if (reader.ValueTextEquals(s_UrlUtf8))
-                        {
-                            // Это токен "shortUrl"?
-                            if (reader.GetString().StartsWith("shortUrl"))
+                    tokenType = reader.TokenType;
+                    switch (tokenType)
+                    {
+                        // Тип токена - начало объекта JSON
+                        case JsonTokenType.StartObject:
+                            break;
+                        // Тип токена - название свойства
+                        case JsonTokenType.PropertyName:
+                            // Это токен "name"?
+                            if (reader.ValueTextEquals(s_nameUtf8))
                             {
-                                // Чтение токена
-                                reader.Read();
-                                TableResp.currShortUrl = reader.GetString().ToString();
-                            }
-                        }
-                        else if (reader.ValueTextEquals(s_badgesUtf8))
-                        {
-                            // Это токен "badges"?
-                            if (reader.GetString().StartsWith("badges"))
-                            {
-                                // Чтение токена
-                                reader.Read();
-                                //Console.WriteLine("badges");
-                                TableResp.bgs++;
-                                if (TableResp.bgs > 1) { Console.WriteLine("Повторное обнаружение начала карточки"); }
-                            }
-                        }
-                        else if (reader.ValueTextEquals(s_cardRoleUtf8))
-                        {
-                            // Это токен "cardRole"?
-                            if (reader.GetString().StartsWith("cardRole"))
-                            {
-                                // Чтение токена
-                                reader.Read();
-                                //Console.WriteLine("cardRole");
-                                Trl.cRe++;
-                                if (Trl.bgs == 0) { Console.WriteLine("Нет начала карточки"); }
-                                else if (Trl.bgs == 1)
+                                if (reader.GetString().StartsWith("name"))
                                 {
-                                    if (Trl.cRe > 1)
-                                    { Console.WriteLine("Повторное обнаружение конца карточки"); }
-                                    else
+                                    // Чтение токена
+                                    reader.Read();
+
+                                    // Блок? 
+                                    if (reader.CurrentDepth.Equals(2))
                                     {
-                                        //// Анализ карточки
+                                        // Запись оценочных и реальных значений для карточки
+                                        Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
+                                    }
+                                    // Стадия? Команда?
+                                    else if (reader.CurrentDepth.Equals(4))
+                                    {
+                                        Trl.Search_Depart_Teams(reader.GetString().ToString());
                                     }
                                 }
-                                // Формирование таблиц оценочных и реальных значений для карточки
-                                Trl.XiFill();
-                                //xiFillAbstr.XiFill();
                             }
-                        }
-                        break;
+                            else if (reader.ValueTextEquals(s_UrlUtf8))
+                            {
+                                // Это токен "shortUrl"?
+                                if (reader.GetString().StartsWith("shortUrl"))
+                                {
+                                    // Чтение токена
+                                    reader.Read();
+                                    TableResp.currShortUrl = reader.GetString().ToString();
+                                }
+                            }
+                            else if (reader.ValueTextEquals(s_badgesUtf8))
+                            {
+                                // Это токен "badges"?
+                                if (reader.GetString().StartsWith("badges"))
+                                {
+                                    // Чтение токена
+                                    reader.Read();
+                                    TableResp.bgs++;
+                                    if (TableResp.bgs > 1) { Console.WriteLine("Повторное обнаружение начала карточки"); }
+                                }
+                            }
+                            else if (reader.ValueTextEquals(s_cardRoleUtf8))
+                            {
+                                // Это токен "cardRole"?
+                                if (reader.GetString().StartsWith("cardRole"))
+                                {
+                                    // Чтение токена
+                                    reader.Read();
+                                    Trl.cRe++;
+                                    Trl.XiFill();
+                                }
+                            }
+                            break;
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Press any key");
+                Console.ReadKey();
+                return;
+            }
             Trl.XiFill();
-            //xiFillAbstr.XiFill();
             Trl.FillExcel();
-            //FillExcelSheetsSt.FillExcel();
             Console.WriteLine("Press any key");
             Console.ReadKey();
         }

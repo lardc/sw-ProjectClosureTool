@@ -11,6 +11,8 @@ namespace project_1
 {
     public class Program
     {
+        //public const int iMaxParse = 100; // максимальное к-во обрабатываемых ошибок в карточке
+
         private static readonly byte[] s_nameUtf8 = Encoding.UTF8.GetBytes("name");
         private static readonly byte[] s_UrlUtf8 = Encoding.UTF8.GetBytes("shortUrl");
         private static readonly byte[] s_badgesUtf8 = Encoding.UTF8.GetBytes("badges");
@@ -28,12 +30,14 @@ namespace project_1
                 {
                     // Запись оценочных и реальных значений для карточки
                     Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
+                    Trl.parseUnitToken = reader.GetString();
                 }
                 // Стадия? Команда?
                 else if (reader.CurrentDepth.Equals(4))
                 {
                     Trl.Search_Depart_Teams(reader.GetString().ToString());
                 }
+                Trl.parseShortUrlToken = TableResp.currShortUrl;
             }
         }
 
@@ -54,7 +58,6 @@ namespace project_1
                 // Чтение токена
                 reader.Read();
                 TableResp.bgs++;
-                if (TableResp.bgs > 1) { Console.WriteLine("Повторное обнаружение начала карточки"); }
             }
         }
 
@@ -64,8 +67,8 @@ namespace project_1
             {
                 // Чтение токена
                 reader.Read();
-                Trl.cRe++;
-                Trl.XiFill();
+                TableResp.cRe++;
+                Trl.XiParse();
             }
         }
 
@@ -135,6 +138,7 @@ namespace project_1
             {
                 ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
                 var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
+                Trl.ParseClear();
                 while (reader.Read())
                 {
                     // Тип считанного токена
@@ -145,11 +149,34 @@ namespace project_1
                     {
                         // Тип токена - начало объекта JSON
                         case JsonTokenType.StartObject:
-                            break;
+                            {
+                                break;
+                            }
                         // Тип токена - название свойства
                         case JsonTokenType.PropertyName:
+                            // Это токен "badges"?
+                            if (reader.ValueTextEquals(s_badgesUtf8))
+                            {
+                                try { BadgesToken(reader); }
+                                catch (Exception e)
+                                {
+                                    Console.WriteLine(e.Message);
+                                    Console.WriteLine("Press any key");
+                                    Console.ReadKey();
+                                    return;
+                                }
+                                if (Trl.parseBadgesToken == true)
+                                {
+                                    if (Trl.iErrParse < Trl.iMaxParse) Trl.iErrParse++;
+                                    Trl.parseStrErrMessage[Trl.iErrParse] = "Нет конца карточки";
+                                    Trl.parseStrErrCardURL[Trl.iErrParse] = TableResp.currShortUrl;
+                                    Trl.XiParse();
+                                    Trl.parseBadgesToken = true;
+                                }
+                                else { Trl.parseBadgesToken = true; }
+                            }
                             // Это токен "name"?
-                            if (reader.ValueTextEquals(s_nameUtf8))
+                            else if (reader.ValueTextEquals(s_nameUtf8))
                             {
                                 try { NameToken(reader); }
                                 catch (Exception e)
@@ -171,20 +198,9 @@ namespace project_1
                                     Console.ReadKey();
                                     return;
                                 }
+                                Trl.parseShortUrlToken = reader.GetString().ToString();
                             }
-                            // Это токен "badges"?
-                            else if (reader.ValueTextEquals(s_badgesUtf8))
-                            {
-                                try { BadgesToken(reader); }
-                                catch (Exception e)
-                                {
-                                    Console.WriteLine(e.Message);
-                                    Console.WriteLine("Press any key");
-                                    Console.ReadKey();
-                                    return;
-                                }
-                            }
-                            // Это токен "cardRole"?
+                            // Это токен "cardRole"? 
                             else if (reader.ValueTextEquals(s_cardRoleUtf8))
                             {
                                 try { CardRoleToken(reader); }
@@ -195,7 +211,10 @@ namespace project_1
                                     Console.ReadKey();
                                     return;
                                 }
+                                Trl.parseCardRoleToken = true;
+                                Trl.XiParse();
                             }
+
                             break;
                     }
                 }
@@ -207,7 +226,7 @@ namespace project_1
                 Console.ReadKey();
                 return;
             }
-            Trl.XiFill();
+            Trl.XiParse();
             Trl.FillExcel();
             Console.WriteLine("Press any key");
             Console.ReadKey();

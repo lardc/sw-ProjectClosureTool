@@ -9,9 +9,7 @@ namespace TrlConsCs
         public const int iMaxParse = 1000; // максимальное к-во обрабатываемых ошибок в карточке
         public static bool parseErrUnit;
 
-        public static bool parseStartObject;
         public static string parseUnitToken;
-        public static string parseLabelToken;
         public static string parseShortUrlToken;
         public static bool parseBadgesToken;
         public static bool parseCardRoleToken;
@@ -21,9 +19,7 @@ namespace TrlConsCs
 
         public static void ParseClear()
         {
-            parseStartObject = false;
             parseUnitToken = "";
-            parseLabelToken = "";
             parseShortUrlToken = "";
             parseBadgesToken = false;
             parseCardRoleToken = false;
@@ -33,12 +29,6 @@ namespace TrlConsCs
                 parseStrErrCardURL[i] = "";
             }
             iErrParse = -1;
-        }
-
-        // Проверка наличия зафиксированных стадий, команд или блоков
-        public static bool DepartTeamUnitExist()
-        {
-            return (iCurr_Depart >= 0 || iCurr_Team >= 0 || iCurr_Unit >= 0);
         }
 
         // Формирование таблиц оценочных и реальных значений

@@ -35,8 +35,6 @@ namespace TrlConsCs
         public static int iCurrTD;
         public static int currUnit;
 
-        //public static bool errUnit = false;
-
         public static double curr_Estim;  // текущее оценочное значение
         public static double curr_Point;  // текущее реальное значение
 
@@ -45,9 +43,9 @@ namespace TrlConsCs
         public static int iErr = 0;
         public static int iStartErr = 0;
 
-        public static int bgs;
-        public static int cRe;
-        public static int iLa;
+        public static int badges;
+        public static int cardRole;
+        public static int iLabelsEM;
 
         public static int iNone;
 
@@ -61,23 +59,17 @@ namespace TrlConsCs
         public static double Curr_Point { get; set; }
         public static double MinimumSize { get; set; }
 
-        //public static OfficeOpenXml.ExcelWorksheet errWorksheet = Excel_result.Workbook.Worksheets[2];
-
-        //System.NullReferenceException: "Object reference not set to an instance of an object."
-        //
-        //TrlConsCs.TableResp.Excel_result.get вернул null.
-
         public static OfficeOpenXml.ExcelPackage excel_result;
 
-        public static void FillExcelSheets(int WorkShtN)
+        public static void FillExcelSheets(int WorkSheetN)
         {
-            for (int WorkSht = 0; WorkSht < WorkShtN; WorkSht++)
+            for (int WorkSheet = 0; WorkSheet < WorkSheetN; WorkSheet++)
             {
-                // Лист для записи оценочных значений WorkSht = 0
-                // Лист для записи реальных значений WorkSht = 1
-                // Лист для записи ошибок WorkSht = WorkShtN
-                OfficeOpenXml.ExcelWorksheet estWorksheet = Excel_result.Workbook.Worksheets[WorkSht];
-                try { FillExcelSheet(WorkSht, estWorksheet); }
+                // Лист для записи оценочных значений WorkSheet = 0
+                // Лист для записи реальных значений WorkSheet = 1
+                // Лист для записи ошибок WorkSheet = WorkSheetN
+                OfficeOpenXml.ExcelWorksheet estWorksheet = Excel_result.Workbook.Worksheets[WorkSheet];
+                try { FillExcelSheet(WorkSheet, estWorksheet); }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
@@ -87,14 +79,14 @@ namespace TrlConsCs
                 }
                 estWorksheet.Cells[estWorksheet.Dimension.Address].AutoFitColumns(MinimumSize);
             }
-            OfficeOpenXml.ExcelWorksheet errWorksheet = Excel_result.Workbook.Worksheets[WorkShtN];
+            OfficeOpenXml.ExcelWorksheet errWorksheet = Excel_result.Workbook.Worksheets[WorkSheetN];
 
             for (int i = 0; i < iErr; i++) { errWorksheet.Cells[i + 3, 1].Value = strErrNumber[i]; }
             for (int i = 0; i < iErr; i++) { errWorksheet.Cells[i + 3, 2].Value = strErrMessage[i]; }
             for (int i = 0; i < iErr; i++) { errWorksheet.Cells[i + 3, 3].Value = strErrCardURL[i]; }
         }
 
-        public static void FillExcelSheet(int WorkSht, OfficeOpenXml.ExcelWorksheet estWorksheet)
+        public static void FillExcelSheet(int WorkSheet, OfficeOpenXml.ExcelWorksheet estWorksheet)
         {
             for (int iD = 0; iD < iDep; iD++)
             {
@@ -106,25 +98,25 @@ namespace TrlConsCs
                         estWorksheet.Cells[i + 4, 1].Value = All_Units[i];
                     for (int j = 0; j <= iTeams; j++)
                     {
-                        FillExcelCells(i, j, iD, estWorksheet, WorkSht);
+                        FillExcelCells(i, j, iD, estWorksheet, WorkSheet);
                     }
                 }
             }
         }
 
-        public static void FillExcelCells(int i, int j, int iD, OfficeOpenXml.ExcelWorksheet estWorksheet, int WorkSht)
+        public static void FillExcelCells(int i, int j, int iD, OfficeOpenXml.ExcelWorksheet estWorksheet, int WorkSheet)
         {
             int jD = iD * (iTeams + 1) + j;
             if (i == iAll)
                 estWorksheet.Cells[iAll + 4, jD + 2].Formula = "=SUM(" + estWorksheet.Cells[4, jD + 2].Address + ":" + estWorksheet.Cells[iAll + 3, jD + 2].Address + ")";
             else if (j < iTeams)
             {
-                estWorksheet.Cells[i + 4, jD + 2].Value = Xi[WorkSht, jD, i + 1];
+                estWorksheet.Cells[i + 4, jD + 2].Value = Xi[WorkSheet, jD, i + 1];
                 estWorksheet.Cells[i + 4, jD + 2].Style.Fill.PatternType = ExcelFillStyle.Solid;
                 estWorksheet.Cells[i + 4, jD + 2].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.LightGreen);
             }
-            ExcelRange rg = estWorksheet.Cells[iAll + 5, 1, iAllUnits + 5, jD + 2];
-            rg.Clear();
+            ExcelRange range = estWorksheet.Cells[iAll + 5, 1, iAllUnits + 5, jD + 2];
+            range.Clear();
         }
     }
 }

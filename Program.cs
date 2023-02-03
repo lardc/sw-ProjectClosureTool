@@ -54,7 +54,7 @@ namespace project_1
             {
                 // Чтение токена
                 reader.Read();
-                TableResp.bgs++;
+                TableResp.badges++;
             }
         }
 
@@ -64,7 +64,7 @@ namespace project_1
             {
                 // Чтение токена
                 reader.Read();
-                TableResp.cRe++;
+                TableResp.cardRole++;
                 Trl.XiParse();
             }
         }
@@ -85,13 +85,13 @@ namespace project_1
 
             Console.WriteLine($"boardCode: {args[0]}");
             Console.WriteLine($"APIKey: {confProg.APIKey}");
-            Console.WriteLine($"MyTrelloToken: {confProg.MyTrelloToken}");
+            Console.WriteLine($"myTrelloToken: {confProg.myTrelloToken}");
             Console.WriteLine("Press any key");
             Console.ReadKey();
             API_Req.boardURL = "https://trello.com/1/boards/";
             API_Req.boardCode = args[0];
             API_Req.APIKey = confProg.APIKey;
-            API_Req.MyTrelloToken = confProg.MyTrelloToken;
+            API_Req.myTrelloToken = confProg.myTrelloToken;
             string CardFilter = "/cards/open";
             //string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=2";
             string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=1000";
@@ -101,7 +101,7 @@ namespace project_1
 
             try
             {
-                API_Req.Request(API_Req.APIKey, API_Req.MyTrelloToken, CardFilter, CardFields, API_Req.boardCode);
+                API_Req.Request(API_Req.APIKey, API_Req.myTrelloToken, CardFilter, CardFields, API_Req.boardCode);
             }
             catch (Exception e)
             {
@@ -133,7 +133,7 @@ namespace project_1
 
             try
             {
-                ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
+                ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.readToEnd_string);
                 var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
                 Trl.ParseClear();
                 while (reader.Read())

@@ -62,7 +62,7 @@ namespace TrlConsCs
         //public static void FillParseErr(string currShortUrl)
         public static void FillParseErr()
         {
-            for (int i = 0; i <= iErrParse && iLa ==0; i++)
+            for (int i = 0; i <= iErrParse && iLabelsEM == 0; i++)
             {
                 strErrNumber[iErr] = iErr+1;
                 strErrMessage[iErr] = parseStrErrMessage[i];
@@ -101,10 +101,10 @@ namespace TrlConsCs
             iCurr_Unit = -1;
             Curr_Estim = 0;
             Curr_Point = 0;
-            iLa = 0; // Служебная карточка
+            iLabelsEM = 0; // Служебная карточка
             iStartErr = iErr;
-            bgs = 0;
-            cRe = 0;
+            badges = 0;
+            cardRole = 0;
         }
 
         // Формирование списка стадий и команд
@@ -271,7 +271,7 @@ namespace TrlConsCs
             else if (rr == "Labels" || rr == "ЭМ")
             {
                 Console.WriteLine($"Служебная карточка <{rr}>");
-                iLa = 1;
+                iLabelsEM = 1;
             }
             else
             {

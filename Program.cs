@@ -8,8 +8,6 @@ namespace project_1
 {
     public class Program
     {
-        //public const int iMaxParse = 100; // максимальное к-во обрабатываемых ошибок в карточке
-
         private static readonly byte[] s_nameUtf8 = Encoding.UTF8.GetBytes("name");
         private static readonly byte[] s_UrlUtf8 = Encoding.UTF8.GetBytes("shortUrl");
         private static readonly byte[] s_badgesUtf8 = Encoding.UTF8.GetBytes("badges");
@@ -27,14 +25,12 @@ namespace project_1
                 {
                     // Запись оценочных и реальных значений для карточки
                     Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
-                    Trl.parseUnitToken = reader.GetString();
                 }
                 // Стадия? Команда?
                 else if (reader.CurrentDepth.Equals(4))
                 {
                     Trl.Search_Depart_Teams(reader.GetString().ToString());
                 }
-                Trl.parseShortUrlToken = TableResp.currShortUrl;
             }
         }
 
@@ -195,7 +191,6 @@ namespace project_1
                                     Console.ReadKey();
                                     return;
                                 }
-                                Trl.parseShortUrlToken = reader.GetString().ToString();
                             }
                             // Это токен "cardRole"? 
                             else if (reader.ValueTextEquals(s_cardRoleUtf8))
@@ -208,7 +203,6 @@ namespace project_1
                                     Console.ReadKey();
                                     return;
                                 }
-                                Trl.parseCardRoleToken = true;
                                 Trl.XiParse();
                             }
 

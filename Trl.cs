@@ -27,12 +27,6 @@ namespace TrlConsCs
         // Формирование таблиц оценочных и реальных значений
         public static void XiParse()
         {
-            if (iCurr_Depart >= 0 && iCurr_Team >= 0 && iCurr_Unit >= 0)
-            {
-                if (Curr_Estim > 0) XiFill_Curr_Estim();
-                if (Curr_Point > 0) XiFill_Curr_Point();
-            }
-
             if (iCurr_Depart < 0 && iCurr_Unit >= 0)
             {
                 if (iErrParse < iMaxParse) iErrParse++;
@@ -46,21 +40,39 @@ namespace TrlConsCs
                 parseStrErrMessage[iErrParse] = "Нет ярлыка команды";
                 parseStrErrCardURL[iErrParse] = currShortUrl;
             }
+
+            if (iCurr_Depart >= 0 && iCurr_Team >= 0 && iCurr_Unit >= 0)
+            {
+                if (Curr_Estim > 0)
+                {
+                    XiFill_Curr_Estim();
+                    //Console.WriteLine($"-- iErrParse={iErrParse} XiFill_Curr_Estim = {Curr_Estim}  {currShortUrl}");
+                }
+                if (Curr_Point > 0)
+                {
+                    //Console.WriteLine($"-- iErrParse={iErrParse} XiFill_Curr_Point = {Curr_Point}  {currShortUrl}");
+                    XiFill_Curr_Point();
+                }
+            }
+
             FillParseErr();
             Curr_Clear();
         }
 
-        //public static void FillParseErr(string currShortUrl)
         public static void FillParseErr()
         {
-            for (int i = 0; i <= iErrParse && iLabelsEM == 0; i++)
+            if (iLabelsEM == 0)
             {
-                strErrNumber[iErr] = iErr+1;
-                strErrMessage[iErr] = parseStrErrMessage[i];
-                strErrCardURL[iErr] = parseStrErrCardURL[iErrParse];
-                iErr++;
+                int i;
+                for (i = 0; i <= iErrParse; i++)
+                {
+                    strErrNumber[iErr] = iErr + 1;
+                    strErrMessage[iErr] = parseStrErrMessage[i];
+                    strErrCardURL[iErr] = currShortUrl;
+
+                    iErr++;
+                }
             }
-            if (iErr > 0) strErrCardURL[iErr - 1] = currShortUrl;
             ParseClear();
         }
 
@@ -92,10 +104,11 @@ namespace TrlConsCs
             iCurr_Unit = -1;
             Curr_Estim = 0;
             Curr_Point = 0;
-            iLabelsEM = 0; // Служебная карточка
+            iLabelsEM = 0; // Служебная карточка: iLabelsEM = 1
             iStartErr = iErr;
             badges = 0;
             cardRole = 0;
+            currShortUrl = "";
         }
 
         // Формирование списка стадий и команд
@@ -103,12 +116,6 @@ namespace TrlConsCs
         {
             if (Departments.Contains(rr)) Search_Departments(rr);
             else if (Teams.Contains(rr)) Search_Teams(rr);
-            else
-            {
-                if (iErrParse < iMaxParse) iErrParse++;
-                parseStrErrMessage[iErrParse] = $"Ярлык <{rr}> не соответствует полям таблицы";
-                parseStrErrCardURL[iErrParse] = currShortUrl;
-            }
         }
 
         // Формирование списка стадий
@@ -199,46 +206,46 @@ namespace TrlConsCs
         public static void Fill_Unit_Curr_Val(string rr)
         {
             int iDot = rr.IndexOf('.', 0);
-            int iOPar = rr.IndexOf('(', 0);
-            int iCPar = rr.IndexOf(')', 0);
-            int iOBr = rr.IndexOf('[', 0);
-            int iCBr = rr.IndexOf(']', 0);
+            int iOpeningParenthesis = rr.IndexOf('(', 0);
+            int iClosingParenthesis = rr.IndexOf(')', 0);
+            int iOpeningBracket = rr.IndexOf('[', 0);
+            int iClosingBracket = rr.IndexOf(']', 0);
 
             if (iDot >= 0)
             {
-                if (iOPar >= 0 && iCPar < iOPar)
+                if (iOpeningParenthesis >= 0 && iClosingParenthesis < iOpeningParenthesis)
                 {
                     if (iErrParse < iMaxParse) iErrParse++;
                     parseStrErrMessage[iErrParse] = $"В карточке <{rr}> нет закрывающей круглой скобки";
                     parseStrErrCardURL[iErrParse] = currShortUrl;
                 }
-                if (iOBr >= 0 && iCBr < iOBr)
+                if (iOpeningBracket >= 0 && iClosingBracket < iOpeningBracket)
                 {
                     if (iErrParse < iMaxParse) iErrParse++;
                     parseStrErrMessage[iErrParse] = $"В карточке <{rr}> нет закрывающей квадратной скобки";
                     parseStrErrCardURL[iErrParse] = currShortUrl;
                 }
 
-                if (iOPar >= iDot && iCPar >= iDot)
+                if (iOpeningParenthesis >= iDot && iClosingParenthesis >= iDot)
                 {
-                    string s_uiro = rr.Substring(iOPar + 1, iCPar - iOPar - 1).Trim();
+                    string s_uiro = rr.Substring(iOpeningParenthesis + 1, iClosingParenthesis - iOpeningParenthesis - 1).Trim();
                     double d_ior = double.Parse(s_uiro);
                     Curr_Estim = d_ior;
                 }
-                if (iOBr >= iDot && iCBr >= iDot)
+                if (iOpeningBracket >= iDot && iClosingBracket >= iDot)
                 {
-                    string s_uisq = rr.Substring(iOBr + 1, iCBr - iOBr - 1).Trim();
+                    string s_uisq = rr.Substring(iOpeningBracket + 1, iClosingBracket - iOpeningBracket - 1).Trim();
                     double d_isq = double.Parse(s_uisq);
                     Curr_Point = d_isq;
                 }
-                if (Curr_Estim == 0 && Curr_Point == 0 && ((iDot <= Math.Min(iOPar, iOBr) && Math.Min(iOPar, iOBr) >= 0) || (Math.Max(iOPar, iOBr) < 0)))
+                if (Curr_Estim == 0 && Curr_Point == 0 && ((iDot <= Math.Min(iOpeningParenthesis, iOpeningBracket) && Math.Min(iOpeningParenthesis, iOpeningBracket) >= 0) || (Math.Max(iOpeningParenthesis, iOpeningBracket) < 0)))
                 {
                     if (iErrParse < iMaxParse) iErrParse++;
                     parseStrErrMessage[iErrParse] = $"В карточке <{rr}> нет значений";
                     parseStrErrCardURL[iErrParse] = currShortUrl;
                     iNone++;
                 }
-                if (iDot >= Math.Max(iOPar, iOBr) && Math.Max(iOPar, iOBr) > 0)
+                if (iDot >= Math.Max(iOpeningParenthesis, iOpeningBracket) && Math.Max(iOpeningParenthesis, iOpeningBracket) > 0)
                 {
                     if (iErrParse < iMaxParse) iErrParse++;
                     parseStrErrMessage[iErrParse] = $"В карточке <{rr}> нет имени блока";

@@ -24,7 +24,7 @@ namespace project_1
                 if (reader.CurrentDepth.Equals(2))
                 {
                     // Запись оценочных и реальных значений для карточки
-                    Trl.Fill_Unit_Curr_Val(reader.GetString().ToString());
+                    Trl.Fill_Current_Values(reader.GetString().ToString());
                 }
                 // Стадия? Команда?
                 else if (reader.CurrentDepth.Equals(4))
@@ -61,7 +61,7 @@ namespace project_1
                 // Чтение токена
                 reader.Read();
                 TableResp.cardRole++;
-                Trl.XiParse();
+                Trl.FillParsedValues();
             }
         }
 
@@ -131,7 +131,7 @@ namespace project_1
             {
                 ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.readToEnd_string);
                 var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
-                Trl.ParseClear();
+                Trl.ClearParsedCardErrorData();
                 while (reader.Read())
                 {
                     // Тип считанного токена
@@ -163,7 +163,8 @@ namespace project_1
                                     if (Trl.iErrParse < Trl.iMaxParse) Trl.iErrParse++;
                                     Trl.parseStrErrMessage[Trl.iErrParse] = "Нет конца карточки";
                                     Trl.parseStrErrCardURL[Trl.iErrParse] = TableResp.currShortUrl;
-                                    Trl.XiParse();
+                                    Trl.FillParsedValues();
+                                    //Trl.XiParse();
                                     Trl.parseBadgesToken = true;
                                 }
                                 else { Trl.parseBadgesToken = true; }
@@ -203,7 +204,7 @@ namespace project_1
                                     Console.ReadKey();
                                     return;
                                 }
-                                Trl.XiParse();
+                                Trl.FillParsedValues();
                             }
 
                             break;
@@ -217,7 +218,7 @@ namespace project_1
                 Console.ReadKey();
                 return;
             }
-            Trl.XiParse();
+            Trl.FillParsedValues();
             Trl.FillExcel();
             Console.WriteLine("Press any key");
             Console.ReadKey();

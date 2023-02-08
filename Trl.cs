@@ -13,7 +13,7 @@ namespace TrlConsCs
         public static string[] parseStrErrMessage = new string[iMaxParse];
         public static string[] parseStrErrCardURL = new string[iMaxParse];
 
-        public static void ParseClear()
+        public static void ClearParsedCardErrorData()
         {
             parseBadgesToken = false;
             for (int i = 0; i < iMaxParse; i++)
@@ -25,7 +25,7 @@ namespace TrlConsCs
         }
 
         // Формирование таблиц оценочных и реальных значений
-        public static void XiParse()
+        public static void FillParsedValues()
         {
             if (iCurr_Depart < 0 && iCurr_Unit >= 0)
             {
@@ -55,11 +55,12 @@ namespace TrlConsCs
                 }
             }
 
-            FillParseErr();
+            FillParsedErrors();
             Curr_Clear();
         }
 
-        public static void FillParseErr()
+        // Формирование таблицы ошибок для обработанной карточки
+        public static void FillParsedErrors()
         {
             if (iLabelsEM == 0)
             {
@@ -73,7 +74,7 @@ namespace TrlConsCs
                     iErr++;
                 }
             }
-            ParseClear();
+            ClearParsedCardErrorData();
         }
 
         public static void XiFill_Curr_Estim()
@@ -203,13 +204,13 @@ namespace TrlConsCs
         }
 
         // Запись оценочных и реальных значений для обнаруженного блока
-        public static void Fill_Unit_Curr_Val(string rr)
+        public static void Fill_Current_Values(string rr)
         {
-            int iDot = rr.IndexOf('.', 0);
-            int iOpeningParenthesis = rr.IndexOf('(', 0);
-            int iClosingParenthesis = rr.IndexOf(')', 0);
-            int iOpeningBracket = rr.IndexOf('[', 0);
-            int iClosingBracket = rr.IndexOf(']', 0);
+            int iDot = rr.IndexOf('.', 0); // позиция точки в строке rr
+            int iOpeningParenthesis = rr.IndexOf('(', 0); // позиция открывающейся круглой скобки в строке rr
+            int iClosingParenthesis = rr.IndexOf(')', 0); // позиция закрывающейся круглой скобки в строке rr
+            int iOpeningBracket = rr.IndexOf('[', 0); // позиция открывающейся квадратной скобки в строке rr
+            int iClosingBracket = rr.IndexOf(']', 0); // позиция закрывающейся квадратной скобки в строке rr
 
             if (iDot >= 0)
             {

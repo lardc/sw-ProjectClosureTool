@@ -63,11 +63,12 @@ namespace TrlConsCs
 
         public static void FillExcelSheets(int WorkSheetN)
         {
-            for (int WorkSheet = 0; WorkSheet < WorkSheetN; WorkSheet++)
+            for (int WorkSheet = 0; WorkSheet < WorkSheetN - 1; WorkSheet++)
             {
                 // Лист для записи оценочных значений WorkSheet = 0
                 // Лист для записи реальных значений WorkSheet = 1
-                // Лист для записи ошибок WorkSheet = WorkSheetN
+                // Лист для записи ошибок WorkSheet = WorkSheetN - 1
+                // Лист для записи корректных карточек WorkSheet = WorkSheetN
                 OfficeOpenXml.ExcelWorksheet estWorksheet = Excel_result.Workbook.Worksheets[WorkSheet];
                 try { FillExcelSheet(WorkSheet, estWorksheet); }
                 catch (Exception e)
@@ -79,11 +80,19 @@ namespace TrlConsCs
                 }
                 estWorksheet.Cells[estWorksheet.Dimension.Address].AutoFitColumns(MinimumSize);
             }
-            OfficeOpenXml.ExcelWorksheet errWorksheet = Excel_result.Workbook.Worksheets[WorkSheetN];
+
+            OfficeOpenXml.ExcelWorksheet errWorksheet = Excel_result.Workbook.Worksheets[WorkSheetN - 1];
 
             for (int i = 0; i < iErr; i++) { errWorksheet.Cells[i + 3, 1].Value = strErrNumber[i]; }
             for (int i = 0; i < iErr; i++) { errWorksheet.Cells[i + 3, 2].Value = strErrMessage[i]; }
             for (int i = 0; i < iErr; i++) { errWorksheet.Cells[i + 3, 3].Value = strErrCardURL[i]; }
+
+            OfficeOpenXml.ExcelWorksheet valueWorksheet = Excel_result.Workbook.Worksheets[WorkSheetN];
+
+            for (int i = 0; i < Trl.iCorrectParse; i++) { valueWorksheet.Cells[i + 2, 1].Value = i + 1; }
+            for (int i = 0; i < Trl.iCorrectParse; i++) { valueWorksheet.Cells[i + 2, 2].Value = Trl.strCorrectEst[i]; }
+            for (int i = 0; i < Trl.iCorrectParse; i++) { valueWorksheet.Cells[i + 2, 3].Value = Trl.strCorrectPt[i]; }
+            for (int i = 0; i < Trl.iCorrectParse; i++) { valueWorksheet.Cells[i + 2, 4].Value = Trl.strCorrectShotrURL[i]; }
         }
 
         public static void FillExcelSheet(int WorkSheet, OfficeOpenXml.ExcelWorksheet estWorksheet)

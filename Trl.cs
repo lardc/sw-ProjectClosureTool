@@ -12,6 +12,10 @@ namespace TrlConsCs
         public static int iErrParse;
         public static string[] parseStrErrMessage = new string[iMaxParse];
         public static string[] parseStrErrCardURL = new string[iMaxParse];
+        public static double[] strCorrectEst = new double[iAllUnits]; // приближённое значение в корректной карточке
+        public static double[] strCorrectPt = new double[iAllUnits]; // точное значение в корректной карточке
+        public static string[] strCorrectShotrURL = new string[iAllUnits];
+        public static int iCorrectParse = 0;
 
         public static void ClearParsedCardErrorData()
         {
@@ -46,13 +50,15 @@ namespace TrlConsCs
                 if (Curr_Estim > 0)
                 {
                     XiFill_Curr_Estim();
-                    //Console.WriteLine($"-- iErrParse={iErrParse} XiFill_Curr_Estim = {Curr_Estim}  {currShortUrl}");
                 }
                 if (Curr_Point > 0)
                 {
-                    //Console.WriteLine($"-- iErrParse={iErrParse} XiFill_Curr_Point = {Curr_Point}  {currShortUrl}");
                     XiFill_Curr_Point();
                 }
+                strCorrectEst[iCorrectParse] = Curr_Estim;
+                strCorrectPt[iCorrectParse] = Curr_Point;
+                strCorrectShotrURL[iCorrectParse] = currShortUrl;
+                if (iCorrectParse < iAllUnits) iCorrectParse++;
             }
 
             FillParsedErrors();
@@ -310,7 +316,8 @@ namespace TrlConsCs
                     Excel_result.Workbook.Properties.Title = "Trello";
                     Excel_result.Workbook.Properties.Created = DateTime.Now;
                     MinimumSize = 6;
-                    FillExcelSheets(2);
+                    FillExcelSheets(3);
+                    //FillExcelSheets(2);
                     Excel_result.Save();
                 }
             }

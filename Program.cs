@@ -79,6 +79,12 @@ namespace project_1
             string jsonString = File.ReadAllText(fileName);
             ConfProg confProg = JsonSerializer.Deserialize<ConfProg>(jsonString)!;
 
+            if (args.Length == 0) 
+            { 
+                Console.WriteLine("Нет аргументов");
+                Console.ReadKey();
+                return;
+            }
             Console.WriteLine($"boardCode: {args[0]}");
             Console.WriteLine($"APIKey: {confProg.APIKey}");
             Console.WriteLine($"myTrelloToken: {confProg.myTrelloToken}");

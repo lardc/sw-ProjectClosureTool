@@ -4,7 +4,7 @@ using System.Text;
 using System.Text.Json;
 using TrlConsCs;
 
-namespace project_1
+namespace ProjectClosureToolV2
 {
     public class Program
     {
@@ -67,33 +67,59 @@ namespace project_1
 
         static void Main(string[] args)
         {
-            string fileName = "config.json";
+            //string fileName = "config.json";
 
-            if (!File.Exists(fileName))
+            //if (!File.Exists(fileName))
+            //{
+            //    Console.WriteLine("Нет конфигурационного файла");
+            //    Console.WriteLine("Press any key");
+            //    Console.ReadKey();
+            //    return;
+            //}
+            //string jsonString = File.ReadAllText(fileName);
+            //ConfProg confProg = JsonSerializer.Deserialize<ConfProg>(jsonString)!;
+
+            //if (args.Length == 0) 
+            //{ 
+            //    Console.WriteLine("Нет аргументов");
+            //    Console.ReadKey();
+            //    return;
+            //}
+
+            Console.WriteLine("Введите код доски");
+            try { API_Req.boardCode = Console.ReadLine(); }
+            catch (Exception e)
             {
-                Console.WriteLine("Нет конфигурационного файла");
+                Console.WriteLine(e.Message);
                 Console.WriteLine("Press any key");
                 Console.ReadKey();
                 return;
             }
-            string jsonString = File.ReadAllText(fileName);
-            ConfProg confProg = JsonSerializer.Deserialize<ConfProg>(jsonString)!;
-
-            if (args.Length == 0) 
-            { 
-                Console.WriteLine("Нет аргументов");
+            Console.WriteLine("Введите ключ пользователя");
+            try { API_Req.APIKey = Console.ReadLine(); }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Press any key");
                 Console.ReadKey();
                 return;
             }
-            Console.WriteLine($"boardCode: {args[0]}");
-            Console.WriteLine($"APIKey: {confProg.APIKey}");
-            Console.WriteLine($"myTrelloToken: {confProg.myTrelloToken}");
+            Console.WriteLine("Введите токен пользователя");
+            try { API_Req.myTrelloToken = Console.ReadLine(); }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Press any key");
+                Console.ReadKey();
+                return;
+            }
+
+            Console.WriteLine($"boardCode: {API_Req.boardCode}");
+            Console.WriteLine($"APIKey: {API_Req.APIKey}");
+            Console.WriteLine($"myTrelloToken: {API_Req.myTrelloToken}");
             Console.WriteLine("Press any key");
             Console.ReadKey();
             API_Req.boardURL = "https://trello.com/1/boards/";
-            API_Req.boardCode = args[0];
-            API_Req.APIKey = confProg.APIKey;
-            API_Req.myTrelloToken = confProg.myTrelloToken;
             string CardFilter = "/cards/open";
             //string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=2";
             string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=1000";

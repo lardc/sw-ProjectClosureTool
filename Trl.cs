@@ -9,11 +9,11 @@ namespace TrlConsCs
         public const int iMaxParse = 1000; // максимальное к-во обрабатываемых ошибок в карточке
 
         public static bool parseBadgesToken;
-        public static int iErrParse;
-        public static string[] parseStrErrMessage = new string[iMaxParse];
-        public static string[] parseStrErrCardURL = new string[iMaxParse];
-        public static double[] strCorrectEst = new double[iAllUnits]; // приближённое значение в корректной карточке
-        public static double[] strCorrectPt = new double[iAllUnits]; // точное значение в корректной карточке
+        public static int iErrorParse;
+        public static string[] parseStrErrorMessage = new string[iMaxParse];
+        public static string[] parseStrErrorCardURL = new string[iMaxParse];
+        public static double[] strCorrectEstimate = new double[iAllUnits]; // приближённое значение в корректной карточке
+        public static double[] strCorrectPoint = new double[iAllUnits]; // точное значение в корректной карточке
         public static string[] strCorrectShotrURL = new string[iAllUnits];
         public static int iCorrectParse = 0;
 
@@ -22,47 +22,47 @@ namespace TrlConsCs
             parseBadgesToken = false;
             for (int i = 0; i < iMaxParse; i++)
             {
-                parseStrErrMessage[i] = "";
-                parseStrErrCardURL[i] = "";
+                parseStrErrorMessage[i] = "";
+                parseStrErrorCardURL[i] = "";
             }
-            iErrParse = -1;
+            iErrorParse = -1;
         }
 
         // Формирование таблиц оценочных и реальных значений
         public static void FillParsedValues()
         {
-            if (iCurr_Depart < 0 && iCurr_Unit >= 0)
+            if (iCurrentDepartment < 0 && iCurrentUnit >= 0)
             {
-                if (iErrParse < iMaxParse) iErrParse++;
-                parseStrErrMessage[iErrParse] = "Нет ярлыка стадии";
-                parseStrErrCardURL[iErrParse] = currShortUrl;
+                if (iErrorParse < iMaxParse) iErrorParse++;
+                parseStrErrorMessage[iErrorParse] = "Нет ярлыка стадии";
+                parseStrErrorCardURL[iErrorParse] = currentShortUrl;
             }
 
-            if (iCurr_Team < 0 && iCurr_Unit >= 0)
+            if (iCurrentTeam < 0 && iCurrentUnit >= 0)
             {
-                if (iErrParse < iMaxParse) iErrParse++;
-                parseStrErrMessage[iErrParse] = "Нет ярлыка команды";
-                parseStrErrCardURL[iErrParse] = currShortUrl;
+                if (iErrorParse < iMaxParse) iErrorParse++;
+                parseStrErrorMessage[iErrorParse] = "Нет ярлыка команды";
+                parseStrErrorCardURL[iErrorParse] = currentShortUrl;
             }
 
-            if (iCurr_Depart >= 0 && iCurr_Team >= 0 && iCurr_Unit >= 0)
+            if (iCurrentDepartment >= 0 && iCurrentTeam >= 0 && iCurrentUnit >= 0)
             {
                 if (Curr_Estim > 0)
                 {
-                    XiFill_Curr_Estim();
+                    FillCurrentEstimate();
                 }
                 if (Curr_Point > 0)
                 {
-                    XiFill_Curr_Point();
+                    FillCurrentPoints();
                 }
-                strCorrectEst[iCorrectParse] = Curr_Estim;
-                strCorrectPt[iCorrectParse] = Curr_Point;
-                strCorrectShotrURL[iCorrectParse] = currShortUrl;
+                strCorrectEstimate[iCorrectParse] = Curr_Estim;
+                strCorrectPoint[iCorrectParse] = Curr_Point;
+                strCorrectShotrURL[iCorrectParse] = currentShortUrl;
                 if (iCorrectParse < iAllUnits) iCorrectParse++;
             }
 
             FillParsedErrors();
-            Curr_Clear();
+            ClearCurrentUnit();
         }
 
         // Формирование таблицы ошибок для обработанной карточки
@@ -71,55 +71,55 @@ namespace TrlConsCs
             if (iLabelsEM == 0)
             {
                 int i;
-                for (i = 0; i <= iErrParse; i++)
+                for (i = 0; i <= iErrorParse; i++)
                 {
-                    strErrNumber[iErr] = iErr + 1;
-                    strErrMessage[iErr] = parseStrErrMessage[i];
-                    strErrCardURL[iErr] = currShortUrl;
+                    strErrNumber[iError] = iError + 1;
+                    strErrMessage[iError] = parseStrErrorMessage[i];
+                    strErrCardURL[iError] = currentShortUrl;
 
-                    iErr++;
+                    iError++;
                 }
             }
             ClearParsedCardErrorData();
         }
 
-        public static void XiFill_Curr_Estim()
+        public static void FillCurrentEstimate()
         {
-            iTotal = iCurr_Depart * (iTeams + 1) + iTeams;
-            iCurrTD = iCurr_Depart * (iTeams + 1) + iCurr_Team;
-            CurrUnit = iCurr_Unit + 1;
+            iTotal = iCurrentDepartment * (iTeams + 1) + iTeams;
+            iCurrTD = iCurrentDepartment * (iTeams + 1) + iCurrentTeam;
+            CurrUnit = iCurrentUnit + 1;
             Xi[0, iCurrTD, CurrUnit] += Curr_Estim;
             Xi[0, iCurrTD, 0] += Curr_Estim;
             Xi[0, iTotal, 0] += Curr_Estim;
         }
 
-        public static void XiFill_Curr_Point()
+        public static void FillCurrentPoints()
         {
-            iTotal = iCurr_Depart * (iTeams + 1) + iTeams;
-            iCurrTD = iCurr_Depart * (iTeams + 1) + iCurr_Team;
-            CurrUnit = iCurr_Unit + 1;
+            iTotal = iCurrentDepartment * (iTeams + 1) + iTeams;
+            iCurrTD = iCurrentDepartment * (iTeams + 1) + iCurrentTeam;
+            CurrUnit = iCurrentUnit + 1;
             Xi[1, iCurrTD, CurrUnit] += Curr_Point;
             Xi[1, iCurrTD, 0] += Curr_Point;
             Xi[1, iTotal, 0] += Curr_Point;
         }
 
         //Очистка значений счётчиков по текущему блоку
-        public static void Curr_Clear()
+        public static void ClearCurrentUnit()
         {
-            iCurr_Depart = -1;
-            iCurr_Team = -1;
-            iCurr_Unit = -1;
+            iCurrentDepartment = -1;
+            iCurrentTeam = -1;
+            iCurrentUnit = -1;
             Curr_Estim = 0;
             Curr_Point = 0;
             iLabelsEM = 0; // Служебная карточка: iLabelsEM = 1
-            iStartErr = iErr;
+            iStartError = iError;
             badges = 0;
             cardRole = 0;
-            currShortUrl = "";
+            currentShortUrl = "";
         }
 
         // Формирование списка стадий и команд
-        public static void Search_Depart_Teams(string rr)
+        public static void Search_Departments_Teams(string rr)
         {
             if (Departments.Contains(rr)) Search_Departments(rr);
             else if (Teams.Contains(rr)) Search_Teams(rr);
@@ -132,13 +132,13 @@ namespace TrlConsCs
             {
                 if (Departments.Contains(rr))
                 {
-                    if (iCurr_Depart < 0) iCurr_Depart = Array.IndexOf(Departments, rr);
+                    if (iCurrentDepartment < 0) iCurrentDepartment = Array.IndexOf(Departments, rr);
                     // уже есть стадия к текущей карточке
                     else
                     {
-                        if (iErrParse < iMaxParse) iErrParse++;
-                        parseStrErrMessage[iErrParse] = $"Повтор: карточке соответствует более одной стадии";
-                        parseStrErrCardURL[iErrParse] = currShortUrl;
+                        if (iErrorParse < iMaxParse) iErrorParse++;
+                        parseStrErrorMessage[iErrorParse] = $"Повтор: карточке соответствует более одной стадии";
+                        parseStrErrorCardURL[iErrorParse] = currentShortUrl;
                     };
                 }
             }
@@ -158,13 +158,13 @@ namespace TrlConsCs
             {
                 if (Teams.Contains(rr))
                 {
-                    if (iCurr_Team < 0) iCurr_Team = Array.IndexOf(Teams, rr);
+                    if (iCurrentTeam < 0) iCurrentTeam = Array.IndexOf(Teams, rr);
                     // уже есть команда к текущей карточке
                     else
                     {
-                        if (iErrParse < iMaxParse) iErrParse++;
-                        parseStrErrMessage[iErrParse] = $"Повтор: карточке соответствует более одной команды";
-                        parseStrErrCardURL[iErrParse] = currShortUrl;
+                        if (iErrorParse < iMaxParse) iErrorParse++;
+                        parseStrErrorMessage[iErrorParse] = $"Повтор: карточке соответствует более одной команды";
+                        parseStrErrorCardURL[iErrorParse] = currentShortUrl;
                     };
                 }
             }
@@ -184,11 +184,11 @@ namespace TrlConsCs
             {
                 try
                 {
-                    if (All_Units.Contains(rr)) iCurr_Unit = Array.IndexOf(All_Units, rr);
+                    if (All_Units.Contains(rr)) iCurrentUnit = Array.IndexOf(All_Units, rr);
                     else
                     {
-                        iCurr_Unit = iAll;
-                        All_Units[iCurr_Unit] = rr;
+                        iCurrentUnit = iAll;
+                        All_Units[iCurrentUnit] = rr;
                         iAll++;
                     }
                 }
@@ -202,9 +202,9 @@ namespace TrlConsCs
             }
             else
             {
-                if (iErrParse < iMaxParse) iErrParse++;
-                parseStrErrMessage[iErrParse] = $"Количество блоков превышено ( >{iAllUnits} )";
-                parseStrErrCardURL[iErrParse] = currShortUrl;
+                if (iErrorParse < iMaxParse) iErrorParse++;
+                parseStrErrorMessage[iErrorParse] = $"Количество блоков превышено ( >{iAllUnits} )";
+                parseStrErrorCardURL[iErrorParse] = currentShortUrl;
                 Console.WriteLine("Количество блоков превышено");
             }
         }
@@ -222,15 +222,15 @@ namespace TrlConsCs
             {
                 if (iOpeningParenthesis >= 0 && iClosingParenthesis < iOpeningParenthesis)
                 {
-                    if (iErrParse < iMaxParse) iErrParse++;
-                    parseStrErrMessage[iErrParse] = $"В карточке <{rr}> нет закрывающей круглой скобки";
-                    parseStrErrCardURL[iErrParse] = currShortUrl;
+                    if (iErrorParse < iMaxParse) iErrorParse++;
+                    parseStrErrorMessage[iErrorParse] = $"В карточке <{rr}> нет закрывающей круглой скобки";
+                    parseStrErrorCardURL[iErrorParse] = currentShortUrl;
                 }
                 if (iOpeningBracket >= 0 && iClosingBracket < iOpeningBracket)
                 {
-                    if (iErrParse < iMaxParse) iErrParse++;
-                    parseStrErrMessage[iErrParse] = $"В карточке <{rr}> нет закрывающей квадратной скобки";
-                    parseStrErrCardURL[iErrParse] = currShortUrl;
+                    if (iErrorParse < iMaxParse) iErrorParse++;
+                    parseStrErrorMessage[iErrorParse] = $"В карточке <{rr}> нет закрывающей квадратной скобки";
+                    parseStrErrorCardURL[iErrorParse] = currentShortUrl;
                 }
 
                 if (iOpeningParenthesis >= iDot && iClosingParenthesis >= iDot)
@@ -247,16 +247,16 @@ namespace TrlConsCs
                 }
                 if (Curr_Estim == 0 && Curr_Point == 0 && ((iDot <= Math.Min(iOpeningParenthesis, iOpeningBracket) && Math.Min(iOpeningParenthesis, iOpeningBracket) >= 0) || (Math.Max(iOpeningParenthesis, iOpeningBracket) < 0)))
                 {
-                    if (iErrParse < iMaxParse) iErrParse++;
-                    parseStrErrMessage[iErrParse] = $"В карточке <{rr}> нет значений";
-                    parseStrErrCardURL[iErrParse] = currShortUrl;
+                    if (iErrorParse < iMaxParse) iErrorParse++;
+                    parseStrErrorMessage[iErrorParse] = $"В карточке <{rr}> нет значений";
+                    parseStrErrorCardURL[iErrorParse] = currentShortUrl;
                     iNone++;
                 }
                 if (iDot >= Math.Max(iOpeningParenthesis, iOpeningBracket) && Math.Max(iOpeningParenthesis, iOpeningBracket) > 0)
                 {
-                    if (iErrParse < iMaxParse) iErrParse++;
-                    parseStrErrMessage[iErrParse] = $"В карточке <{rr}> нет имени блока";
-                    parseStrErrCardURL[iErrParse] = currShortUrl;
+                    if (iErrorParse < iMaxParse) iErrorParse++;
+                    parseStrErrorMessage[iErrorParse] = $"В карточке <{rr}> нет имени блока";
+                    parseStrErrorCardURL[iErrorParse] = currentShortUrl;
                 }
                 else
                 {
@@ -272,9 +272,9 @@ namespace TrlConsCs
             }
             else
             {
-                if (iErrParse < iMaxParse) iErrParse++;
-                parseStrErrMessage[iErrParse] = $"В карточке <{rr}> нет имени блока";
-                parseStrErrCardURL[iErrParse] = currShortUrl;
+                if (iErrorParse < iMaxParse) iErrorParse++;
+                parseStrErrorMessage[iErrorParse] = $"В карточке <{rr}> нет имени блока";
+                parseStrErrorCardURL[iErrorParse] = currentShortUrl;
             }
         }
 
@@ -317,7 +317,6 @@ namespace TrlConsCs
                     Excel_result.Workbook.Properties.Created = DateTime.Now;
                     MinimumSize = 6;
                     FillExcelSheets(3);
-                    //FillExcelSheets(2);
                     Excel_result.Save();
                 }
             }

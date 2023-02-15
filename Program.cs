@@ -29,7 +29,7 @@ namespace project_1
                 // Стадия? Команда?
                 else if (reader.CurrentDepth.Equals(4))
                 {
-                    Trl.Search_Depart_Teams(reader.GetString().ToString());
+                    Trl.Search_Departments_Teams(reader.GetString().ToString());
                 }
             }
         }
@@ -40,7 +40,7 @@ namespace project_1
             {
                 // Чтение токена
                 reader.Read();
-                TableResp.currShortUrl = reader.GetString().ToString();
+                TableResp.currentShortUrl = reader.GetString().ToString();
             }
         }
 
@@ -99,7 +99,7 @@ namespace project_1
             string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=1000";
 
             Console.WriteLine("Start");
-            Trl.Curr_Clear();
+            Trl.ClearCurrentUnit();
 
             try
             {
@@ -166,11 +166,10 @@ namespace project_1
                                 }
                                 if (Trl.parseBadgesToken == true)
                                 {
-                                    if (Trl.iErrParse < Trl.iMaxParse) Trl.iErrParse++;
-                                    Trl.parseStrErrMessage[Trl.iErrParse] = "Нет конца карточки";
-                                    Trl.parseStrErrCardURL[Trl.iErrParse] = TableResp.currShortUrl;
+                                    if (Trl.iErrorParse < Trl.iMaxParse) Trl.iErrorParse++;
+                                    Trl.parseStrErrorMessage[Trl.iErrorParse] = "Нет конца карточки";
+                                    Trl.parseStrErrorCardURL[Trl.iErrorParse] = TableResp.currentShortUrl;
                                     Trl.FillParsedValues();
-                                    //Trl.XiParse();
                                     Trl.parseBadgesToken = true;
                                 }
                                 else { Trl.parseBadgesToken = true; }

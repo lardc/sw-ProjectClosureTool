@@ -18,30 +18,30 @@ namespace TrlConsCs
 
         public static string[] Departments = { "Technical Solution", "Development", "Debugging", "Commissioning", "Documentation" };
         public const int iDep = 5;
-        public static int iCurr_Depart = -1; // текущая стадия (0-4)
+        public static int iCurrentDepartment = -1; // текущая стадия (0-4)
 
         public static string[] Teams = { "Electronics Team", "Firmware Team", "Remote Team", "Mechanics Team", "Commissioning Team", "Software Team" };
         public const int iTeams = 6;
-        public static int iCurr_Team = -1; // текущая команда (0-5)
+        public static int iCurrentTeam = -1; // текущая команда (0-5)
 
         public static string[] All_Units = new string[iAllUnits + 5]; //0 - сумма по столбцу, 1-1000 - сумма по блоку
         public static int iAll = 0;  // всего блоков обнаружено
-        public static int iCurr_Unit = -1; // текущий блок
+        public static int iCurrentUnit = -1; // текущий блок
 
-        public static string currCardName;
-        public static string currShortUrl;
+        public static string currentCardName;
+        public static string currentShortUrl;
 
         public static int iTotal;
         public static int iCurrTD;
-        public static int currUnit;
+        public static int currentUnit;
 
-        public static double curr_Estim;  // текущее оценочное значение
-        public static double curr_Point;  // текущее реальное значение
+        public static double currentEstimate;  // текущее оценочное значение
+        public static double currentPoint;  // текущее реальное значение
 
         public static double minimumSize;
 
-        public static int iErr = 0;
-        public static int iStartErr = 0;
+        public static int iError = 0;
+        public static int iStartError = 0;
 
         public static int badges;
         public static int cardRole;
@@ -83,15 +83,15 @@ namespace TrlConsCs
 
             OfficeOpenXml.ExcelWorksheet errWorksheet = Excel_result.Workbook.Worksheets[WorkSheetN - 1];
 
-            for (int i = 0; i < iErr; i++) { errWorksheet.Cells[i + 3, 1].Value = strErrNumber[i]; }
-            for (int i = 0; i < iErr; i++) { errWorksheet.Cells[i + 3, 2].Value = strErrMessage[i]; }
-            for (int i = 0; i < iErr; i++) { errWorksheet.Cells[i + 3, 3].Value = strErrCardURL[i]; }
+            for (int i = 0; i < iError; i++) { errWorksheet.Cells[i + 3, 1].Value = strErrNumber[i]; }
+            for (int i = 0; i < iError; i++) { errWorksheet.Cells[i + 3, 2].Value = strErrMessage[i]; }
+            for (int i = 0; i < iError; i++) { errWorksheet.Cells[i + 3, 3].Value = strErrCardURL[i]; }
 
             OfficeOpenXml.ExcelWorksheet valueWorksheet = Excel_result.Workbook.Worksheets[WorkSheetN];
 
             for (int i = 0; i < Trl.iCorrectParse; i++) { valueWorksheet.Cells[i + 2, 1].Value = i + 1; }
-            for (int i = 0; i < Trl.iCorrectParse; i++) { valueWorksheet.Cells[i + 2, 2].Value = Trl.strCorrectEst[i]; }
-            for (int i = 0; i < Trl.iCorrectParse; i++) { valueWorksheet.Cells[i + 2, 3].Value = Trl.strCorrectPt[i]; }
+            for (int i = 0; i < Trl.iCorrectParse; i++) { valueWorksheet.Cells[i + 2, 2].Value = Trl.strCorrectEstimate[i]; }
+            for (int i = 0; i < Trl.iCorrectParse; i++) { valueWorksheet.Cells[i + 2, 3].Value = Trl.strCorrectPoint[i]; }
             for (int i = 0; i < Trl.iCorrectParse; i++) { valueWorksheet.Cells[i + 2, 4].Value = Trl.strCorrectShotrURL[i]; }
         }
 

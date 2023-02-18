@@ -17,6 +17,9 @@ namespace TrlConsCs
         public static string[] strCorrectShotrURL = new string[iAllUnits];
         public static int iCorrectParse = 0;
 
+        public static string[] label = new string[iAllUnits];
+        public static int iLabel = 0;
+
         public static void ClearParsedCardErrorData()
         {
             parseBadgesToken = false;
@@ -123,6 +126,11 @@ namespace TrlConsCs
         {
             if (Departments.Contains(rr)) Search_Departments(rr);
             else if (Teams.Contains(rr)) Search_Teams(rr);
+            if (!label.Contains(rr))
+            {
+                label[iLabel] = rr;
+                iLabel++;
+            }
         }
 
         // Формирование списка стадий
@@ -133,6 +141,7 @@ namespace TrlConsCs
                 if (Departments.Contains(rr))
                 {
                     if (iCurrentDepartment < 0) iCurrentDepartment = Array.IndexOf(Departments, rr);
+
                     // уже есть стадия к текущей карточке
                     else
                     {
@@ -289,7 +298,7 @@ namespace TrlConsCs
             string fstrin = "json_into_xlsx_t.xltx";
             if (!File.Exists(fstrin))
             {
-                Console.WriteLine("Шаблон не существует");
+                Console.WriteLine("Шаблон <json_into_xlsx_t.xltx> не существует");
                 Console.WriteLine("Press any key");
                 Console.ReadKey();
                 return;

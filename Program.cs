@@ -13,6 +13,8 @@ namespace ProjectClosureToolV2
         private static readonly byte[] s_badgesUtf8 = Encoding.UTF8.GetBytes("badges");
         private static readonly byte[] s_cardRoleUtf8 = Encoding.UTF8.GetBytes("cardRole");
 
+        public static bool labelsListFilled;
+
         public static void NameToken(Utf8JsonReader reader)
         {
             if (reader.GetString().StartsWith("name"))
@@ -65,37 +67,18 @@ namespace ProjectClosureToolV2
             }
         }
 
-        static void Main(string[] args)
+        public static void Help()
         {
-            //string fileName = "config.json";
+            Console.WriteLine("kt - ввод ключа и токена");
+            Console.WriteLine("board - ввод кода доски");
+            Console.WriteLine("labels - нумерованный список всех имеющихся на доске ярлыков");
+            Console.WriteLine("q - выход");
+        }
 
-            //if (!File.Exists(fileName))
-            //{
-            //    Console.WriteLine("Нет конфигурационного файла");
-            //    Console.WriteLine("Press any key");
-            //    Console.ReadKey();
-            //    return;
-            //}
-            //string jsonString = File.ReadAllText(fileName);
-            //ConfProg confProg = JsonSerializer.Deserialize<ConfProg>(jsonString)!;
-
-            //if (args.Length == 0) 
-            //{ 
-            //    Console.WriteLine("Нет аргументов");
-            //    Console.ReadKey();
-            //    return;
-            //}
-
-            Console.WriteLine("Введите код доски");
-            try { API_Req.boardCode = Console.ReadLine(); }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Press any key");
-                Console.ReadKey();
-                return;
-            }
-            Console.WriteLine("Введите ключ пользователя");
+        // Получение ключа и токена
+        public static void KeyToken()
+        {
+            Console.Write("Введите ключ пользователя >");
             try { API_Req.APIKey = Console.ReadLine(); }
             catch (Exception e)
             {
@@ -104,8 +87,23 @@ namespace ProjectClosureToolV2
                 Console.ReadKey();
                 return;
             }
-            Console.WriteLine("Введите токен пользователя");
+            Console.Write("Введите токен пользователя >");
             try { API_Req.myTrelloToken = Console.ReadLine(); }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Press any key");
+                Console.ReadKey();
+                return;
+            }
+        }
+
+        // Получение кода для работы с конкретной доской
+        public static void Board()
+        {
+            labelsListFilled = false;
+            Console.Write("Введите код доски >");
+            try { API_Req.boardCode = Console.ReadLine(); }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
@@ -115,9 +113,8 @@ namespace ProjectClosureToolV2
             }
 
             Console.WriteLine($"boardCode: {API_Req.boardCode}");
-            Console.WriteLine($"APIKey: {API_Req.APIKey}");
-            Console.WriteLine($"myTrelloToken: {API_Req.myTrelloToken}");
             Console.WriteLine("Press any key");
+
             Console.ReadKey();
             API_Req.boardURL = "https://trello.com/1/boards/";
             string CardFilter = "/cards/open";
@@ -144,7 +141,7 @@ namespace ProjectClosureToolV2
                 if (e.Message.Contains("401"))
                 {
                     Trl.EMessage(e.Message);
-                    Console.WriteLine("Нет доступа к доске");
+                    Console.Write("Нет доступа к доске \nkt - ввод ключа и токена\n");
                     Console.WriteLine("Press any key");
                     Console.ReadKey();
                     return;
@@ -249,8 +246,63 @@ namespace ProjectClosureToolV2
                 Console.ReadKey();
                 return;
             }
+
             Trl.FillParsedValues();
             Trl.FillExcel();
+
+            labelsListFilled = true;
+        }
+
+        // Нумерованный список всех имеющихся на доске ярлыков
+        public static void LabelsList()
+        {
+            if (labelsListFilled == false)
+            {
+                Console.WriteLine("Ярлыков нет");
+                Console.WriteLine("Press any key");
+                Console.ReadKey();
+            }
+            else
+            {
+                for (int i = 0; i < Trl.iLabel; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {Trl.label[i]}");
+                }
+            }
+        }
+
+        static void Main()
+        {
+            labelsListFilled = false;
+            Console.WriteLine("Введите команду");
+            string sc = "";
+            while (sc != "q")
+            {
+                Console.Write(" >");
+                sc = Console.ReadLine();
+                switch (sc)
+                {
+                    case "help":
+                        Help();
+                        break;
+                    case "kt":
+                        KeyToken();
+                        break;
+                    case "board":
+                        Board();
+                        break;
+                    case "labels":
+                        LabelsList();
+                        break;
+                    case "q":
+                        Console.WriteLine("q - выход");
+                        break;
+                    default:
+                        Console.Write("Команда не распознана \nhelp - перечень доступных команд\n");
+                        break;
+                }
+            }
+
             Console.WriteLine("Press any key");
             Console.ReadKey();
         }

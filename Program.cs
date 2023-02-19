@@ -293,12 +293,12 @@ namespace ProjectClosureToolV2
         public static void AddIgnore()
         {
             Console.Write("Введите игнорируемый ярлык\n >");
-            string sInputiIgnore  = Console.ReadLine();
-            if (Trl.ignoredLabel.Contains(sInputiIgnore)) 
-                Console.WriteLine($"Ярлык {sInputiIgnore} уже содержится в списке игнорируемых");
+            string sInputIgnore  = Console.ReadLine();
+            if (Trl.ignoredLabel.Contains(sInputIgnore)) 
+                Console.WriteLine($"Ярлык {sInputIgnore} уже содержится в списке игнорируемых");
             else
             {
-                Trl.ignoredLabel[nIgnore] = sInputiIgnore;
+                Trl.ignoredLabel[nIgnore] = sInputIgnore;
                 nIgnore++;
                 ignoredLabelsListFilled = true;
             }

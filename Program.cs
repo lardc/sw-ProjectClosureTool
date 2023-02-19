@@ -281,18 +281,15 @@ namespace ProjectClosureToolV2
         // Создание списка игнорируемых ярлыков
         public static void IgnoreLabels(int n)
         {
-            for (int i = 0; i < n; i++)
-            {
-                nIgnore = 0;
-                AddIgnore();
-            }
+            nIgnore = 0;
+            for (int i = 0; i < n; i++) AddIgnore();
             ignoredLabelsListFilled = true;
         }
 
         // Добавление одного игнорируемого ярлыка
         public static void AddIgnore()
         {
-            Console.Write("Введите игнорируемый ярлык\n >");
+            Console.Write("Введите игнорируемый ярлык >");
             string sInputIgnore  = Console.ReadLine();
             if (Trl.ignoredLabel.Contains(sInputIgnore)) 
                 Console.WriteLine($"Ярлык {sInputIgnore} уже содержится в списке игнорируемых");
@@ -332,7 +329,7 @@ namespace ProjectClosureToolV2
         static void Main()
         {
             labelsListFilled = false;
-            Console.WriteLine("Введите команду");
+            Console.Write("help - перечень доступных команд \nВведите команду\n");
             string sc = "";
             while (sc != "q")
             {
@@ -354,12 +351,11 @@ namespace ProjectClosureToolV2
                         LabelsList();
                         break;
                     case "ignore":
-                        Console.Write("Введите количество игнорируемых ярлыков\n >");
+                        Console.Write("Введите количество игнорируемых ярлыков >");
                         nIgnore = int.Parse(Console.ReadLine());
                         IgnoreLabels(nIgnore);
                         break;
                     case "addI":
-                        Console.Write("\n >");
                         AddIgnore();
                         break;
                     case "listI":
@@ -373,7 +369,7 @@ namespace ProjectClosureToolV2
                         ClearIgnoredLabels();
                         break;
                     default:
-                        Console.Write("Команда не распознана \nhelp - перечень доступных команд\n");
+                        Console.Write("Команда не распознана");
                         break;
                 }
             }

@@ -19,6 +19,7 @@ namespace TrlConsCs
 
         public static string[] label = new string[iAllUnits];
         public static int iLabel = 0;
+        public static string[] ignoredLabel = new string[iAllUnits];
 
         public static void ClearParsedCardErrorData()
         {
@@ -124,12 +125,15 @@ namespace TrlConsCs
         // Формирование списка стадий и команд
         public static void Search_Departments_Teams(string rr)
         {
-            if (Departments.Contains(rr)) Search_Departments(rr);
-            else if (Teams.Contains(rr)) Search_Teams(rr);
-            if (!label.Contains(rr))
+            if (!ignoredLabel.Contains(rr))
             {
-                label[iLabel] = rr;
-                iLabel++;
+                if (Departments.Contains(rr)) Search_Departments(rr);
+                else if (Teams.Contains(rr)) Search_Teams(rr);
+                if (!label.Contains(rr))
+                {
+                    label[iLabel] = rr;
+                    iLabel++;
+                }
             }
         }
 

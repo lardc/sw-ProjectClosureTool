@@ -14,6 +14,9 @@ namespace ProjectClosureToolV2
         private static readonly byte[] s_cardRoleUtf8 = Encoding.UTF8.GetBytes("cardRole");
 
         public static bool labelsListFilled;
+        public static bool ignoredLabelsListFilled;
+
+        private static int nIgnore;
 
         public static void NameToken(Utf8JsonReader reader)
         {
@@ -72,6 +75,10 @@ namespace ProjectClosureToolV2
             Console.WriteLine("kt - ввод ключа и токена");
             Console.WriteLine("board - ввод кода доски");
             Console.WriteLine("labels - нумерованный список всех имеющихся на доске ярлыков");
+            Console.WriteLine("ignore - создание списка игнорируемых ярлыков");
+            Console.WriteLine("addI - добавление одного игнорируемого ярлыка");
+            Console.WriteLine("listI - просмотр списка игнорируемых ярлыков");
+            Console.WriteLine("clearI - очистка списка игнорируемых ярлыков");
             Console.WriteLine("q - выход");
         }
 
@@ -271,6 +278,57 @@ namespace ProjectClosureToolV2
             }
         }
 
+        // Создание списка игнорируемых ярлыков
+        public static void IgnoreLabels(int n)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                nIgnore = 0;
+                AddIgnore();
+            }
+            ignoredLabelsListFilled = true;
+        }
+
+        // Добавление одного игнорируемого ярлыка
+        public static void AddIgnore()
+        {
+            Console.Write("Введите игнорируемый ярлык\n >");
+            string sInputiIgnore  = Console.ReadLine();
+            if (Trl.ignoredLabel.Contains(sInputiIgnore)) 
+                Console.WriteLine($"Ярлык {sInputiIgnore} уже содержится в списке игнорируемых");
+            else
+            {
+                Trl.ignoredLabel[nIgnore] = sInputiIgnore;
+                nIgnore++;
+                ignoredLabelsListFilled = true;
+            }
+        }
+
+        // Просмотр списка игнорируемых ярлыков
+        public static void IgnoredLabelsList(int n)
+        {
+            if (ignoredLabelsListFilled == false)
+            {
+                Console.WriteLine("Игнорируемых ярлыков нет");
+                Console.WriteLine("Press any key");
+                Console.ReadKey();
+            }
+            else
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {Trl.ignoredLabel[i]}");
+                }
+            }
+        }
+
+        // Очистка списка игнорируемых ярлыков
+        public static void ClearIgnoredLabels()
+        {
+            nIgnore = 0;
+            ignoredLabelsListFilled = false;
+        }
+
         static void Main()
         {
             labelsListFilled = false;
@@ -292,10 +350,27 @@ namespace ProjectClosureToolV2
                         Board();
                         break;
                     case "labels":
+                        Console.WriteLine("Перечень ярлыков:");
                         LabelsList();
+                        break;
+                    case "ignore":
+                        Console.Write("Введите количество игнорируемых ярлыков\n >");
+                        nIgnore = int.Parse(Console.ReadLine());
+                        IgnoreLabels(nIgnore);
+                        break;
+                    case "addI":
+                        Console.Write("\n >");
+                        AddIgnore();
+                        break;
+                    case "listI":
+                        Console.WriteLine("Перечень игнорируемых ярлыков:");
+                        IgnoredLabelsList(nIgnore);
                         break;
                     case "q":
                         Console.WriteLine("q - выход");
+                        break;
+                    case "clearI":
+                        ClearIgnoredLabels();
                         break;
                     default:
                         Console.Write("Команда не распознана \nhelp - перечень доступных команд\n");

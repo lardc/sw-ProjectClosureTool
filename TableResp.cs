@@ -7,11 +7,10 @@ namespace TrlConsCs
     public partial class TableResp
     {
         // Количество блоков превышено ?
-        //public const int iAllUnits = 2; // максимальное к-во обрабатываемых блоков
         public const int iAllUnits = 1000; // максимальное к-во обрабатываемых блоков
 
         public static double[,,] Xi = new double[2, iDep * (iTeams + 1), iAllUnits + 5];
-        // 2-Estimations, Points (лист отчета)
+        // 2 - Estimations, Points (лист отчета)
         // 35 столбцов таблицы (Total по Department + макс. к-во пар Department/Team)
         // 1000 строки All_Units + 1(Total)
         // Total - 0 строка, блоки - начинать с 1-й
@@ -106,9 +105,7 @@ namespace TrlConsCs
                     else
                         estWorksheet.Cells[i + 4, 1].Value = All_Units[i];
                     for (int j = 0; j <= iTeams; j++)
-                    {
                         FillExcelCells(i, j, iD, estWorksheet, WorkSheet);
-                    }
                 }
             }
         }

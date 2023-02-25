@@ -17,9 +17,9 @@ namespace TrlConsCs
         public static string[] strCorrectShotrURL = new string[iAllUnits];
         public static int iCorrectParse = 0;
 
-        public static string[] label = new string[iAllUnits];
-        public static int iLabel = 0;
-        public static string[] ignoredLabel = new string[iAllUnits];
+        public static string[] labels = new string[iAllUnits];
+        public static int iLabels = 0;
+        public static string[] ignoredLabels = new string[iAllUnits];
 
         public static void ClearParsedCardErrorData()
         {
@@ -51,14 +51,8 @@ namespace TrlConsCs
 
             if (iCurrentDepartment >= 0 && iCurrentTeam >= 0 && iCurrentUnit >= 0)
             {
-                if (Curr_Estim > 0)
-                {
-                    FillCurrentEstimate();
-                }
-                if (Curr_Point > 0)
-                {
-                    FillCurrentPoints();
-                }
+                if (Curr_Estim > 0) FillCurrentEstimate();
+                if (Curr_Point > 0) FillCurrentPoints();
                 strCorrectEstimate[iCorrectParse] = Curr_Estim;
                 strCorrectPoint[iCorrectParse] = Curr_Point;
                 strCorrectShotrURL[iCorrectParse] = currentShortUrl;
@@ -67,6 +61,34 @@ namespace TrlConsCs
 
             FillParsedErrors();
             ClearCurrentUnit();
+        }
+
+        public static void ClearValues()
+        {
+            for (int i = 0; i < iAllUnits + 5; i++)
+            {
+                strErrNumber[i] = 0;
+                strErrMessage[i] = "";
+                strErrCardURL[i] = "";
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                for (int j = 0; j < iDep * (iTeams + 1); j++)
+                {
+                    for (int k = 0; k < iAllUnits + 5; k++)
+                    {
+                        Xi[i, j, k] = 0;
+                    }
+                }
+            }
+            for (int i = 0; i < iAllUnits; i++)
+            {
+                strCorrectEstimate[i] = 0;
+                strCorrectPoint[i] = 0;
+                strCorrectShotrURL[i] = "";
+            }
+            iCorrectParse = 0;
+            iError = 0;
         }
 
         // Формирование таблицы ошибок для обработанной карточки
@@ -80,7 +102,6 @@ namespace TrlConsCs
                     strErrNumber[iError] = iError + 1;
                     strErrMessage[iError] = parseStrErrorMessage[i];
                     strErrCardURL[iError] = currentShortUrl;
-
                     iError++;
                 }
             }
@@ -125,15 +146,24 @@ namespace TrlConsCs
         // Формирование списка стадий и команд
         public static void Search_Departments_Teams(string rr)
         {
-            if (!ignoredLabel.Contains(rr))
+            if (!ignoredLabels.Contains(rr))
             {
                 if (Departments.Contains(rr)) Search_Departments(rr);
                 else if (Teams.Contains(rr)) Search_Teams(rr);
-                if (!label.Contains(rr))
+                if (!labels.Contains(rr))
                 {
-                    label[iLabel] = rr;
-                    iLabel++;
+                    labels[iLabels] = rr;
+                    iLabels++;
                 }
+            }
+        }
+
+        public static void Input_Labels(string rr)
+        {
+            if (!labels.Contains(rr))
+            {
+                labels[iLabels] = rr;
+                iLabels++;
             }
         }
 
@@ -312,7 +342,6 @@ namespace TrlConsCs
                 FillExcel_fstrout(fstrin);
                 FileInfo fin = new(fstrin);
                 if (File.Exists(FillExcel_fstrout(fstrin)))
-                {
                     try { File.Delete(FillExcel_fstrout(fstrin)); }
                     catch (IOException deleteError)
                     {
@@ -321,7 +350,6 @@ namespace TrlConsCs
                         Console.ReadKey();
                         return;
                     }
-                }
                 FileInfo fout = new(FillExcel_fstrout(fstrin));
                 using (Excel_result = new OfficeOpenXml.ExcelPackage(fout, fin))
                 {

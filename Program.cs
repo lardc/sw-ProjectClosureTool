@@ -393,7 +393,7 @@ namespace ProjectClosureToolV2
         {
             if (Trl.labels.Contains(rr)) isLabel = true; else isLabel = false;
             if (Trl.ignoredLabels.Contains(rr)) isIgnored = true; else isIgnored = false;
-            return isLabel || !isIgnored;
+            return isLabel && !isIgnored;
         }
 
         static void Main()

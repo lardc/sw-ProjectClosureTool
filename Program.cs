@@ -352,7 +352,8 @@ namespace ProjectClosureToolV2
             while (iInputIgnore != 0)
             {
                 CheckLabels(Trl.labels[iInputIgnore - 1]);
-                if (!isLabel) Console.WriteLine($"Нет ярлыка с номером <{iInputIgnore - 1}>. Введите другой номер.");
+                if (!isLabel || iInputIgnore > Trl.iLabels)
+                    Console.WriteLine($"Нет ярлыка с номером <{iInputIgnore}>. Введите другой номер.");
                 else
                 { 
                     if (isIgnored)

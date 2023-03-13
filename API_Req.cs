@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TrlConsCs
+namespace ProjectClosureToolV2
 {
     public partial class API_Req
     {

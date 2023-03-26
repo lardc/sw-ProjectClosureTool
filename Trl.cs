@@ -6,31 +6,7 @@ namespace ProjectClosureToolV2
 {
     public partial class Trl : TableResp
     {
-        //public const int iMaxParse = 1000; // максимальное к-во обрабатываемых ошибок в карточке
-
-        //public static bool parseBadgesToken;
-        //public static int iErrorParse;
-        //public static string[] parseStrErrorMessage = new string[iMaxParse];
-        //public static string[] parseStrErrorCardURL = new string[iMaxParse];
-        //public static double[] strCorrectEstimate = new double[iAllUnits]; // приближённое значение в корректной карточке
-        //public static double[] strCorrectPoint = new double[iAllUnits]; // точное значение в корректной карточке
-        //public static string[] strCorrectShotrURL = new string[iAllUnits];
-        //public static int iCorrectParse = 0;
-
-        public static string[] labels = new string[iAllUnits];
         public static int iLabels = 0;
-        public static int nLabels = 0;
-        public static string[] ignoredLabels = new string[iAllUnits];
-
-        public static string[] units = new string[iAllUnits];
-
-        // ввод текущей карточки ???
-        public static int iCard;
-        //public static string currentCardURL;
-        //public static string currentCardUnit;
-        //public static string currentCardName;
-        //public static double[,] cardValues = new double[iAllUnits, 2];
-        //public static string[,] cardLabels = new string[iAllUnits, 10];
 
         // ввод текущей карточки
         public static string currentCardURL;
@@ -39,7 +15,6 @@ namespace ProjectClosureToolV2
         public static double currentCardEstimate;
         public static double currentCardPoint;
         public static string[] cardLabels = new string[20];
-
 
         public static void SearchLabelsM(string rr)
         {
@@ -90,9 +65,13 @@ namespace ProjectClosureToolV2
                     try 
                     { 
                         currentCardUnit = s_unit;
-                        if (!units.Contains(currentCardUnit))
-                            units[iAll++] = currentCardUnit;
-                    }
+                        if (!Program.units.Contains(new TrelloObjectLabels { CardID = iAll, CardLabel = currentCardUnit }))
+                            Program.units.Add(new TrelloObjectLabels
+                            {
+                                CardID = iAll++,
+                                CardLabel = currentCardUnit,
+                            });
+                        }
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);

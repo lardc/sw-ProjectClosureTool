@@ -58,15 +58,4 @@ namespace ProjectClosureToolV2
             return CardID;
         }
     }
-    //public partial class TrelloSumValues
-    //{
-    //    public int UnitID { get; set; }
-    //    public int CombinationID { get; set; }
-    //    public double SumEstimate { get; set; }
-    //    public double SumPoint { get; set; }
-    //    public override string ToString()
-    //    {
-    //        return $"Блок {UnitID + 1}. Комбинация {CombinationID + 1}. ({SumEstimate}) [{SumPoint}]";
-    //    }
-    //}
 }

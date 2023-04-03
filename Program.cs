@@ -25,11 +25,15 @@ namespace ProjectClosureToolV2
         static List<TrelloObjectLabels> labels = new List<TrelloObjectLabels>();
         static List<TrelloObjectLabels> labelsList = new List<TrelloObjectLabels>();
         static List<TrelloObjectLabels> ignoredLabelsList = new List<TrelloObjectLabels>();
-        static List<TrelloObjectLabels> cardCombination = new List<TrelloObjectLabels>();
-        static List<TrelloObjectLabels> labelCombinations = new List<TrelloObjectLabels>();
+        static List<string> combinationsList = new List<string>();
+        static List<string> combinationsListI = new List<string>();
+        static IEnumerable<string> distinctCombinations = new List<string>();
+        static IEnumerable<string> distinctCombinationsI = new List<string>();
+
         static List<TrelloObjectLabels> cardLabels = new List<TrelloObjectLabels>();
-        public static List<TrelloObjectLabels> units = new List<TrelloObjectLabels>();
-        
+        public static List<string> units = new List<string>();
+        static IEnumerable<string> distinctUnits = new List<string>();
+
         //public static void NameToken(Utf8JsonReader reader)
         //{
         //    if (reader.GetString().StartsWith("name"))
@@ -92,8 +96,10 @@ namespace ProjectClosureToolV2
             Console.WriteLine("units - вывод списка всех блоков на доске");
             Console.WriteLine("labelC - список всех комбинаций ярлыков");
             Console.WriteLine("labelCI - список всех комбинаций ярлыков (игнорируемые ярлыки не учитываются)");
-            Console.WriteLine("cardsOut - вывод данных по всем карточкам");
-            Console.WriteLine("cardOut - вывод ярлыков для заданной карточки");
+            Console.WriteLine("sums - суммарные оценки (два типа) для конкретного блока для всех уникальных комбинаций ярлыков (игнорируемые ярлыки не учитываются)");
+            Console.WriteLine("sum - суммарные оценки (два типа) для конкретного блока для конкретной комбинации ярлыков ярлыков (игнорируемые ярлыки не учитываются)");
+            //Console.WriteLine("cardsOut - вывод данных по всем карточкам");
+            //Console.WriteLine("cardOut - вывод ярлыков для заданной карточки");
             //Console.WriteLine("fillExcel - формирование excel-файла");
             Console.WriteLine("q - выход");
         }
@@ -233,8 +239,6 @@ namespace ProjectClosureToolV2
                 return;
             }
 
-            //ClearIgnoredLabels();
-
             Console.WriteLine($"boardCode: <{API_Req.boardCode}>");
             Console.WriteLine("Press any key");
 
@@ -343,10 +347,7 @@ namespace ProjectClosureToolV2
             {
                 foreach (TrelloObjectLabels aLabel in labelsList)
                     if (!CheckIgnored(aLabel.CardLabel))
-                    //{
-                        //aLabel.CardID = labelsList.Count;
                         Console.WriteLine(aLabel);
-                    //}
             }
         }
 
@@ -355,6 +356,9 @@ namespace ProjectClosureToolV2
             ClearCardM();
             cards.Clear();
             units.Clear();
+            labels.Clear();
+            combinationsList.Clear();
+            distinctUnits = Enumerable.Empty<string>();
             TableResp.iAll = 0;
             try
             {
@@ -407,11 +411,6 @@ namespace ProjectClosureToolV2
                     }
                 }
                 labels.Sort();
-                
-                //foreach (TrelloObject aCard in cards)
-                //    Console.WriteLine(aCard.ToString());
-                //foreach (TrelloObjectLabels aLabel in labels)
-                //    Console.WriteLine(aLabel.ToString());
             }
             catch (Exception e)
             {
@@ -551,6 +550,9 @@ namespace ProjectClosureToolV2
                     return;
                 }
             }
+            foreach (TrelloObject aCard in cards)
+                aCard.LabelCombinationI = "";
+            LabelCombinationsI();
         }
 
         // Просмотр списка игнорируемых ярлыков
@@ -624,6 +626,7 @@ namespace ProjectClosureToolV2
                     }
                 }
             }
+            LabelCombinationsI();
         }
 
         // Очистка списка игнорируемых ярлыков
@@ -631,6 +634,7 @@ namespace ProjectClosureToolV2
         {
             ignoredLabelsList.Clear();
             ignoredLabelsListFilled = false;
+            LabelCombinationsI();
         }
 
         public static void ClearLabels()
@@ -664,33 +668,33 @@ namespace ProjectClosureToolV2
 
         public static void UnitsList()
         {
-            foreach (TrelloObjectLabels aUnit in units)
-                Console.WriteLine(aUnit);
+            distinctUnits = units.Distinct();
+            foreach (string aUnit in distinctUnits)
+                Console.WriteLine($"{distinctUnits.ToList().IndexOf(aUnit) + 1}. {aUnit}");
         }
 
         public static void LabelCombinations()
         {
             try
             {
-                labelCombinations.Clear();
+                combinationsList.Clear();
+                distinctCombinations = Enumerable.Empty<string>();
                 labels.Sort();
                 for (int i = 0; i < cards.Count; i++)
                 {
                     string sCombination = "";
                     foreach (TrelloObjectLabels aLabel in labels)
                         if (aLabel.CardID.Equals(i))
-                        {
-                            cardCombination.Add(aLabel);
                             sCombination += $"{aLabel.CardLabel}        ";
-                        }
-                    if (!labelCombinations.Contains(new TrelloObjectLabels { CardID = labelCombinations.Count, CardLabel = sCombination }) && sCombination != "")
-                        labelCombinations.Add(new TrelloObjectLabels
+                    foreach (TrelloObject aCard in cards)
+                        if (aCard.CardID.Equals(i) && sCombination != "")
                         {
-                            CardID = labelCombinations.Count,
-                            CardLabel = sCombination
-                        });
+                            aCard.LabelCombination = sCombination;
+                            combinationsList.Add(sCombination);
+                        }
                 }
-                foreach (TrelloObjectLabels aCombination in labelCombinations)
+                distinctCombinations = combinationsList.Distinct();
+                foreach (string aCombination in distinctCombinations)
                     Console.WriteLine(aCombination);
             }
             catch (Exception e)
@@ -704,28 +708,25 @@ namespace ProjectClosureToolV2
 
         public static void LabelCombinationsI()
         {
-            try 
+            try
             {
-                labelCombinations.Clear();
+                combinationsListI.Clear();
+                distinctCombinationsI = Enumerable.Empty<string>();
                 labels.Sort();
                 for (int i = 0; i < cards.Count; i++)
                 {
                     string sCombination = "";
                     foreach (TrelloObjectLabels aLabel in labels)
                         if (aLabel.CardID.Equals(i) && !ignoredLabelsList.Contains(aLabel))
-                        {
-                            cardCombination.Add(aLabel);
                             sCombination += $"{aLabel.CardLabel}        ";
-                        }
-                    if (!labelCombinations.Contains(new TrelloObjectLabels { CardID = labelCombinations.Count, CardLabel = sCombination }) && sCombination != "")
-                        labelCombinations.Add(new TrelloObjectLabels
+                    foreach (TrelloObject aCard in cards)
+                        if (aCard.CardID.Equals(i) && sCombination != "")
                         {
-                            CardID = labelCombinations.Count,
-                            CardLabel = sCombination
-                        });
+                            aCard.LabelCombinationI = sCombination;
+                            combinationsListI.Add(sCombination);
+                        }
                 }
-                foreach (TrelloObjectLabels aCombination in labelCombinations)
-                    Console.WriteLine(aCombination);
+                distinctCombinationsI = combinationsListI.Distinct();
             }
             catch (Exception e)
             {
@@ -753,6 +754,24 @@ namespace ProjectClosureToolV2
                 foreach (TrelloObjectLabels aLabel in cardLabels)
                     Console.WriteLine(aLabel);
             }
+        }
+
+        public static void Sum(int i, int j)
+        {
+            double sumEstimate = 0;
+            double sumPoint = 0;
+            string unit = distinctUnits.ElementAt(i - 1);
+            string combination = distinctCombinationsI.ElementAt(j - 1);
+            foreach (TrelloObject aCard in cards)
+                if (aCard.CardUnit.Equals(unit) && aCard.LabelCombinationI.Equals(combination))
+                {
+                    sumEstimate += aCard.CardEstimate;
+                    sumPoint += aCard.CardPoint;
+                }
+            Console.WriteLine($"Блок: {unit}");
+            Console.WriteLine($"Комбинация ярлыков: {combination}");
+            Console.WriteLine($"Суммарное оценочное значение: ({sumEstimate}). Суммарное реальное значение: [{sumPoint}].");
+            Console.WriteLine();
         }
 
         static void Main()
@@ -812,7 +831,33 @@ namespace ProjectClosureToolV2
                         break;
                     case "labelCI":
                         LabelCombinationsI();
+                        foreach (string aCombination in distinctCombinationsI)
+                            Console.WriteLine($"{distinctCombinationsI.ToList().IndexOf(aCombination) + 1}. {aCombination}");
                         break;
+                    case "sum":
+                        UnitsList();
+                        Console.WriteLine();
+                        LabelCombinationsI();
+                        foreach (string aCombination in distinctCombinationsI)
+                            Console.WriteLine($"{distinctCombinationsI.ToList().IndexOf(aCombination) + 1}. {aCombination}");
+                        Console.WriteLine();
+                        Console.Write("Введите номер блока >");
+                        int iUnit = int.Parse(Console.ReadLine());
+                        Console.Write("Введите номер комбинации >");
+                        int iCombination = int.Parse(Console.ReadLine());
+                        Sum(iUnit, iCombination);
+                        break;
+                    case "sums":
+                        LabelCombinationsI();
+                        Console.WriteLine();
+                        UnitsList();
+                        Console.WriteLine();
+                        Console.Write("Введите номер блока >");
+                        iUnit = int.Parse(Console.ReadLine());
+                        for (int i = 0; i < distinctCombinationsI.ToList().Count; i++)
+                            Sum(iUnit, i + 1);
+                        break;
+
                     //case "fillExcel":
                     //    if (!labelsListFilled) Console.WriteLine("Код доски не введён");
                     //    else

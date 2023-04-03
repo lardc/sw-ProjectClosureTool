@@ -65,13 +65,8 @@ namespace ProjectClosureToolV2
                     try 
                     { 
                         currentCardUnit = s_unit;
-                        if (!Program.units.Contains(new TrelloObjectLabels { CardID = iAll, CardLabel = currentCardUnit }))
-                            Program.units.Add(new TrelloObjectLabels
-                            {
-                                CardID = iAll++,
-                                CardLabel = currentCardUnit,
-                            });
-                        }
+                        Program.units.Add(currentCardUnit);
+                    }
                     catch (Exception e)
                     {
                         Console.WriteLine(e.Message);

@@ -15,6 +15,8 @@ namespace ProjectClosureToolV2
         public string CardName { get; set; }
         public double CardEstimate { get; set; }
         public double CardPoint { get; set; }
+        public string LabelCombination { get; set; }
+        public string LabelCombinationI { get; set; }
         public override string ToString()
         {
             return "CardID: " + CardID + "; CardURL: " + CardURL + "; CardUnit: " + CardUnit + "; CardName: " + CardName + "; CardEstimate: " + CardEstimate + "; CardPoint: " + CardPoint;
@@ -56,14 +58,15 @@ namespace ProjectClosureToolV2
             return CardID;
         }
     }
-    public partial class TrelloSumValues
-    {
-        public int UnitID { get; set; }
-        public int CombinationID { get; set; }
-        public double Sum { get; set; }
-        public override string ToString()
-        {
-            return $"Блок {UnitID + 1}. Комбинация {CombinationID + 1}. {Sum}";
-        }
-    }
+    //public partial class TrelloSumValues
+    //{
+    //    public int UnitID { get; set; }
+    //    public int CombinationID { get; set; }
+    //    public double SumEstimate { get; set; }
+    //    public double SumPoint { get; set; }
+    //    public override string ToString()
+    //    {
+    //        return $"Блок {UnitID + 1}. Комбинация {CombinationID + 1}. ({SumEstimate}) [{SumPoint}]";
+    //    }
+    //}
 }

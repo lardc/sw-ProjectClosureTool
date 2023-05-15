@@ -19,7 +19,7 @@ namespace ProjectClosureToolV2
         public string LabelCombinationI { get; set; }
         public override string ToString()
         {
-            return "CardID: " + CardID + "; CardURL: " + CardURL + "; CardUnit: " + CardUnit + "; CardName: " + CardName + "; CardEstimate: " + CardEstimate + "; CardPoint: " + CardPoint;
+            return "CardID: " + CardID + "; CardURL: " + CardURL + "; CardUnit: " + CardUnit + "; CardName: " + CardName + "; CardEstimate: " + CardEstimate + "; CardPoint: " + CardPoint + "; LabelCombinationI: " + LabelCombinationI;
         }
     }
     public partial class TrelloObjectLabels : IComparable<TrelloObjectLabels>

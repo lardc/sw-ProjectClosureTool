@@ -28,11 +28,14 @@ namespace ProjectClosureToolV2
         static List<string> combinationsList = new List<string>();
         static List<string> combinationsListI = new List<string>();
         static IEnumerable<string> distinctCombinations = new List<string>();
+        private static List<string> distinctCombinationsList;
         static IEnumerable<string> distinctCombinationsI = new List<string>();
+        private static List<string> distinctCombinationsListI;
 
         static List<TrelloObjectLabels> cardLabels = new List<TrelloObjectLabels>();
         public static List<string> units = new List<string>();
         static IEnumerable<string> distinctUnits = new List<string>();
+        private static List<string> distinctUnitsList;
 
         //public static void NameToken(Utf8JsonReader reader)
         //{
@@ -411,6 +414,7 @@ namespace ProjectClosureToolV2
                     }
                 }
                 labels.Sort();
+                LabelCombinationsI();
             }
             catch (Exception e)
             {
@@ -669,8 +673,10 @@ namespace ProjectClosureToolV2
         public static void UnitsList()
         {
             distinctUnits = units.Distinct();
-            foreach (string aUnit in distinctUnits)
-                Console.WriteLine($"{distinctUnits.ToList().IndexOf(aUnit) + 1}. {aUnit}");
+            distinctUnitsList = distinctUnits.ToList();
+            distinctUnitsList.Sort();
+            foreach (string aUnit in distinctUnitsList)
+                Console.WriteLine($"{distinctUnitsList.IndexOf(aUnit) + 1}. {aUnit}");
         }
 
         public static void LabelCombinations()
@@ -694,7 +700,9 @@ namespace ProjectClosureToolV2
                         }
                 }
                 distinctCombinations = combinationsList.Distinct();
-                foreach (string aCombination in distinctCombinations)
+                distinctCombinationsList = distinctCombinationsI.ToList();
+                distinctCombinationsList.Sort();
+                foreach (string aCombination in distinctCombinationsList)
                     Console.WriteLine(aCombination);
             }
             catch (Exception e)
@@ -718,7 +726,7 @@ namespace ProjectClosureToolV2
                     string sCombination = "";
                     foreach (TrelloObjectLabels aLabel in labels)
                         if (aLabel.CardID.Equals(i) && !ignoredLabelsList.Contains(aLabel))
-                            sCombination += $"{aLabel.CardLabel}        ";
+                            sCombination += $"{aLabel.CardLabel}\n";
                     foreach (TrelloObject aCard in cards)
                         if (aCard.CardID.Equals(i) && sCombination != "")
                         {
@@ -727,6 +735,8 @@ namespace ProjectClosureToolV2
                         }
                 }
                 distinctCombinationsI = combinationsListI.Distinct();
+                distinctCombinationsListI = distinctCombinationsI.ToList();
+                distinctCombinationsListI.Sort();
             }
             catch (Exception e)
             {
@@ -760,8 +770,8 @@ namespace ProjectClosureToolV2
         {
             double sumEstimate = 0;
             double sumPoint = 0;
-            string unit = distinctUnits.ElementAt(i - 1);
-            string combination = distinctCombinationsI.ElementAt(j - 1);
+            string unit = distinctUnitsList.ElementAt(i - 1);
+            string combination = distinctCombinationsListI.ElementAt(j - 1);
             foreach (TrelloObject aCard in cards)
                 if (aCard.CardUnit.Equals(unit) && aCard.LabelCombinationI.Equals(combination))
                 {
@@ -770,7 +780,8 @@ namespace ProjectClosureToolV2
                 }
             Console.WriteLine($"Блок: {unit}");
             Console.WriteLine($"Комбинация ярлыков: {combination}");
-            Console.WriteLine($"Суммарное оценочное значение: ({sumEstimate}). Суммарное реальное значение: [{sumPoint}].");
+            Console.WriteLine($"Суммарное оценочное значение: ({sumEstimate}).\n" +
+                $"Суммарное реальное значение: [{sumPoint}].");
             Console.WriteLine();
         }
 
@@ -831,15 +842,16 @@ namespace ProjectClosureToolV2
                         break;
                     case "labelCI":
                         LabelCombinationsI();
-                        foreach (string aCombination in distinctCombinationsI)
-                            Console.WriteLine($"{distinctCombinationsI.ToList().IndexOf(aCombination) + 1}. {aCombination}");
+                        foreach (string aCombination in distinctCombinationsListI)
+                            Console.WriteLine($"{distinctCombinationsListI.IndexOf(aCombination) + 1}.\n" +
+                                $"{aCombination}");
                         break;
                     case "sum":
                         UnitsList();
                         Console.WriteLine();
                         LabelCombinationsI();
-                        foreach (string aCombination in distinctCombinationsI)
-                            Console.WriteLine($"{distinctCombinationsI.ToList().IndexOf(aCombination) + 1}. {aCombination}");
+                        foreach (string aCombination in distinctCombinationsListI)
+                            Console.WriteLine($"{distinctCombinationsListI.IndexOf(aCombination) + 1}. {aCombination}");
                         Console.WriteLine();
                         Console.Write("Введите номер блока >");
                         int iUnit = int.Parse(Console.ReadLine());
@@ -868,10 +880,12 @@ namespace ProjectClosureToolV2
                     //    }
                     //    break;
                     case "cardsOut":
+                        LabelCombinationsI();
                         foreach (TrelloObject aCard in cards)
                             Console.WriteLine(aCard.ToString());
                         break;
                     case "cardOut":
+                        LabelCombinationsI();
                         Console.Write("Введите shortURL карточки >");
                         string cShortURL = Console.ReadLine();
                         CardOutput(cShortURL);

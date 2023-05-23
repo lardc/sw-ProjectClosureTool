@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using ProjectClosureToolV2;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 
 namespace ProjectClosureToolV2
 {
@@ -104,6 +106,8 @@ namespace ProjectClosureToolV2
             //Console.WriteLine("cardsOut - вывод данных по всем карточкам");
             //Console.WriteLine("cardOut - вывод ярлыков для заданной карточки");
             //Console.WriteLine("fillExcel - формирование excel-файла");
+            Console.WriteLine("configW - запись данных в конфигурационный файл");
+            Console.WriteLine("configR - чтение конфигурационного файла");
             Console.WriteLine("q - выход");
         }
 
@@ -231,16 +235,17 @@ namespace ProjectClosureToolV2
         // Получение кода для работы с конкретной доской
         public static void ReadBoard()
         {
-            labelsListFilled = false;
-            Console.Write("Введите код доски >");
-            try { API_Req.boardCode = Console.ReadLine(); }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Press any key");
-                Console.ReadKey();
-                return;
-            }
+            //labelsListFilled = false;
+            //Console.Write("Введите код доски >");
+            //try 
+            //{ API_Req.boardCode = Console.ReadLine(); }
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine(e.Message);
+            //    Console.WriteLine("Press any key");
+            //    Console.ReadKey();
+            //    return;
+            //}
 
             Console.WriteLine($"boardCode: <{API_Req.boardCode}>");
             Console.WriteLine("Press any key");
@@ -543,7 +548,6 @@ namespace ProjectClosureToolV2
                             }
                         }
                     }
-                
                 Console.Write("Введите номер игнорируемого ярлыка >");
                 try { iInputIgnore = int.Parse(Console.ReadLine()); }
                 catch (Exception e)
@@ -780,9 +784,34 @@ namespace ProjectClosureToolV2
                 }
             Console.WriteLine($"Блок: {unit}");
             Console.WriteLine($"Комбинация ярлыков: {combination}");
-            Console.WriteLine($"Суммарное оценочное значение: ({sumEstimate}).\n" +
-                $"Суммарное реальное значение: [{sumPoint}].");
+            Console.WriteLine($"Суммарное оценочное значение: ({sumEstimate}).\nСуммарное реальное значение: [{sumPoint}].");
             Console.WriteLine();
+        }
+
+        public static void WriteConfig(string rr)
+        {
+            var obj = new ConfProg()
+            {
+                APIKey = API_Req.APIKey,
+                myTrelloToken = API_Req.myTrelloToken,
+                boardCode = API_Req.boardCode
+            };
+            var json = JsonConvert.SerializeObject(obj);
+            File.WriteAllText($"{rr}", json);
+        }
+
+        public static void ReadConfig(string rr)
+        {
+            ClearIgnoredLabels();
+            var json = File.ReadAllText($"{rr}");
+            var obj = JsonConvert.DeserializeObject<ConfProg>(json);
+            API_Req.APIKey = obj.APIKey;
+            API_Req.myTrelloToken = obj.myTrelloToken;
+            API_Req.boardCode = obj.boardCode;
+            Console.WriteLine($"APIKey = {API_Req.APIKey}");
+            Console.WriteLine($"myTrelloToken = {API_Req.myTrelloToken}");
+            ReadBoard();
+            BoardM();
         }
 
         static void Main()
@@ -813,6 +842,17 @@ namespace ProjectClosureToolV2
                     case "board":
                         ClearIgnoredLabels();
                         ClearLabels();
+                        labelsListFilled = false;
+                        Console.Write("Введите код доски >");
+                        try
+                        { API_Req.boardCode = Console.ReadLine(); }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                            Console.WriteLine("Press any key");
+                            Console.ReadKey();
+                            return;
+                        }
                         ReadBoard();
                         BoardM();
                         break;
@@ -843,8 +883,7 @@ namespace ProjectClosureToolV2
                     case "labelCI":
                         LabelCombinationsI();
                         foreach (string aCombination in distinctCombinationsListI)
-                            Console.WriteLine($"{distinctCombinationsListI.IndexOf(aCombination) + 1}.\n" +
-                                $"{aCombination}");
+                            Console.WriteLine($"{distinctCombinationsListI.IndexOf(aCombination) + 1}.\n{aCombination}");
                         break;
                     case "sum":
                         UnitsList();
@@ -869,7 +908,32 @@ namespace ProjectClosureToolV2
                         for (int i = 0; i < distinctCombinationsI.ToList().Count; i++)
                             Sum(iUnit, i + 1);
                         break;
-
+                    case "configW":
+                        string fileName = "config.json";
+                        try { WriteConfig(fileName); }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                            Console.WriteLine("Press any key");
+                            Console.ReadKey();
+                            return;
+                        }
+                        break;
+                    case "configR":
+                        fileName = "config.json";
+                        if (File.Exists(fileName))
+                        {
+                            try { ReadConfig(fileName); }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                                Console.WriteLine("Press any key");
+                                Console.ReadKey();
+                                return;
+                            }
+                        }
+                        else { Console.WriteLine($"Нет конфигурационного файла <{fileName}>"); }
+                        break;
                     //case "fillExcel":
                     //    if (!labelsListFilled) Console.WriteLine("Код доски не введён");
                     //    else

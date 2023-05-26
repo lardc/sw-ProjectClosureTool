@@ -18,5 +18,8 @@ namespace ProjectClosureToolV2
 
         [JsonProperty("boardCode")]
         public string boardCode { get; set; }
+
+        [JsonProperty("IgnoredLabels")]
+        public List<TrelloObjectLabels> IgnoredLabels { get; set; }
     }
 }

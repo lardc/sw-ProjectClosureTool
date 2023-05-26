@@ -794,9 +794,11 @@ namespace ProjectClosureToolV2
             {
                 APIKey = API_Req.APIKey,
                 myTrelloToken = API_Req.myTrelloToken,
-                boardCode = API_Req.boardCode
+                boardCode = API_Req.boardCode,
+                IgnoredLabels = ignoredLabelsList
             };
             var json = JsonConvert.SerializeObject(obj);
+            if (!File.Exists(rr)) { using var stream = File.Create(rr, (int)FileMode.Create) ; }
             File.WriteAllText($"{rr}", json);
         }
 
@@ -812,6 +814,17 @@ namespace ProjectClosureToolV2
             Console.WriteLine($"myTrelloToken = {API_Req.myTrelloToken}");
             ReadBoard();
             BoardM();
+            foreach (TrelloObjectLabels aLabel in obj.IgnoredLabels)
+            {
+                if (labels.Contains(aLabel))
+                {
+                    ignoredLabelsList.Add(aLabel);
+                    ignoredLabelsListFilled = true;
+                }
+            }
+            if (ignoredLabelsListFilled)
+                Console.WriteLine("Игнорируемые ярлыки:");
+            IgnoredLabelsList();
         }
 
         static void Main()
@@ -932,7 +945,7 @@ namespace ProjectClosureToolV2
                                 return;
                             }
                         }
-                        else { Console.WriteLine($"Нет конфигурационного файла <{fileName}>"); }
+                        else { Console.WriteLine($"Нет конфигурационного файла"); }
                         break;
                     //case "fillExcel":
                     //    if (!labelsListFilled) Console.WriteLine("Код доски не введён");

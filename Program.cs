@@ -13,7 +13,6 @@ namespace ProjectClosureToolV2
     {
         private static readonly byte[] s_nameUtf8 = Encoding.UTF8.GetBytes("name");
         private static readonly byte[] s_UrlUtf8 = Encoding.UTF8.GetBytes("shortUrl");
-        private static readonly byte[] s_badgesUtf8 = Encoding.UTF8.GetBytes("badges");
         private static readonly byte[] s_cardRoleUtf8 = Encoding.UTF8.GetBytes("cardRole");
 
         private static bool labelsListFilled;
@@ -23,7 +22,7 @@ namespace ProjectClosureToolV2
         private static int iDeleteIgnore;
         private static bool isIgnored;
 
-        static List<TrelloObject> cards = new List<TrelloObject>();
+        public static List<TrelloObject> cards = new List<TrelloObject>();
         static List<TrelloObjectLabels> labels = new List<TrelloObjectLabels>();
         static List<TrelloObjectLabels> labelsList = new List<TrelloObjectLabels>();
         static List<TrelloObjectLabels> ignoredLabelsList = new List<TrelloObjectLabels>();
@@ -32,61 +31,18 @@ namespace ProjectClosureToolV2
         static IEnumerable<string> distinctCombinations = new List<string>();
         private static List<string> distinctCombinationsList;
         static IEnumerable<string> distinctCombinationsI = new List<string>();
-        private static List<string> distinctCombinationsListI;
+        public static List<string> distinctCombinationsListI;
 
         static List<TrelloObjectLabels> cardLabels = new List<TrelloObjectLabels>();
         public static List<string> units = new List<string>();
         static IEnumerable<string> distinctUnits = new List<string>();
-        private static List<string> distinctUnitsList;
+        public static List<string> distinctUnitsList;
 
-        //public static void NameToken(Utf8JsonReader reader)
-        //{
-        //    if (reader.GetString().StartsWith("name"))
-        //    {
-        //        // Чтение токена
-        //        reader.Read();
+        public static double sumEstimate = 0;
+        public static double sumPoint = 0;
 
-        //        // Блок? 
-        //        if (reader.CurrentDepth.Equals(2))
-        //            // Запись оценочных и реальных значений для карточки
-        //            Trl.Fill_Current_Values(reader.GetString().ToString());
-        //        // Стадия? Команда?
-        //        else if (reader.CurrentDepth.Equals(4))
-        //            Trl.Search_Departments_Teams(reader.GetString().ToString());
-        //    }
-        //}
-
-        //public static void ShortUrlToken(Utf8JsonReader reader)
-        //{
-        //    if (reader.GetString().StartsWith("shortUrl"))
-        //    {
-        //        // Чтение токена
-        //        reader.Read();
-        //        TableResp.currentShortUrl = reader.GetString().ToString();
-        //        //Trl.cardURL[Trl.iCard] = TableResp.currentShortUrl;
-        //    }
-        //}
-
-        //public static void BadgesToken(Utf8JsonReader reader)
-        //{
-        //    if (reader.GetString().StartsWith("badges"))
-        //    {
-        //        // Чтение токена
-        //        reader.Read();
-        //        TableResp.badges++;
-        //    }
-        //}
-
-        //public static void CardRoleToken(Utf8JsonReader reader)
-        //{
-        //    if (reader.GetString().StartsWith("cardRole"))
-        //    {
-        //        // Чтение токена
-        //        reader.Read();
-        //        TableResp.cardRole++;
-        //        //Trl.FillParsedValues();
-        //    }
-        //}
+        public static List<TrelloObjectSums> sums = new List<TrelloObjectSums>();
+        public static bool sumsListFilled = false;
 
         public static void Help()
         {
@@ -102,12 +58,12 @@ namespace ProjectClosureToolV2
             Console.WriteLine("labelC - список всех комбинаций ярлыков");
             Console.WriteLine("labelCI - список всех комбинаций ярлыков (игнорируемые ярлыки не учитываются)");
             Console.WriteLine("sums - суммарные оценки (два типа) для конкретного блока для всех уникальных комбинаций ярлыков (игнорируемые ярлыки не учитываются)");
-            Console.WriteLine("sum - суммарные оценки (два типа) для конкретного блока для конкретной комбинации ярлыков ярлыков (игнорируемые ярлыки не учитываются)");
-            //Console.WriteLine("cardsOut - вывод данных по всем карточкам");
-            //Console.WriteLine("cardOut - вывод ярлыков для заданной карточки");
-            //Console.WriteLine("fillExcel - формирование excel-файла");
+            Console.WriteLine("sum - суммарные оценки (два типа) для конкретного блока для конкретной комбинации ярлыков (игнорируемые ярлыки не учитываются)");
+            Console.WriteLine("sumUC - суммарные оценки (два типа) для всех блоков для всех комбинаций ярлыков (игнорируемые ярлыки не учитываются)");
+            Console.WriteLine("fillExcel - формирование excel-файла");
             Console.WriteLine("configW - запись данных в конфигурационный файл");
             Console.WriteLine("configR - чтение конфигурационного файла");
+            Console.WriteLine("cardsOut - вывод данных по всем карточкам");
             Console.WriteLine("q - выход");
         }
 
@@ -134,119 +90,10 @@ namespace ProjectClosureToolV2
             }
         }
 
-        //public static void Board()
-        //{
-        //    Trl.ClearCurrentUnit();
-        //    Trl.ClearValues();
-        //    IgnoredLabelsList(nIgnore);
-
-        //    try
-        //    {
-        //        ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.readToEnd_string);
-        //        var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
-        //        Trl.ClearParsedCardErrorData();
-        //        while (reader.Read())
-        //        {
-        //            // Тип считанного токена
-        //            JsonTokenType tokenType;
-
-        //            tokenType = reader.TokenType;
-        //            switch (tokenType)
-        //            {
-        //                // Тип токена - начало объекта JSON
-        //                case JsonTokenType.StartObject:
-        //                    break;
-        //                // Тип токена - название свойства
-        //                case JsonTokenType.PropertyName:
-        //                    // Это токен "badges"?
-        //                    if (reader.ValueTextEquals(s_badgesUtf8))
-        //                    {
-        //                        try { BadgesToken(reader); }
-        //                        catch (Exception e)
-        //                        {
-        //                            Console.WriteLine(e.Message);
-        //                            Console.WriteLine("Press any key");
-        //                            Console.ReadKey();
-        //                            return;
-        //                        }
-        //                        if (Trl.parseBadgesToken)
-        //                        {
-        //                            if (Trl.iErrorParse < Trl.iMaxParse) Trl.iErrorParse++;
-        //                            Trl.parseStrErrorMessage[Trl.iErrorParse] = "Нет конца карточки";
-        //                            Trl.parseStrErrorCardURL[Trl.iErrorParse] = TableResp.currentShortUrl;
-        //                            Trl.FillParsedValues();
-        //                            Trl.parseBadgesToken = true;
-        //                        }
-        //                        else { Trl.parseBadgesToken = true; }
-        //                    }
-        //                    // Это токен "name"?
-        //                    else if (reader.ValueTextEquals(s_nameUtf8))
-        //                    {
-        //                        try { NameToken(reader); }
-        //                        catch (Exception e)
-        //                        {
-        //                            Console.WriteLine(e.Message);
-        //                            Console.WriteLine("Press any key");
-        //                            Console.ReadKey();
-        //                            return;
-        //                        }
-        //                    }
-        //                    // Это токен "shortUrl"?
-        //                    else if (reader.ValueTextEquals(s_UrlUtf8))
-        //                    {
-        //                        try { ShortUrlToken(reader); }
-        //                        catch (Exception e)
-        //                        {
-        //                            Console.WriteLine(e.Message);
-        //                            Console.WriteLine("Press any key");
-        //                            Console.ReadKey();
-        //                            return;
-        //                        }
-        //                    }
-        //                    // Это токен "cardRole"? 
-        //                    else if (reader.ValueTextEquals(s_cardRoleUtf8))
-        //                    {
-        //                        try { CardRoleToken(reader); }
-        //                        catch (Exception e)
-        //                        {
-        //                            Console.WriteLine(e.Message);
-        //                            Console.WriteLine("Press any key");
-        //                            Console.ReadKey();
-        //                            return;
-        //                        }
-        //                        Trl.FillParsedValues();
-        //                    }
-        //                    break;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //        Console.WriteLine("Press any key");
-        //        Console.ReadKey();
-        //        return;
-        //    }
-
-        //    Trl.FillParsedValues();
-        //    labelsListFilled = true;
-        //}
 
         // Получение кода для работы с конкретной доской
         public static void ReadBoard()
         {
-            //labelsListFilled = false;
-            //Console.Write("Введите код доски >");
-            //try 
-            //{ API_Req.boardCode = Console.ReadLine(); }
-            //catch (Exception e)
-            //{
-            //    Console.WriteLine(e.Message);
-            //    Console.WriteLine("Press any key");
-            //    Console.ReadKey();
-            //    return;
-            //}
-
             Console.WriteLine($"boardCode: <{API_Req.boardCode}>");
             Console.WriteLine("Press any key");
 
@@ -290,57 +137,6 @@ namespace ProjectClosureToolV2
             }
         }
 
-        //public static void ReadLabels()
-        //{
-        //    try 
-        //    {
-        //        ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.readToEnd_string);
-        //        var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
-        //        //Trl.ClearParsedCardErrorData();
-        //        ClearLabels();
-        //        while (reader.Read())
-        //        {
-        //            JsonTokenType tokenType;
-
-        //            tokenType = reader.TokenType;
-        //            switch (tokenType)
-        //            {
-        //                // Тип токена - начало объекта JSON
-        //                case JsonTokenType.StartObject:
-        //                    {
-        //                        break;
-        //                    }
-        //                // Тип токена - название свойства
-        //                case JsonTokenType.PropertyName:
-        //                    if (reader.ValueTextEquals(s_nameUtf8))
-        //                    {
-        //                        if (reader.GetString().StartsWith("name"))
-        //                        try
-        //                        {
-        //                            reader.Read(); 
-        //                            if (reader.CurrentDepth.Equals(4)) Trl.Input_Labels(reader.GetString().ToString());
-        //                        }
-        //                        catch (Exception e)
-        //                        {
-        //                            Console.WriteLine(e.Message);
-        //                            Console.WriteLine("Press any key");
-        //                            Console.ReadKey();
-        //                            return;
-        //                        }
-        //                    }
-        //                    break;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        Console.WriteLine(e.Message);
-        //        Console.WriteLine("Press any key");
-        //        Console.ReadKey();
-        //        return;
-        //    }
-        //    labelsListFilled = true;
-        //}
 
         // Нумерованный список всех имеющихся на доске ярлыков
         public static void LabelsList()
@@ -367,7 +163,7 @@ namespace ProjectClosureToolV2
             labels.Clear();
             combinationsList.Clear();
             distinctUnits = Enumerable.Empty<string>();
-            TableResp.iAll = 0;
+            //TableResp.iAll = 0;
             try
             {
                 ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.readToEnd_string);
@@ -649,7 +445,7 @@ namespace ProjectClosureToolV2
         {
             labelsList.Clear();
             Trl.iLabels = 0;
-            TableResp.iAll = 0;
+            //TableResp.iAll = 0;
         }
 
         public static bool CheckLabels(string rr)
@@ -772,20 +568,26 @@ namespace ProjectClosureToolV2
 
         public static void Sum(int i, int j)
         {
-            double sumEstimate = 0;
-            double sumPoint = 0;
+            sumEstimate = 0;
+            sumPoint = 0;
             string unit = distinctUnitsList.ElementAt(i - 1);
             string combination = distinctCombinationsListI.ElementAt(j - 1);
+            int sumT = 0;
             foreach (TrelloObject aCard in cards)
                 if (aCard.CardUnit.Equals(unit) && aCard.LabelCombinationI.Equals(combination))
                 {
                     sumEstimate += aCard.CardEstimate;
                     sumPoint += aCard.CardPoint;
+                    sumT++;
+                    Console.WriteLine();
                 }
-            Console.WriteLine($"Блок: {unit}");
-            Console.WriteLine($"Комбинация ярлыков: {combination}");
-            Console.WriteLine($"Суммарное оценочное значение: ({sumEstimate}).\nСуммарное реальное значение: [{sumPoint}].");
-            Console.WriteLine();
+            if (sumT > 0) 
+            {
+                Console.WriteLine($"Блок: {unit}");
+                Console.WriteLine($"Комбинация ярлыков: {combination}");
+                Console.WriteLine($"Суммарное оценочное значение: ({sumEstimate}).\nСуммарное реальное значение: [{sumPoint}].");
+                Console.WriteLine();
+            }
         }
 
         public static void WriteConfig(string rr)
@@ -899,6 +701,8 @@ namespace ProjectClosureToolV2
                             Console.WriteLine($"{distinctCombinationsListI.IndexOf(aCombination) + 1}.\n{aCombination}");
                         break;
                     case "sum":
+                        sumEstimate = 0;
+                        sumPoint = 0;
                         UnitsList();
                         Console.WriteLine();
                         LabelCombinationsI();
@@ -907,9 +711,14 @@ namespace ProjectClosureToolV2
                         Console.WriteLine();
                         Console.Write("Введите номер блока >");
                         int iUnit = int.Parse(Console.ReadLine());
-                        Console.Write("Введите номер комбинации >");
-                        int iCombination = int.Parse(Console.ReadLine());
-                        Sum(iUnit, iCombination);
+                        if (iUnit > distinctUnitsList.Count) { Console.WriteLine("Введите корректный номер блока"); }
+                        else
+                        {
+                            Console.Write("Введите номер комбинации >");
+                            int iCombination = int.Parse(Console.ReadLine());
+                            if (iCombination > distinctCombinationsListI.Count) { Console.WriteLine("Введите корректный номер комбинации"); }
+                            else Sum(iUnit, iCombination);
+                        }
                         break;
                     case "sums":
                         LabelCombinationsI();
@@ -918,8 +727,35 @@ namespace ProjectClosureToolV2
                         Console.WriteLine();
                         Console.Write("Введите номер блока >");
                         iUnit = int.Parse(Console.ReadLine());
-                        for (int i = 0; i < distinctCombinationsI.ToList().Count; i++)
+                        if (iUnit > distinctUnitsList.Count) { Console.WriteLine("Введите корректный номер блока"); }
+                        else for (int i = 0; i < distinctCombinationsI.ToList().Count; i++)
                             Sum(iUnit, i + 1);
+                        break;
+                    case "sumUC":
+                        int iU = 0;
+                        int iC = 0;
+                        UnitsList();
+                        LabelCombinationsI();
+                        for (iU = 1; iU <= distinctUnitsList.Count; iU++)
+                        {
+                            for (iC = 1; iC <= distinctCombinationsListI.Count; iC++)
+                            {
+                                Console.WriteLine($"Блок {iU}.  Комбинация {iC}.");
+                                Sum(iU, iC);
+                                sums.Add(new TrelloObjectSums()
+                                {
+                                    CardUnit = distinctUnitsList.ElementAt(iU - 1),
+                                    LabelCombinationI = distinctCombinationsListI.ElementAt(iC - 1),
+                                    SumEstimate = sumEstimate,
+                                    SumPoint = sumPoint
+                                });
+                            }
+                        }
+                        sumsListFilled = true;
+                        foreach (TrelloObjectSums aSum in sums)
+                        {
+                            Console.WriteLine(aSum.ToString());
+                        }
                         break;
                     case "configW":
                         string fileName = "config.json";
@@ -947,25 +783,19 @@ namespace ProjectClosureToolV2
                         }
                         else { Console.WriteLine($"Нет конфигурационного файла"); }
                         break;
-                    //case "fillExcel":
-                    //    if (!labelsListFilled) Console.WriteLine("Код доски не введён");
-                    //    else
-                    //    {
-                    //        Console.WriteLine("Формирование excel-файла");
-                    //        Board();
-                    //        Trl.FillExcel();
-                    //    }
-                    //    break;
+                    case "fillExcel":
+                        if (!labelsListFilled) { Console.WriteLine("Код доски не введён"); break; }
+                        if (sumsListFilled)
+                        {
+                            Console.WriteLine("Формирование excel-файла");
+                            TableResp.FillExcel();
+                        }
+                        else { Console.WriteLine("Список сумм не сформирован. Введите команду <sumUC>"); }
+                        break;
                     case "cardsOut":
                         LabelCombinationsI();
                         foreach (TrelloObject aCard in cards)
                             Console.WriteLine(aCard.ToString());
-                        break;
-                    case "cardOut":
-                        LabelCombinationsI();
-                        Console.Write("Введите shortURL карточки >");
-                        string cShortURL = Console.ReadLine();
-                        CardOutput(cShortURL);
                         break;
                     case "boardM":
                         BoardM();

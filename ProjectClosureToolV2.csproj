@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="4.5.3.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties config_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>

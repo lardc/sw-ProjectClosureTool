@@ -1,4 +1,5 @@
 ﻿using OfficeOpenXml;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.RefAndLookup;
 using OfficeOpenXml.Style;
 using System;
 
@@ -48,12 +49,15 @@ namespace ProjectClosureToolV2
                             estimateWorksheet.Cells[1, iC + 1].Value = Program.distinctCombinationsListI[iC - 1];
                             pointWorksheet.Cells[1, iC + 1].Value = Program.distinctCombinationsListI[iC - 1];
                         }
+                        estimateWorksheet.Column(iC).Width = 19;
+                        estimateWorksheet.Column(iC + 1).Width = 19;
+                        pointWorksheet.Column(iC).Width = 19;
+                        pointWorksheet.Column(iC + 1).Width = 19;
                     }
                 }
                 excel_result.SaveAs(fout);
                 for (int iU = 1; iU <= Program.distinctUnitsList.Count; iU++)
                 {
-
                     for (int iC = 1; iC <= Program.distinctCombinationsListI.Count; iC++)
                     {
                         string unit = Program.distinctUnitsList.ElementAt(iU - 1);

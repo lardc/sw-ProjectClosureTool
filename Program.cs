@@ -163,7 +163,6 @@ namespace ProjectClosureToolV2
             labels.Clear();
             combinationsList.Clear();
             distinctUnits = Enumerable.Empty<string>();
-            //TableResp.iAll = 0;
             try
             {
                 ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.readToEnd_string);

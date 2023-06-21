@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ProjectClosureToolV2
+namespace ProjectClosureToolWinFormsNET6
 {
     public partial class TrelloObject
     {
@@ -56,17 +55,6 @@ namespace ProjectClosureToolV2
         public override int GetHashCode()
         {
             return CardID;
-        }
-    }
-    public partial class TrelloObjectSums
-    {
-        public string CardUnit { get; set; }
-        public string LabelCombinationI { get; set; }
-        public double SumEstimate { get; set; }
-        public double SumPoint { get; set; }
-        public override string ToString()
-        {
-            return "CardUnit: " + CardUnit + "; LabelCombinationI: " + LabelCombinationI + "; SumEstimate = " + SumEstimate + "; SumPoint = " + SumPoint;
         }
     }
 }

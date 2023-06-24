@@ -39,6 +39,7 @@
             button1 = new Button();
             button2 = new Button();
             dataGridView1 = new DataGridView();
+            button3 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -148,18 +149,30 @@
             // 
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Location = new Point(810, 9);
-            dataGridView1.Margin = new Padding(4, 4, 4, 4);
+            dataGridView1.Margin = new Padding(4);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
             dataGridView1.Size = new Size(950, 752);
             dataGridView1.TabIndex = 11;
             // 
+            // button3
+            // 
+            button3.Location = new Point(42, 316);
+            button3.Margin = new Padding(2, 4, 2, 4);
+            button3.Name = "button3";
+            button3.Size = new Size(172, 39);
+            button3.TabIndex = 12;
+            button3.Text = "Список блоков";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1775, 866);
+            Controls.Add(button3);
             Controls.Add(dataGridView1);
             Controls.Add(button2);
             Controls.Add(button1);
@@ -193,5 +206,6 @@
         private Button button1;
         private Button button2;
         private DataGridView dataGridView1;
+        private Button button3;
     }
 }

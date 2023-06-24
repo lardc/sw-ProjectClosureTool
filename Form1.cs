@@ -14,10 +14,12 @@ namespace ProjectClosureToolWinFormsNET6
         public static List<TrelloObject> cards = new List<TrelloObject>();
         static List<TrelloObjectLabels> labels = new List<TrelloObjectLabels>();
         static List<TrelloObjectLabels> labelsList = new List<TrelloObjectLabels>();
+        public static List<string> units = new List<string>();
+        static IEnumerable<string> distinctUnits = new List<string>();
+        public static List<string> distinctUnitsList;
         private static bool labelsListFilled;
+        private static bool unitsListFilled;
         private static int iLabels;
-        private static int cardsCount;
-        private static int iNone;
         private static string[] cardLabels = new string[1000];
 
         public static string currentCardURL;
@@ -26,25 +28,20 @@ namespace ProjectClosureToolWinFormsNET6
         public static double currentCardEstimate;
         public static double currentCardPoint;
 
-        public static void EMessage(string eM)
+        private void EMessage(string eM)
         {
             int s_err = eM.IndexOf("error", 0);
             int s_dot = eM.IndexOf(".", 0);
             string s_mess = eM.Substring(s_err, s_dot - s_err).Trim();
-            myOuts.Add(new MyOut(0, s_mess));
+            ListUp(s_mess);
         }
 
-        private /*static*/ void ListUp(string mss)
+        private void ListUp(string mss)
         {
-            //listBox1.BeginUpdate();
-            //listBox1.Items.Add(mss);
-            //listBox1.EndUpdate();
-            //Application.DoEvents();
             dataGridView1_new_string(mss);
         }
         public static DataTable table = new DataTable();
 
-        //-------------------------------------
         public struct MyOut
         {
             public int numStr;
@@ -59,45 +56,17 @@ namespace ProjectClosureToolWinFormsNET6
         }
         public static List<MyOut> myOuts = new List<MyOut>();
 
-        //public struct MyOutN
-        //{
-        //    public int numStr;
-        //    public string strOUT;
-
-
-        //    public MyOutN(int _numStr, string _strOUT)
-        //    {
-        //        numStr = _numStr;
-        //        strOUT = _strOUT;
-        //    }
-        //}
-        //public List<MyOutN> myOutsN = new List<MyOutN>();
-
-        //-------------------------------------
-
-
-
-
         public Form1()
         {
             InitializeComponent();
         }
 
         public void Form1_Load(object sender, EventArgs e)
-        //private void Form1_Load(object sender, EventArgs e)
         {
             dataGridView1.AllowUserToAddRows = false;
-            myOuts.Add(new MyOut(0, "---------------Старт-----------"));
-
-            //DataTable table = new DataTable();
             table.Columns.Add("N п/п", typeof(int));
             table.Columns.Add("Response", typeof(string));
-
-            for (int i = 0; i < myOuts.Count; i++)
-            {
-                table.Rows.Add(myOuts[i].numStr, myOuts[i].strOUT);
-            }
-            dataGridView1.DataSource = table;
+            dataGridView1_start_string("---------------Старт---------------");
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -161,12 +130,10 @@ namespace ProjectClosureToolWinFormsNET6
         }
 
         // Получение кода для работы с конкретной доской
-        public static void ReadBoard()
+        private void ReadBoard()
         {
             string CardFilter = "/cards/open";
             string CardFields = "&fields=id,badges,dateLastActivity,idBoard,idLabels,idList,idShort,labels,limits,name,shortLink,shortUrl,cardRole,url&limit=1000";
-
-            //myOuts.Add(new MyOut(0, "Start"));
 
             try
             {
@@ -177,7 +144,7 @@ namespace ProjectClosureToolWinFormsNET6
                 if (e.Message.Contains("400"))
                 {
                     EMessage(e.Message);
-                    myOuts.Add(new MyOut(0, "Недопустимый url доски"));
+                    ListUp("Недопустимый url доски");
                     return;
                 }
                 if (e.Message.Contains("401"))
@@ -189,23 +156,23 @@ namespace ProjectClosureToolWinFormsNET6
                 if (e.Message.Contains("404"))
                 {
                     EMessage(e.Message);
-                    myOuts.Add(new MyOut(0, "Доска не найдена"));
+                    ListUp("Доска не найдена");
                     return;
                 }
             }
         }
 
-        public static void BoardM()
+        private void BoardM()
         {
             ClearCardM();
             cards.Clear();
-            //units.Clear();
+            units.Clear();
             labels.Clear();
             //combinationsList.Clear();
-            //distinctUnits = Enumerable.Empty<string>();
-            myOuts.Add(new MyOut(0, $"APIKey = {API_Req.APIKey}"));
-            myOuts.Add(new MyOut(0, $"myTrelloToken = {API_Req.myTrelloToken}"));
-            myOuts.Add(new MyOut(0, $"boardCode = {API_Req.boardCode}"));
+            distinctUnits = Enumerable.Empty<string>();
+            ListUp($"APIKey = {API_Req.APIKey}");
+            ListUp($"myTrelloToken = {API_Req.myTrelloToken}");
+            ListUp($"boardCode = {API_Req.boardCode}");
             try
             {
                 ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
@@ -224,7 +191,7 @@ namespace ProjectClosureToolWinFormsNET6
                                 try { NameTokenM(reader); }
                                 catch (Exception e)
                                 {
-                                    myOuts.Add(new MyOut(0, e.Message));
+                                    ListUp(e.Message);
                                     return;
                                 }
                             }
@@ -233,7 +200,7 @@ namespace ProjectClosureToolWinFormsNET6
                                 try { ShortUrlTokenM(reader); }
                                 catch (Exception e)
                                 {
-                                    myOuts.Add(new MyOut(0, e.Message));
+                                    ListUp(e.Message);
                                     return;
                                 }
                             }
@@ -242,7 +209,7 @@ namespace ProjectClosureToolWinFormsNET6
                                 try { CardRoleTokenM(reader); }
                                 catch (Exception e)
                                 {
-                                    myOuts.Add(new MyOut(0, e.Message));
+                                    ListUp(e.Message);
                                     return;
                                 }
                                 ClearCardM();
@@ -255,12 +222,12 @@ namespace ProjectClosureToolWinFormsNET6
             }
             catch (Exception e)
             {
-                myOuts.Add(new MyOut(0, e.Message));
+                ListUp(e.Message);
                 return;
             }
         }
 
-        public static void SearchUnitValuesM(string rr)
+        private void SearchUnitValuesM(string rr)
         {
             if (rr.Length > 0)
             {
@@ -279,7 +246,7 @@ namespace ProjectClosureToolWinFormsNET6
                         try { currentCardEstimate = d_ior; }
                         catch (Exception e)
                         {
-                            myOuts.Add(new MyOut(0, e.Message));
+                            ListUp(e.Message);
                             return;
                         }
                     }
@@ -290,7 +257,7 @@ namespace ProjectClosureToolWinFormsNET6
                         try { currentCardPoint = d_isq; }
                         catch (Exception e)
                         {
-                            myOuts.Add(new MyOut(0, e.Message));
+                            ListUp(e.Message);
                             return;
                         }
                     }
@@ -298,10 +265,12 @@ namespace ProjectClosureToolWinFormsNET6
                     try
                     {
                         currentCardUnit = s_unit;
+                        units.Add(currentCardUnit);
+                        unitsListFilled = true;
                     }
                     catch (Exception e)
                     {
-                        myOuts.Add(new MyOut(0, e.Message));
+                        ListUp(e.Message);
                         return;
                     }
                     string s_name = "";
@@ -319,12 +288,11 @@ namespace ProjectClosureToolWinFormsNET6
                     try { currentCardName = s_name; }
                     catch (Exception e)
                     {
-                        myOuts.Add(new MyOut(0, e.Message));
+                        ListUp(e.Message);
                         return;
                     }
                 }
                 else currentCardName = rr;
-                if (currentCardEstimate == 0 && currentCardPoint == 0 && ((iDot <= Math.Min(iOpeningParenthesis, iOpeningBracket) && Math.Min(iOpeningParenthesis, iOpeningBracket) >= 0) || (Math.Max(iOpeningParenthesis, iOpeningBracket) < 0))) iNone++;
             }
         }
 
@@ -334,7 +302,7 @@ namespace ProjectClosureToolWinFormsNET6
             iLabels++;
         }
 
-        public static void NameTokenM(Utf8JsonReader reader)
+        private void NameTokenM(Utf8JsonReader reader)
         {
             if (reader.GetString().StartsWith("name"))
             {
@@ -343,14 +311,14 @@ namespace ProjectClosureToolWinFormsNET6
                     try { SearchUnitValuesM(reader.GetString().ToString()); }
                     catch (Exception e)
                     {
-                        myOuts.Add(new MyOut(0, e.Message));
+                        ListUp(e.Message);
                         return;
                     }
                 else if (reader.CurrentDepth.Equals(4))
                     try { SearchLabelsM(reader.GetString().ToString()); }
                     catch (Exception e)
                     {
-                        myOuts.Add(new MyOut(0, e.Message));
+                        ListUp(e.Message);
                         return;
                     }
             }
@@ -408,6 +376,7 @@ namespace ProjectClosureToolWinFormsNET6
             //ClearIgnoredLabels();
             ClearLabels();
             labelsListFilled = false;
+            unitsListFilled = false;
             try
             { API_Req.boardCode = textBox2.Text; }
             catch (Exception ex)
@@ -421,19 +390,9 @@ namespace ProjectClosureToolWinFormsNET6
         }
 
         private void LabelsList()
-        //public static void LabelsList()
         {
             if (!labelsListFilled)
-            {
                 ListUp("Ярлыков нет. Выполните команду ввода кода доски.");
-                string message = "Ярлыков нет. Выполните команду ввода кода доски.";
-                string caption = labelsListFilled.ToString();
-                MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-                DialogResult result;
-                result = MessageBox.Show(message, caption, buttons);
-                if (result == System.Windows.Forms.DialogResult.Yes)
-                    this.Close();
-            }
             else
             {
                 foreach (TrelloObjectLabels aLabel in labelsList)
@@ -441,29 +400,45 @@ namespace ProjectClosureToolWinFormsNET6
                     ListUp(aLabel.ToString());
             }
         }
+        private void dataGridView1_start_string(string mss)
+        {
+            myOuts.Add(new MyOut(0, mss));
+            table.Rows.Clear();
+            table.Rows.Add(0, myOuts[0].strOUT);
+            dataGridView1.DataSource = table;
+        }
+
+
         private void dataGridView1_new_string(string mss)
         {
             int k = myOuts.Count;
             myOuts.Add(new MyOut(k, mss));
-            //myOuts.Add(new MyOut(2, "Старт 2"));
-
-            //DataTable table = new DataTable();
-            //table.Columns.Add("N п/п", typeof(int));
-            //table.Columns.Add("Response", typeof(string));
-
-            table.Rows.Clear();
-            for (int i = 0; i < myOuts.Count; i++)
-            {
-                table.Rows.Add(myOuts[i].numStr, myOuts[i].strOUT);
-            }
+            table.Rows.Add(myOuts[k].numStr, myOuts[k].strOUT);
             dataGridView1.DataSource = table;
-
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             ListUp("Список ярлыков:");
             LabelsList();
+        }
+
+        private void UnitsList()
+        {
+            if (!unitsListFilled)
+                ListUp("Блоков нет. Выполните команду ввода кода доски.");
+            else
+                foreach (string aUnit in distinctUnitsList)
+                    ListUp(aUnit);
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            ListUp("Список блоков:");
+            distinctUnits = units.Distinct();
+            distinctUnitsList = distinctUnits.ToList();
+            distinctUnitsList.Sort();
+            UnitsList();
         }
     }
     public static class API_Req

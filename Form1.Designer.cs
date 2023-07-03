@@ -40,13 +40,19 @@
             button2 = new Button();
             dataGridView1 = new DataGridView();
             button3 = new Button();
+            button4 = new Button();
+            button5 = new Button();
+            button6 = new Button();
+            button7 = new Button();
+            button8 = new Button();
+            button9 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(42, 50);
+            label1.Location = new Point(11, 15);
             label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
             label1.Size = new Size(96, 25);
@@ -56,7 +62,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(521, 50);
+            label2.Location = new Point(11, 56);
             label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
             label2.Size = new Size(104, 25);
@@ -66,7 +72,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(42, 124);
+            label3.Location = new Point(11, 106);
             label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
             label3.Size = new Size(67, 25);
@@ -76,7 +82,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(42, 196);
+            label4.Location = new Point(11, 156);
             label4.Margin = new Padding(2, 0, 2, 0);
             label4.Name = "label4";
             label4.Size = new Size(124, 25);
@@ -85,7 +91,7 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(176, 44);
+            textBox1.Location = new Point(145, 17);
             textBox1.Margin = new Padding(2, 4, 2, 4);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(235, 31);
@@ -95,7 +101,7 @@
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(418, 44);
+            textBox2.Location = new Point(145, 56);
             textBox2.Margin = new Padding(2, 4, 2, 4);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(98, 31);
@@ -105,7 +111,7 @@
             // 
             // textBox3
             // 
-            textBox3.Location = new Point(176, 119);
+            textBox3.Location = new Point(145, 101);
             textBox3.Margin = new Padding(2, 4, 2, 4);
             textBox3.Name = "textBox3";
             textBox3.Size = new Size(150, 31);
@@ -115,7 +121,7 @@
             // 
             // textBox4
             // 
-            textBox4.Location = new Point(176, 191);
+            textBox4.Location = new Point(145, 150);
             textBox4.Margin = new Padding(2, 4, 2, 4);
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(150, 31);
@@ -125,10 +131,10 @@
             // 
             // button1
             // 
-            button1.Location = new Point(638, 44);
+            button1.Location = new Point(325, 74);
             button1.Margin = new Padding(2, 4, 2, 4);
             button1.Name = "button1";
-            button1.Size = new Size(128, 39);
+            button1.Size = new Size(128, 88);
             button1.TabIndex = 8;
             button1.Text = "Обработка";
             button1.UseVisualStyleBackColor = true;
@@ -136,7 +142,7 @@
             // 
             // button2
             // 
-            button2.Location = new Point(42, 246);
+            button2.Location = new Point(11, 211);
             button2.Margin = new Padding(2, 4, 2, 4);
             button2.Name = "button2";
             button2.Size = new Size(172, 39);
@@ -147,18 +153,20 @@
             // 
             // dataGridView1
             // 
+            dataGridView1.AllowUserToOrderColumns = true;
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(810, 9);
+            dataGridView1.Location = new Point(558, 15);
             dataGridView1.Margin = new Padding(4);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(950, 752);
+            dataGridView1.Size = new Size(1127, 836);
             dataGridView1.TabIndex = 11;
             // 
             // button3
             // 
-            button3.Location = new Point(42, 316);
+            button3.Location = new Point(11, 258);
             button3.Margin = new Padding(2, 4, 2, 4);
             button3.Name = "button3";
             button3.Size = new Size(172, 39);
@@ -167,11 +175,84 @@
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
             // 
+            // button4
+            // 
+            button4.Location = new Point(11, 493);
+            button4.Margin = new Padding(2, 4, 2, 4);
+            button4.Name = "button4";
+            button4.Size = new Size(279, 39);
+            button4.TabIndex = 13;
+            button4.Text = "Список комбинаций ярлыков";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(11, 305);
+            button5.Margin = new Padding(2, 4, 2, 4);
+            button5.Name = "button5";
+            button5.Size = new Size(403, 39);
+            button5.TabIndex = 14;
+            button5.Text = "Добавление ярлыков к списку игнорируемых";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
+            // 
+            // button6
+            // 
+            button6.Location = new Point(11, 352);
+            button6.Margin = new Padding(2, 4, 2, 4);
+            button6.Name = "button6";
+            button6.Size = new Size(371, 39);
+            button6.TabIndex = 15;
+            button6.Text = "Просмотр списка игнорируемых ярлыков";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
+            // 
+            // button7
+            // 
+            button7.Location = new Point(11, 446);
+            button7.Margin = new Padding(2, 4, 2, 4);
+            button7.Name = "button7";
+            button7.Size = new Size(371, 39);
+            button7.TabIndex = 16;
+            button7.Text = "Очистка списка игнорируемых ярлыков";
+            button7.UseVisualStyleBackColor = true;
+            button7.Click += button7_Click;
+            // 
+            // button8
+            // 
+            button8.Location = new Point(11, 540);
+            button8.Margin = new Padding(2, 4, 2, 4);
+            button8.Name = "button8";
+            button8.Size = new Size(541, 39);
+            button8.TabIndex = 17;
+            button8.Text = "Список комбинаций ярлыков (игнорируемые не учитываются)";
+            button8.UseVisualStyleBackColor = true;
+            button8.Click += button8_Click;
+            // 
+            // button9
+            // 
+            button9.Location = new Point(11, 399);
+            button9.Margin = new Padding(2, 4, 2, 4);
+            button9.Name = "button9";
+            button9.RightToLeft = RightToLeft.Yes;
+            button9.Size = new Size(384, 39);
+            button9.TabIndex = 18;
+            button9.Text = "Удаление ярлыков из списка игнорируемых";
+            button9.UseVisualStyleBackColor = true;
+            button9.Click += button9_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1775, 866);
+            ClientSize = new Size(1699, 866);
+            Controls.Add(button9);
+            Controls.Add(button8);
+            Controls.Add(button7);
+            Controls.Add(button6);
+            Controls.Add(button5);
+            Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(dataGridView1);
             Controls.Add(button2);
@@ -207,5 +288,11 @@
         private Button button2;
         private DataGridView dataGridView1;
         private Button button3;
+        private Button button4;
+        private Button button5;
+        private Button button6;
+        private Button button7;
+        private Button button8;
+        private Button button9;
     }
 }

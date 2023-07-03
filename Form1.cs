@@ -2,6 +2,8 @@ using System.Security.Policy;
 using System.Text.Json;
 using System.Text;
 using System.Data;
+using System.Windows.Forms;
+using Microsoft.VisualBasic;
 
 namespace ProjectClosureToolWinFormsNET6
 {
@@ -14,10 +16,18 @@ namespace ProjectClosureToolWinFormsNET6
         public static List<TrelloObject> cards = new List<TrelloObject>();
         static List<TrelloObjectLabels> labels = new List<TrelloObjectLabels>();
         static List<TrelloObjectLabels> labelsList = new List<TrelloObjectLabels>();
+        static List<TrelloObjectLabels> ignoredLabelsList = new List<TrelloObjectLabels>();
         public static List<string> units = new List<string>();
         static IEnumerable<string> distinctUnits = new List<string>();
         public static List<string> distinctUnitsList;
+        static List<string> combinationsList = new List<string>();
+        static List<string> combinationsListI = new List<string>();
+        static IEnumerable<string> distinctCombinations = new List<string>();
+        static IEnumerable<string> distinctCombinationsI = new List<string>();
+        private static List<string> distinctCombinationsList;
+        private static List<string> distinctCombinationsListI;
         private static bool labelsListFilled;
+        private static bool ignoredLabelsListFilled;
         private static bool unitsListFilled;
         private static int iLabels;
         private static string[] cardLabels = new string[1000];
@@ -27,6 +37,8 @@ namespace ProjectClosureToolWinFormsNET6
         public static string currentCardName;
         public static double currentCardEstimate;
         public static double currentCardPoint;
+        public static int iInputIgnore;
+        private static int iDeleteIgnore;
 
         private void EMessage(string eM)
         {
@@ -42,12 +54,11 @@ namespace ProjectClosureToolWinFormsNET6
         }
         public static DataTable table = new DataTable();
 
+        //-------------------------------------
         public struct MyOut
         {
             public int numStr;
             public string strOUT;
-
-
             public MyOut(int _numStr, string _strOUT)
             {
                 numStr = _numStr;
@@ -66,7 +77,7 @@ namespace ProjectClosureToolWinFormsNET6
             dataGridView1.AllowUserToAddRows = false;
             table.Columns.Add("N п/п", typeof(int));
             table.Columns.Add("Response", typeof(string));
-            dataGridView1_start_string("---------------—тарт---------------");
+            dataGridView1_start_string("---------------—тарт-----------");
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -103,21 +114,13 @@ namespace ProjectClosureToolWinFormsNET6
             { API_Req.myTrelloToken = textBox4.Text; }
         }
 
-        // ќчистка списка игнорируемых €рлыков
-        //public static void ClearIgnoredLabels()
-        //{
-        //    ignoredLabelsList.Clear();
-        //    ignoredLabelsListFilled = false;
-        //    LabelCombinationsI();
-        //}
-
-        public static void ClearLabels()
+        public void ClearLabels()
         {
             labelsList.Clear();
             iLabels = 0;
         }
 
-        public static void ClearCardM()
+        public void ClearCardM()
         {
             currentCardURL = "";
             currentCardUnit = "";
@@ -150,7 +153,7 @@ namespace ProjectClosureToolWinFormsNET6
                 if (e.Message.Contains("401"))
                 {
                     EMessage(e.Message);
-                    Console.Write("Ќет доступа к доске \nkt - ввод ключа и токена\n");
+                    ListUp("Ќет доступа к доске \nkt - ввод ключа и токена\n");
                     return;
                 }
                 if (e.Message.Contains("404"))
@@ -168,7 +171,7 @@ namespace ProjectClosureToolWinFormsNET6
             cards.Clear();
             units.Clear();
             labels.Clear();
-            //combinationsList.Clear();
+            combinationsList.Clear();
             distinctUnits = Enumerable.Empty<string>();
             ListUp($"APIKey = {API_Req.APIKey}");
             ListUp($"myTrelloToken = {API_Req.myTrelloToken}");
@@ -218,6 +221,7 @@ namespace ProjectClosureToolWinFormsNET6
                     }
                 }
                 labels.Sort();
+                //LabelCombinations();
                 //LabelCombinationsI();
             }
             catch (Exception e)
@@ -296,7 +300,7 @@ namespace ProjectClosureToolWinFormsNET6
             }
         }
 
-        public static void SearchLabelsM(string rr)
+        public void SearchLabelsM(string rr)
         {
             cardLabels[iLabels] = rr;
             iLabels++;
@@ -324,7 +328,7 @@ namespace ProjectClosureToolWinFormsNET6
             }
         }
 
-        public static void ShortUrlTokenM(Utf8JsonReader reader)
+        public void ShortUrlTokenM(Utf8JsonReader reader)
         {
             if (reader.GetString().StartsWith("shortUrl"))
             {
@@ -333,7 +337,7 @@ namespace ProjectClosureToolWinFormsNET6
             }
         }
 
-        public static void CardRoleTokenM(Utf8JsonReader reader)
+        public void CardRoleTokenM(Utf8JsonReader reader)
         {
             int newCardID = cards.Count;
             cards.Add(new TrelloObject()
@@ -373,7 +377,6 @@ namespace ProjectClosureToolWinFormsNET6
         // ќбработка
         private void button1_Click(object sender, EventArgs e)
         {
-            //ClearIgnoredLabels();
             ClearLabels();
             labelsListFilled = false;
             unitsListFilled = false;
@@ -389,17 +392,6 @@ namespace ProjectClosureToolWinFormsNET6
             ListUp("ќбработка завершена");
         }
 
-        private void LabelsList()
-        {
-            if (!labelsListFilled)
-                ListUp("ярлыков нет. ¬ыполните команду ввода кода доски.");
-            else
-            {
-                foreach (TrelloObjectLabels aLabel in labelsList)
-                    //if (!CheckIgnored(aLabel.CardLabel))
-                    ListUp(aLabel.ToString());
-            }
-        }
         private void dataGridView1_start_string(string mss)
         {
             myOuts.Add(new MyOut(0, mss));
@@ -415,12 +407,25 @@ namespace ProjectClosureToolWinFormsNET6
             myOuts.Add(new MyOut(k, mss));
             table.Rows.Add(myOuts[k].numStr, myOuts[k].strOUT);
             dataGridView1.DataSource = table;
+            dataGridView1.CurrentCell = dataGridView1[0, k];
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             ListUp("—писок €рлыков:");
             LabelsList();
+        }
+
+        private void LabelsList()
+        {
+            if (!labelsListFilled)
+                ListUp("ярлыков нет. ¬ыполните команду ввода кода доски.");
+            else
+            {
+                foreach (TrelloObjectLabels aLabel in labelsList)
+                    if (!CheckIgnored(aLabel.CardLabel))
+                        ListUp(aLabel.ToString());
+            }
         }
 
         private void UnitsList()
@@ -440,8 +445,260 @@ namespace ProjectClosureToolWinFormsNET6
             distinctUnitsList.Sort();
             UnitsList();
         }
+
+        public void LabelCombinations()
+        {
+            try
+            {
+                foreach (string aCombination in distinctCombinationsList)
+                    ListUp(aCombination);
+            }
+            catch (Exception e)
+            {
+                ListUp(e.Message);
+                return;
+            }
+        }
+
+        private void LabelCombinationsI()
+        {
+            try
+            {
+                foreach (string aCombination in distinctCombinationsListI)
+                    ListUp(aCombination);
+            }
+            catch (Exception e)
+            {
+                ListUp(e.Message);
+                return;
+            }
+        }
+
+        // —писок комбинаций €рлыков
+        private void button4_Click(object sender, EventArgs e)
+        {
+            combinationsList.Clear();
+            distinctCombinations = Enumerable.Empty<string>();
+            labels.Sort();
+            for (int i = 0; i < cards.Count; i++)
+            {
+                string sCombination = "";
+                foreach (TrelloObjectLabels aLabel in labels)
+                    if (aLabel.CardID.Equals(i))
+                        sCombination += $"{aLabel.CardLabel}        ";
+                foreach (TrelloObject aCard in cards)
+                    if (aCard.CardID.Equals(i) && sCombination != "")
+                    {
+                        aCard.LabelCombination = sCombination;
+                        combinationsList.Add(sCombination);
+                    }
+            }
+            distinctCombinations = combinationsList.Distinct();
+            distinctCombinationsList = distinctCombinations.ToList();
+            distinctCombinationsList.Sort();
+            ListUp("—писок комбинаций €рлыков:");
+            LabelCombinations();
+        }
+
+        private bool CheckLabels(string rr)
+        {
+            bool isLabel = false;
+            foreach (TrelloObjectLabels aLabel in labelsList)
+            {
+                if (aLabel.CardLabel.Equals(rr))
+                    isLabel = true;
+            }
+            return isLabel;
+        }
+
+        private bool CheckIgnored(string rr)
+        {
+            bool isIgnored = false;
+            foreach (TrelloObjectLabels aLabel in ignoredLabelsList)
+            {
+                if (aLabel.CardLabel.Equals(rr))
+                    isIgnored = true;
+            }
+            return isIgnored;
+        }
+
+        private void AddIgnore()
+        {
+            try { iInputIgnore = int.Parse(Interaction.InputBox("¬ведите номер €рлыка")); }
+            catch (Exception e)
+            {
+                ListUp(e.Message);
+                return;
+            }
+            while (iInputIgnore != 0)
+            {
+                foreach (TrelloObjectLabels aLabel in labelsList)
+                    if (aLabel.CardID.Equals(iInputIgnore - 1))
+                    {
+                        if (!CheckLabels(aLabel.CardLabel) || iInputIgnore > labelsList.Count)
+                            ListUp($"Ќет €рлыка с номером <{iInputIgnore}>. ¬ведите другой номер.");
+                        else
+                        {
+                            if (CheckIgnored(aLabel.CardLabel))
+                            {
+                                foreach (TrelloObjectLabels label in labelsList)
+                                    if (label.CardID.Equals(iInputIgnore - 1))
+                                        ListUp($"ярлык <{label.CardLabel}> уже содержитс€ в списке игнорируемых");
+                            }
+                            else
+                            {
+                                ignoredLabelsList.Add(aLabel);
+                                ignoredLabelsListFilled = true;
+                            }
+                        }
+                    }
+                ListUp("ѕеречень игнорируемых €рлыков:");
+                IgnoredLabelsList();
+                Application.DoEvents();
+                try { iInputIgnore = int.Parse(Interaction.InputBox("¬ведите номер €рлыка")); }
+                catch (Exception e)
+                {
+                    ListUp(e.Message);
+                    return;
+                }
+            }
+            foreach (TrelloObject aCard in cards)
+                aCard.LabelCombinationI = "";
+        }
+
+        // ƒобавление €рлыков к списку игнорируемых
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (!labelsListFilled)
+                ListUp("ярлыков нет. ¬ыполните команду ввода кода доски.");
+            else
+            {
+                LabelsList();
+                Application.DoEvents();
+                AddIgnore();
+                IgnoredLabelsList();
+            }
+        }
+
+        private void IgnoredLabelsList()
+        {
+            if (!ignoredLabelsListFilled)
+                ListUp("»гнорируемых €рлыков нет");
+            else
+                foreach (TrelloObjectLabels aLabel in ignoredLabelsList)
+                {
+                    if (!CheckLabels(aLabel.CardLabel))
+                        ListUp($"»гнорируемый €рлык <{aLabel.CardLabel}> отсутствует в списке €рлыков. ѕерезагрузите доску.");
+                    else ListUp(aLabel.ToString());
+                }
+        }
+
+        // ѕросмотр списка игнорируемых €рлыков
+        private void button6_Click(object sender, EventArgs e)
+        {
+            ListUp("ѕеречень игнорируемых €рлыков:");
+            IgnoredLabelsList();
+        }
+
+        // ќчистка списка игнорируемых €рлыков
+        private void button7_Click(object sender, EventArgs e)
+        {
+            ignoredLabelsList.Clear();
+            ignoredLabelsListFilled = false;
+        }
+
+        // —писок комбинаций €рлыков (игнорируемые не учитываютс€)
+        private void button8_Click(object sender, EventArgs e)
+        {
+            combinationsListI.Clear();
+            distinctCombinationsI = Enumerable.Empty<string>();
+            labels.Sort();
+            for (int i = 0; i < cards.Count; i++)
+            {
+                string sCombination = "";
+                foreach (TrelloObjectLabels aLabel in labels)
+                    if (aLabel.CardID.Equals(i) && !ignoredLabelsList.Contains(aLabel))
+                        sCombination += $"{aLabel.CardLabel}        ";
+                foreach (TrelloObject aCard in cards)
+                    if (aCard.CardID.Equals(i) && sCombination != "")
+                    {
+                        aCard.LabelCombination = sCombination;
+                        combinationsListI.Add(sCombination);
+                    }
+            }
+            distinctCombinationsI = combinationsListI.Distinct();
+            distinctCombinationsListI = distinctCombinationsI.ToList();
+            distinctCombinationsListI.Sort();
+            ListUp("—писок комбинаций €рлыков (игнорируемые не учитываютс€):");
+            LabelCombinationsI();
+        }
+
+        private void DeleteIgnoredLabel()
+        {
+            try { iDeleteIgnore = int.Parse(Interaction.InputBox("¬ведите номер удал€емого из списка игнорируемых €рлыка")); }
+            catch (Exception ex)
+            {
+                ListUp(ex.Message);
+                return;
+            }
+            Application.DoEvents();
+            while (iDeleteIgnore != 0)
+            {
+                var temp = new List<TrelloObjectLabels>();
+                bool contains = false;
+                foreach (TrelloObjectLabels aLabel in ignoredLabelsList)
+                {
+                    if (aLabel.CardID.Equals(iDeleteIgnore - 1))
+                    {
+                        contains = true;
+                        if (aLabel.CardID.Equals(iDeleteIgnore - 1))
+                            temp.Add(aLabel);
+                    }
+                }
+                if (!contains)
+                    ListUp($"Ќет игнорируемого €рлыка с номером <{iDeleteIgnore}>. ¬ведите другой номер.");
+                if (ignoredLabelsList.Count < 1)
+                {
+                    ignoredLabelsListFilled = false;
+                    iDeleteIgnore = 0;
+                    ListUp("ѕеречень игнорируемых €рлыков:");
+                    IgnoredLabelsList();
+                    Application.DoEvents();
+                }
+                else
+                {
+                    foreach (TrelloObjectLabels aLabel in temp)
+                        if (ignoredLabelsList.Contains(aLabel))
+                            ignoredLabelsList.Remove(aLabel);
+                    ListUp("ѕеречень игнорируемых €рлыков:");
+                    IgnoredLabelsList();
+                    Application.DoEvents();
+                    try { iDeleteIgnore = int.Parse(Interaction.InputBox("¬ведите номер удал€емого из списка игнорируемых €рлыка")); }
+                    catch (Exception ex)
+                    {
+                        ListUp(ex.Message);
+                        return;
+                    }
+                }
+            }
+        }
+
+        // ”даление €рлыков из списка игнорируемых
+        private void button9_Click(object sender, EventArgs e)
+        {
+            if (!ignoredLabelsListFilled)
+                ListUp("»гнорируемых €рлыков нет");
+            else
+            {
+                ListUp("”даление €рлыков по номеру");
+                ListUp("ƒл€ выхода введите 0");
+                IgnoredLabelsList();
+                Application.DoEvents();
+                DeleteIgnoredLabel();
+            }
+        }
     }
-    public static class API_Req
+    public class API_Req
     {
         private static string readToEnd_string;
         public static string boardURL = Program.c_boardURL;

@@ -46,6 +46,8 @@
             button7 = new Button();
             button8 = new Button();
             button9 = new Button();
+            button10 = new Button();
+            button11 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -156,12 +158,12 @@
             dataGridView1.AllowUserToOrderColumns = true;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(558, 15);
+            dataGridView1.Location = new Point(710, 15);
             dataGridView1.Margin = new Padding(4);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(1127, 836);
+            dataGridView1.Size = new Size(976, 836);
             dataGridView1.TabIndex = 11;
             // 
             // button3
@@ -242,11 +244,35 @@
             button9.UseVisualStyleBackColor = true;
             button9.Click += button9_Click;
             // 
+            // button10
+            // 
+            button10.Location = new Point(11, 587);
+            button10.Margin = new Padding(2, 4, 2, 4);
+            button10.Name = "button10";
+            button10.Size = new Size(627, 39);
+            button10.TabIndex = 19;
+            button10.Text = "Суммарные оценки для конкретнго блока для всех комбинаций ярлыков";
+            button10.UseVisualStyleBackColor = true;
+            button10.Click += button10_Click;
+            // 
+            // button11
+            // 
+            button11.Location = new Point(11, 634);
+            button11.Margin = new Padding(2, 4, 2, 4);
+            button11.Name = "button11";
+            button11.Size = new Size(692, 39);
+            button11.TabIndex = 20;
+            button11.Text = "Суммарные оценки для конкретнго блока для конкретной комбинации ярлыков";
+            button11.UseVisualStyleBackColor = true;
+            button11.Click += button11_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1699, 866);
+            Controls.Add(button11);
+            Controls.Add(button10);
             Controls.Add(button9);
             Controls.Add(button8);
             Controls.Add(button7);
@@ -294,5 +320,7 @@
         private Button button7;
         private Button button8;
         private Button button9;
+        private Button button10;
+        private Button button11;
     }
 }

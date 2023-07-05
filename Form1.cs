@@ -37,8 +37,12 @@ namespace ProjectClosureToolWinFormsNET6
         public static string currentCardName;
         public static double currentCardEstimate;
         public static double currentCardPoint;
+        public static double sumEstimate;
+        public static double sumPoint;
         public static int iInputIgnore;
         private static int iDeleteIgnore;
+        private static int iUnit;
+        private static int iCombination;
 
         private void EMessage(string eM)
         {
@@ -221,8 +225,6 @@ namespace ProjectClosureToolWinFormsNET6
                     }
                 }
                 labels.Sort();
-                //LabelCombinations();
-                //LabelCombinationsI();
             }
             catch (Exception e)
             {
@@ -433,49 +435,30 @@ namespace ProjectClosureToolWinFormsNET6
             if (!unitsListFilled)
                 ListUp("Ѕлоков нет. ¬ыполните команду ввода кода доски.");
             else
+            {
+                distinctUnits = units.Distinct();
+                distinctUnitsList = distinctUnits.ToList();
+                distinctUnitsList.Sort();
+                iUnit = 1;
                 foreach (string aUnit in distinctUnitsList)
-                    ListUp(aUnit);
+                {
+                    ListUp($"{iUnit}. {aUnit}");
+                    iUnit++;
+                }
+                iUnit = 0;
+            }
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             ListUp("—писок блоков:");
-            distinctUnits = units.Distinct();
-            distinctUnitsList = distinctUnits.ToList();
-            distinctUnitsList.Sort();
+            //distinctUnits = units.Distinct();
+            //distinctUnitsList = distinctUnits.ToList();
+            //distinctUnitsList.Sort();
             UnitsList();
         }
 
         public void LabelCombinations()
-        {
-            try
-            {
-                foreach (string aCombination in distinctCombinationsList)
-                    ListUp(aCombination);
-            }
-            catch (Exception e)
-            {
-                ListUp(e.Message);
-                return;
-            }
-        }
-
-        private void LabelCombinationsI()
-        {
-            try
-            {
-                foreach (string aCombination in distinctCombinationsListI)
-                    ListUp(aCombination);
-            }
-            catch (Exception e)
-            {
-                ListUp(e.Message);
-                return;
-            }
-        }
-
-        // —писок комбинаций €рлыков
-        private void button4_Click(object sender, EventArgs e)
         {
             combinationsList.Clear();
             distinctCombinations = Enumerable.Empty<string>();
@@ -496,6 +479,83 @@ namespace ProjectClosureToolWinFormsNET6
             distinctCombinations = combinationsList.Distinct();
             distinctCombinationsList = distinctCombinations.ToList();
             distinctCombinationsList.Sort();
+            try
+            {
+                iCombination = 1;
+                foreach (string aCombination in distinctCombinationsList)
+                {
+                    ListUp($"{iCombination}. {aCombination}");
+                    iCombination++;
+                }
+                iCombination = 0;
+            }
+            catch (Exception e)
+            {
+                ListUp(e.Message);
+                return;
+            }
+        }
+
+        private void LabelCombinationsI()
+        {
+            combinationsListI.Clear();
+            distinctCombinationsI = Enumerable.Empty<string>();
+            labels.Sort();
+            for (int i = 0; i < cards.Count; i++)
+            {
+                string sCombination = "";
+                foreach (TrelloObjectLabels aLabel in labels)
+                    if (aLabel.CardID.Equals(i) && !ignoredLabelsList.Contains(aLabel))
+                        sCombination += $"{aLabel.CardLabel}        ";
+                foreach (TrelloObject aCard in cards)
+                    if (aCard.CardID.Equals(i) && sCombination != "")
+                    {
+                        aCard.LabelCombinationI = sCombination;
+                        combinationsListI.Add(sCombination);
+                    }
+            }
+            distinctCombinationsI = combinationsListI.Distinct();
+            distinctCombinationsListI = distinctCombinationsI.ToList();
+            distinctCombinationsListI.Sort();
+            try
+            {
+                iCombination = 1;
+                foreach (string aCombination in distinctCombinationsListI)
+                {
+                    ListUp($"{iCombination}. {aCombination}");
+                    iCombination++;
+                }
+                iCombination = 0;
+            }
+            catch (Exception e)
+            {
+                ListUp(e.Message);
+                return;
+            }
+        }
+
+        // —писок комбинаций €рлыков
+        private void button4_Click(object sender, EventArgs e)
+        {
+            //combinationsList.Clear();
+            //distinctCombinations = Enumerable.Empty<string>();
+            //labels.Sort();
+            //for (int i = 0; i < cards.Count; i++)
+            //{
+            //    string sCombination = "";
+            //    foreach (TrelloObjectLabels aLabel in labels)
+            //        if (aLabel.CardID.Equals(i))
+            //            sCombination += $"{aLabel.CardLabel}        ";
+            //    foreach (TrelloObject aCard in cards)
+            //        if (aCard.CardID.Equals(i) && sCombination != "")
+            //        {
+            //            aCard.LabelCombination = sCombination;
+            //            combinationsList.Add(sCombination);
+            //        }
+            //}
+            //distinctCombinations = combinationsList.Distinct();
+            //distinctCombinationsList = distinctCombinations.ToList();
+            //distinctCombinationsList.Sort();
             ListUp("—писок комбинаций €рлыков:");
             LabelCombinations();
         }
@@ -576,7 +636,6 @@ namespace ProjectClosureToolWinFormsNET6
                 LabelsList();
                 Application.DoEvents();
                 AddIgnore();
-                IgnoredLabelsList();
             }
         }
 
@@ -605,30 +664,31 @@ namespace ProjectClosureToolWinFormsNET6
         {
             ignoredLabelsList.Clear();
             ignoredLabelsListFilled = false;
+            IgnoredLabelsList();
         }
 
         // —писок комбинаций €рлыков (игнорируемые не учитываютс€)
         private void button8_Click(object sender, EventArgs e)
         {
-            combinationsListI.Clear();
-            distinctCombinationsI = Enumerable.Empty<string>();
-            labels.Sort();
-            for (int i = 0; i < cards.Count; i++)
-            {
-                string sCombination = "";
-                foreach (TrelloObjectLabels aLabel in labels)
-                    if (aLabel.CardID.Equals(i) && !ignoredLabelsList.Contains(aLabel))
-                        sCombination += $"{aLabel.CardLabel}        ";
-                foreach (TrelloObject aCard in cards)
-                    if (aCard.CardID.Equals(i) && sCombination != "")
-                    {
-                        aCard.LabelCombination = sCombination;
-                        combinationsListI.Add(sCombination);
-                    }
-            }
-            distinctCombinationsI = combinationsListI.Distinct();
-            distinctCombinationsListI = distinctCombinationsI.ToList();
-            distinctCombinationsListI.Sort();
+            //combinationsListI.Clear();
+            //distinctCombinationsI = Enumerable.Empty<string>();
+            //labels.Sort();
+            //for (int i = 0; i < cards.Count; i++)
+            //{
+            //    string sCombination = "";
+            //    foreach (TrelloObjectLabels aLabel in labels)
+            //        if (aLabel.CardID.Equals(i) && !ignoredLabelsList.Contains(aLabel))
+            //            sCombination += $"{aLabel.CardLabel}        ";
+            //    foreach (TrelloObject aCard in cards)
+            //        if (aCard.CardID.Equals(i) && sCombination != "")
+            //        {
+            //            aCard.LabelCombination = sCombination;
+            //            combinationsListI.Add(sCombination);
+            //        }
+            //}
+            //distinctCombinationsI = combinationsListI.Distinct();
+            //distinctCombinationsListI = distinctCombinationsI.ToList();
+            //distinctCombinationsListI.Sort();
             ListUp("—писок комбинаций €рлыков (игнорируемые не учитываютс€):");
             LabelCombinationsI();
         }
@@ -695,6 +755,92 @@ namespace ProjectClosureToolWinFormsNET6
                 IgnoredLabelsList();
                 Application.DoEvents();
                 DeleteIgnoredLabel();
+            }
+        }
+
+        private void Sum(int i, int j)
+        {
+            sumEstimate = 0;
+            sumPoint = 0;
+            string unit = distinctUnitsList.ElementAt(i - 1);
+            string combination = distinctCombinationsListI.ElementAt(j - 1);
+            int sumT = 0;
+            foreach (TrelloObject aCard in cards)
+                if (aCard.CardUnit.Equals(unit) && aCard.LabelCombinationI.Equals(combination))
+                {
+                    sumEstimate += aCard.CardEstimate;
+                    sumPoint += aCard.CardPoint;
+                    sumT++;
+                }
+            if (sumT > 0)
+            {
+                ListUp($"Ѕлок: {unit}");
+                ListUp($" омбинаци€ €рлыков:");
+                ListUp($"{combination}");
+                ListUp($"—уммарное оценочное значение: ({sumEstimate})");
+                ListUp($"—уммарное реальное значение: [{sumPoint}].");
+            }
+        }
+
+        // —уммарные оценки дл€ конкретнго блока дл€ всех комбинаций €рлыков
+        private void button10_Click(object sender, EventArgs e)
+        {
+            if (!labelsListFilled || !unitsListFilled)
+                ListUp("¬ыполните команду ввода кода доски");
+            else
+            {
+                ListUp("—писок комбинаций €рлыков (игнорируемые не учитываютс€):");
+                LabelCombinationsI();
+                Application.DoEvents();
+                ListUp("—писок блоков:");
+                UnitsList();
+                Application.DoEvents();
+                try { iUnit = int.Parse(Interaction.InputBox("¬ведите номер блока")); }
+                catch (Exception ex)
+                {
+                    ListUp(ex.Message);
+                    return;
+                }
+                if (iUnit > distinctUnitsList.Count || iUnit < 1)
+                    ListUp("¬ведите корректный номер блока");
+                else for (int i = 0; i < distinctCombinationsI.ToList().Count; i++)
+                        Sum(iUnit, i + 1);
+            }
+        }
+
+        // —уммарные оценки дл€ конкретнго блока дл€ конкретной комбинации €рлыков
+        private void button11_Click(object sender, EventArgs e)
+        {
+            if (!labelsListFilled || !unitsListFilled)
+                ListUp("¬ыполните команду ввода кода доски");
+            else
+            {
+                ListUp("—писок блоков:");
+                UnitsList();
+                Application.DoEvents();
+                try { iUnit = int.Parse(Interaction.InputBox("¬ведите номер блока")); }
+                catch (Exception ex)
+                {
+                    ListUp(ex.Message);
+                    return;
+                }
+                if (iUnit > distinctUnitsList.Count || iUnit < 1)
+                    ListUp("¬ведите корректный номер блока");
+                else
+                {
+                    ListUp("—писок комбинаций €рлыков (игнорируемые не учитываютс€):");
+                    LabelCombinationsI();
+                    Application.DoEvents();
+                    try { iCombination = int.Parse(Interaction.InputBox("¬ведите номер комбинации")); }
+                    catch (Exception ex)
+                    {
+                        ListUp(ex.Message);
+                        return;
+                    }
+                    if (iCombination > distinctCombinationsListI.Count || iCombination < 1)
+                        { ListUp("¬ведите корректный номер комбинации"); }
+                    else Sum(iUnit, iCombination);
+                }
             }
         }
     }

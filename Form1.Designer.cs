@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
@@ -41,14 +42,17 @@
             dataGridView1 = new DataGridView();
             button3 = new Button();
             button4 = new Button();
-            button5 = new Button();
             button6 = new Button();
             button7 = new Button();
             button8 = new Button();
             button9 = new Button();
             button10 = new Button();
             button11 = new Button();
+            dataGridView2 = new DataGridView();
+            button5 = new Button();
+            button12 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -93,7 +97,7 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(145, 17);
+            textBox1.Location = new Point(145, 18);
             textBox1.Margin = new Padding(2, 4, 2, 4);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(235, 31);
@@ -133,7 +137,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(325, 74);
+            button1.Location = new Point(351, 75);
             button1.Margin = new Padding(2, 4, 2, 4);
             button1.Name = "button1";
             button1.Size = new Size(128, 88);
@@ -147,7 +151,7 @@
             button2.Location = new Point(11, 211);
             button2.Margin = new Padding(2, 4, 2, 4);
             button2.Name = "button2";
-            button2.Size = new Size(172, 39);
+            button2.Size = new Size(465, 39);
             button2.TabIndex = 10;
             button2.Text = "Список ярлыков";
             button2.UseVisualStyleBackColor = true;
@@ -156,22 +160,33 @@
             // dataGridView1
             // 
             dataGridView1.AllowUserToOrderColumns = true;
+            dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(710, 15);
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Window;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle1.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridView1.Location = new Point(1012, 6);
             dataGridView1.Margin = new Padding(4);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(976, 836);
+            dataGridView1.Size = new Size(662, 836);
             dataGridView1.TabIndex = 11;
+            dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // button3
             // 
             button3.Location = new Point(11, 258);
             button3.Margin = new Padding(2, 4, 2, 4);
             button3.Name = "button3";
-            button3.Size = new Size(172, 39);
+            button3.Size = new Size(468, 39);
             button3.TabIndex = 12;
             button3.Text = "Список блоков";
             button3.UseVisualStyleBackColor = true;
@@ -179,43 +194,33 @@
             // 
             // button4
             // 
-            button4.Location = new Point(11, 493);
+            button4.Location = new Point(11, 399);
             button4.Margin = new Padding(2, 4, 2, 4);
             button4.Name = "button4";
-            button4.Size = new Size(279, 39);
+            button4.Size = new Size(468, 39);
             button4.TabIndex = 13;
             button4.Text = "Список комбинаций ярлыков";
             button4.UseVisualStyleBackColor = true;
             button4.Click += button4_Click;
             // 
-            // button5
-            // 
-            button5.Location = new Point(11, 305);
-            button5.Margin = new Padding(2, 4, 2, 4);
-            button5.Name = "button5";
-            button5.Size = new Size(403, 39);
-            button5.TabIndex = 14;
-            button5.Text = "Добавление ярлыков к списку игнорируемых";
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += button5_Click;
-            // 
             // button6
             // 
-            button6.Location = new Point(11, 352);
+            button6.Location = new Point(8, 789);
             button6.Margin = new Padding(2, 4, 2, 4);
             button6.Name = "button6";
-            button6.Size = new Size(371, 39);
+            button6.Size = new Size(468, 39);
             button6.TabIndex = 15;
             button6.Text = "Просмотр списка игнорируемых ярлыков";
             button6.UseVisualStyleBackColor = true;
+            button6.Visible = false;
             button6.Click += button6_Click;
             // 
             // button7
             // 
-            button7.Location = new Point(11, 446);
+            button7.Location = new Point(11, 352);
             button7.Margin = new Padding(2, 4, 2, 4);
             button7.Name = "button7";
-            button7.Size = new Size(371, 39);
+            button7.Size = new Size(468, 39);
             button7.TabIndex = 16;
             button7.Text = "Очистка списка игнорируемых ярлыков";
             button7.UseVisualStyleBackColor = true;
@@ -223,10 +228,10 @@
             // 
             // button8
             // 
-            button8.Location = new Point(11, 540);
+            button8.Location = new Point(11, 446);
             button8.Margin = new Padding(2, 4, 2, 4);
             button8.Name = "button8";
-            button8.Size = new Size(541, 39);
+            button8.Size = new Size(468, 69);
             button8.TabIndex = 17;
             button8.Text = "Список комбинаций ярлыков (игнорируемые не учитываются)";
             button8.UseVisualStyleBackColor = true;
@@ -234,22 +239,23 @@
             // 
             // button9
             // 
-            button9.Location = new Point(11, 399);
+            button9.Location = new Point(11, 836);
             button9.Margin = new Padding(2, 4, 2, 4);
             button9.Name = "button9";
             button9.RightToLeft = RightToLeft.Yes;
-            button9.Size = new Size(384, 39);
+            button9.Size = new Size(468, 39);
             button9.TabIndex = 18;
             button9.Text = "Удаление ярлыков из списка игнорируемых";
             button9.UseVisualStyleBackColor = true;
+            button9.Visible = false;
             button9.Click += button9_Click;
             // 
             // button10
             // 
-            button10.Location = new Point(11, 587);
+            button10.Location = new Point(11, 523);
             button10.Margin = new Padding(2, 4, 2, 4);
             button10.Name = "button10";
-            button10.Size = new Size(627, 39);
+            button10.Size = new Size(468, 74);
             button10.TabIndex = 19;
             button10.Text = "Суммарные оценки для конкретнго блока для всех комбинаций ярлыков";
             button10.UseVisualStyleBackColor = true;
@@ -257,20 +263,61 @@
             // 
             // button11
             // 
-            button11.Location = new Point(11, 634);
+            button11.Location = new Point(11, 605);
             button11.Margin = new Padding(2, 4, 2, 4);
             button11.Name = "button11";
-            button11.Size = new Size(692, 39);
+            button11.Size = new Size(468, 88);
             button11.TabIndex = 20;
             button11.Text = "Суммарные оценки для конкретнго блока для конкретной комбинации ярлыков";
             button11.UseVisualStyleBackColor = true;
             button11.Click += button11_Click;
             // 
+            // dataGridView2
+            // 
+            dataGridView2.AllowUserToAddRows = false;
+            dataGridView2.AllowUserToOrderColumns = true;
+            dataGridView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
+            dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView2.Location = new Point(498, 6);
+            dataGridView2.Margin = new Padding(4);
+            dataGridView2.Name = "dataGridView2";
+            dataGridView2.RowHeadersWidth = 51;
+            dataGridView2.RowTemplate.Height = 29;
+            dataGridView2.Size = new Size(492, 822);
+            dataGridView2.TabIndex = 21;
+            dataGridView2.CellContentClick += dataGridView2_CellContentClick;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(11, 742);
+            button5.Margin = new Padding(2, 4, 2, 4);
+            button5.Name = "button5";
+            button5.Size = new Size(468, 39);
+            button5.TabIndex = 14;
+            button5.Text = "Добавление ярлыков к списку игнорируемых";
+            button5.UseVisualStyleBackColor = true;
+            button5.Visible = false;
+            button5.Click += button5_Click;
+            // 
+            // button12
+            // 
+            button12.Location = new Point(11, 305);
+            button12.Margin = new Padding(2, 4, 2, 4);
+            button12.Name = "button12";
+            button12.Size = new Size(465, 39);
+            button12.TabIndex = 22;
+            button12.Text = "Сохранение списка игнорируемых ярлыков";
+            button12.UseVisualStyleBackColor = true;
+            button12.Click += button12_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1699, 866);
+            ClientSize = new Size(1735, 866);
+            Controls.Add(button12);
+            Controls.Add(dataGridView2);
             Controls.Add(button11);
             Controls.Add(button10);
             Controls.Add(button9);
@@ -296,6 +343,7 @@
             Text = "Form1";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -315,12 +363,14 @@
         private DataGridView dataGridView1;
         private Button button3;
         private Button button4;
-        private Button button5;
         private Button button6;
         private Button button7;
         private Button button8;
         private Button button9;
         private Button button10;
         private Button button11;
+        private DataGridView dataGridView2;
+        private Button button5;
+        private Button button12;
     }
 }

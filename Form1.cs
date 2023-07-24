@@ -4,6 +4,7 @@ using System.Text;
 using System.Data;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
+using System.ComponentModel;
 
 namespace ProjectClosureToolWinFormsNET6
 {
@@ -44,6 +45,8 @@ namespace ProjectClosureToolWinFormsNET6
         private static int iUnit;
         private static int iCombination;
 
+        private static bool isIgnoredDGV2 = false;
+
         private void EMessage(string eM)
         {
             int s_err = eM.IndexOf("error", 0);
@@ -56,7 +59,12 @@ namespace ProjectClosureToolWinFormsNET6
         {
             dataGridView1_new_string(mss);
         }
+        private void DGV2Up(string mss)
+        {
+            dataGridView2_new_string(mss);
+        }
         public static DataTable table = new DataTable();
+        public static DataTable tableDGV2 = new DataTable();
 
         //-------------------------------------
         public struct MyOut
@@ -71,6 +79,20 @@ namespace ProjectClosureToolWinFormsNET6
         }
         public static List<MyOut> myOuts = new List<MyOut>();
 
+        public struct MyOutDGV2
+        {
+            public int numStr;
+            public string strOUT;
+            public bool isIgn;
+            public MyOutDGV2(int _numStr, string _strOUT, bool _isIgn)
+            {
+                numStr = _numStr;
+                strOUT = _strOUT;
+                isIgn = _isIgn;
+            }
+        }
+        public static List<MyOutDGV2> myOutsDGV2 = new List<MyOutDGV2>();
+
         public Form1()
         {
             InitializeComponent();
@@ -82,6 +104,9 @@ namespace ProjectClosureToolWinFormsNET6
             table.Columns.Add("N п/п", typeof(int));
             table.Columns.Add("Response", typeof(string));
             dataGridView1_start_string("---------------—тарт-----------");
+            tableDGV2.Columns.Add("N п/п", typeof(int));
+            tableDGV2.Columns.Add("Label", typeof(string));
+            tableDGV2.Columns.Add("Ignored", typeof(bool));
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -382,6 +407,12 @@ namespace ProjectClosureToolWinFormsNET6
             ClearLabels();
             labelsListFilled = false;
             unitsListFilled = false;
+            int count = dataGridView2.Rows.Count;
+            if (count > 0)
+                for (int i = 0; i < count - 1; i++)
+                {
+                    dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+                }
             try
             { API_Req.boardCode = textBox2.Text; }
             catch (Exception ex)
@@ -402,6 +433,13 @@ namespace ProjectClosureToolWinFormsNET6
             dataGridView1.DataSource = table;
         }
 
+        private void dataGridView2_start_string(string mss)
+        {
+            myOutsDGV2.Add(new MyOutDGV2(0, mss, false));
+            tableDGV2.Rows.Clear();
+            tableDGV2.Rows.Add(0, myOutsDGV2[0].strOUT);
+            dataGridView2.DataSource = tableDGV2;
+        }
 
         private void dataGridView1_new_string(string mss)
         {
@@ -412,9 +450,24 @@ namespace ProjectClosureToolWinFormsNET6
             dataGridView1.CurrentCell = dataGridView1[0, k];
         }
 
+        private void dataGridView2_new_string(string mss)
+        {
+            int k = myOutsDGV2.Count;
+            myOutsDGV2.Add(new MyOutDGV2(k, mss, isIgnoredDGV2));
+            tableDGV2.Rows.Add(myOutsDGV2[k].numStr + 1, myOutsDGV2[k].strOUT, myOutsDGV2[k].isIgn);
+            dataGridView2.DataSource = tableDGV2;
+            //if (k > 1)
+            //    dataGridView2.CurrentCell = dataGridView2[0, k - 1];
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
-            ListUp("—писок €рлыков:");
+            int count = dataGridView2.Rows.Count;
+            if (count > 0)
+                for (int i = 0; i < count - 1; i++)
+                {
+                    dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+                }
             LabelsList();
         }
 
@@ -425,8 +478,11 @@ namespace ProjectClosureToolWinFormsNET6
             else
             {
                 foreach (TrelloObjectLabels aLabel in labelsList)
-                    if (!CheckIgnored(aLabel.CardLabel))
-                        ListUp(aLabel.ToString());
+                {
+                    isIgnoredDGV2 = CheckIgnored(aLabel.CardLabel);
+                    DGV2Up(aLabel.ToString());
+                    isIgnoredDGV2 = false;
+                }
             }
         }
 
@@ -452,9 +508,6 @@ namespace ProjectClosureToolWinFormsNET6
         private void button3_Click(object sender, EventArgs e)
         {
             ListUp("—писок блоков:");
-            //distinctUnits = units.Distinct();
-            //distinctUnitsList = distinctUnits.ToList();
-            //distinctUnitsList.Sort();
             UnitsList();
         }
 
@@ -537,25 +590,6 @@ namespace ProjectClosureToolWinFormsNET6
         // —писок комбинаций €рлыков
         private void button4_Click(object sender, EventArgs e)
         {
-            //combinationsList.Clear();
-            //distinctCombinations = Enumerable.Empty<string>();
-            //labels.Sort();
-            //for (int i = 0; i < cards.Count; i++)
-            //{
-            //    string sCombination = "";
-            //    foreach (TrelloObjectLabels aLabel in labels)
-            //        if (aLabel.CardID.Equals(i))
-            //            sCombination += $"{aLabel.CardLabel}        ";
-            //    foreach (TrelloObject aCard in cards)
-            //        if (aCard.CardID.Equals(i) && sCombination != "")
-            //        {
-            //            aCard.LabelCombination = sCombination;
-            //            combinationsList.Add(sCombination);
-            //        }
-            //}
-            //distinctCombinations = combinationsList.Distinct();
-            //distinctCombinationsList = distinctCombinations.ToList();
-            //distinctCombinationsList.Sort();
             ListUp("—писок комбинаций €рлыков:");
             LabelCombinations();
         }
@@ -612,8 +646,13 @@ namespace ProjectClosureToolWinFormsNET6
                             }
                         }
                     }
-                ListUp("ѕеречень игнорируемых €рлыков:");
-                IgnoredLabelsList();
+                int count = dataGridView2.Rows.Count;
+                if (count > 0)
+                    for (int i = 0; i < count - 1; i++)
+                    {
+                        dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+                    }
+                LabelsList();
                 Application.DoEvents();
                 try { iInputIgnore = int.Parse(Interaction.InputBox("¬ведите номер €рлыка")); }
                 catch (Exception e)
@@ -629,34 +668,33 @@ namespace ProjectClosureToolWinFormsNET6
         // ƒобавление €рлыков к списку игнорируемых
         private void button5_Click(object sender, EventArgs e)
         {
-            if (!labelsListFilled)
-                ListUp("ярлыков нет. ¬ыполните команду ввода кода доски.");
-            else
-            {
-                LabelsList();
-                Application.DoEvents();
-                AddIgnore();
-            }
-        }
-
-        private void IgnoredLabelsList()
-        {
-            if (!ignoredLabelsListFilled)
-                ListUp("»гнорируемых €рлыков нет");
-            else
-                foreach (TrelloObjectLabels aLabel in ignoredLabelsList)
-                {
-                    if (!CheckLabels(aLabel.CardLabel))
-                        ListUp($"»гнорируемый €рлык <{aLabel.CardLabel}> отсутствует в списке €рлыков. ѕерезагрузите доску.");
-                    else ListUp(aLabel.ToString());
-                }
+            //int count = dataGridView2.Rows.Count;
+            //if (count > 0)
+            //    for (int i = 0; i < count - 1; i++)
+            //    {
+            //        dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+            //    }
+            //if (!labelsListFilled)
+            //    ListUp("ярлыков нет. ¬ыполните команду ввода кода доски.");
+            //else
+            //{
+            //    LabelsList();
+            //    Application.DoEvents();
+            //    AddIgnore();
+            //}
         }
 
         // ѕросмотр списка игнорируемых €рлыков
         private void button6_Click(object sender, EventArgs e)
         {
-            ListUp("ѕеречень игнорируемых €рлыков:");
-            IgnoredLabelsList();
+            //int count = dataGridView2.Rows.Count;
+            //if (count > 0)
+            //    for (int i = 0; i < count - 1; i++)
+            //    {
+            //        dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+            //    }
+            //ListUp("ѕеречень игнорируемых €рлыков:");
+            //IgnoredLabelsList();
         }
 
         // ќчистка списка игнорируемых €рлыков
@@ -664,31 +702,18 @@ namespace ProjectClosureToolWinFormsNET6
         {
             ignoredLabelsList.Clear();
             ignoredLabelsListFilled = false;
-            IgnoredLabelsList();
+            int count = dataGridView2.Rows.Count;
+            if (count > 0)
+                for (int i = 0; i < count; i++)
+                {
+                    dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+                }
+            LabelsList();
         }
 
         // —писок комбинаций €рлыков (игнорируемые не учитываютс€)
         private void button8_Click(object sender, EventArgs e)
         {
-            //combinationsListI.Clear();
-            //distinctCombinationsI = Enumerable.Empty<string>();
-            //labels.Sort();
-            //for (int i = 0; i < cards.Count; i++)
-            //{
-            //    string sCombination = "";
-            //    foreach (TrelloObjectLabels aLabel in labels)
-            //        if (aLabel.CardID.Equals(i) && !ignoredLabelsList.Contains(aLabel))
-            //            sCombination += $"{aLabel.CardLabel}        ";
-            //    foreach (TrelloObject aCard in cards)
-            //        if (aCard.CardID.Equals(i) && sCombination != "")
-            //        {
-            //            aCard.LabelCombination = sCombination;
-            //            combinationsListI.Add(sCombination);
-            //        }
-            //}
-            //distinctCombinationsI = combinationsListI.Distinct();
-            //distinctCombinationsListI = distinctCombinationsI.ToList();
-            //distinctCombinationsListI.Sort();
             ListUp("—писок комбинаций €рлыков (игнорируемые не учитываютс€):");
             LabelCombinationsI();
         }
@@ -721,8 +746,13 @@ namespace ProjectClosureToolWinFormsNET6
                 {
                     ignoredLabelsListFilled = false;
                     iDeleteIgnore = 0;
-                    ListUp("ѕеречень игнорируемых €рлыков:");
-                    IgnoredLabelsList();
+                    int count = dataGridView2.Rows.Count;
+                    if (count > 0)
+                        for (int i = 0; i < count - 1; i++)
+                        {
+                            dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+                        }
+                    LabelsList();
                     Application.DoEvents();
                 }
                 else
@@ -730,8 +760,13 @@ namespace ProjectClosureToolWinFormsNET6
                     foreach (TrelloObjectLabels aLabel in temp)
                         if (ignoredLabelsList.Contains(aLabel))
                             ignoredLabelsList.Remove(aLabel);
-                    ListUp("ѕеречень игнорируемых €рлыков:");
-                    IgnoredLabelsList();
+                    int count = dataGridView2.Rows.Count;
+                    if (count > 0)
+                        for (int i = 0; i < count - 1; i++)
+                        {
+                            dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+                        }
+                    LabelsList();
                     Application.DoEvents();
                     try { iDeleteIgnore = int.Parse(Interaction.InputBox("¬ведите номер удал€емого из списка игнорируемых €рлыка")); }
                     catch (Exception ex)
@@ -746,16 +781,23 @@ namespace ProjectClosureToolWinFormsNET6
         // ”даление €рлыков из списка игнорируемых
         private void button9_Click(object sender, EventArgs e)
         {
-            if (!ignoredLabelsListFilled)
-                ListUp("»гнорируемых €рлыков нет");
-            else
-            {
-                ListUp("”даление €рлыков по номеру");
-                ListUp("ƒл€ выхода введите 0");
-                IgnoredLabelsList();
-                Application.DoEvents();
-                DeleteIgnoredLabel();
-            }
+            //if (!ignoredLabelsListFilled)
+            //    ListUp("»гнорируемых €рлыков нет");
+            //else
+            //{
+            //    ListUp("”даление €рлыков по номеру");
+            //    ListUp("ƒл€ выхода введите 0");
+            //    //IgnoredLabelsList();
+            //    Application.DoEvents();
+            //    DeleteIgnoredLabel();
+            //    int count = dataGridView2.Rows.Count;
+            //    if (count > 0)
+            //        for (int i = 0; i < count - 1; i++)
+            //        {
+            //            dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+            //        }
+            //    LabelsList();
+            //}
         }
 
         private void Sum(int i, int j)
@@ -838,10 +880,51 @@ namespace ProjectClosureToolWinFormsNET6
                         return;
                     }
                     if (iCombination > distinctCombinationsListI.Count || iCombination < 1)
-                        { ListUp("¬ведите корректный номер комбинации"); }
+                    { ListUp("¬ведите корректный номер комбинации"); }
                     else Sum(iUnit, iCombination);
                 }
             }
+        }
+
+        private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int iInputIgnore = dataGridView2.CurrentCell.RowIndex;
+            if (iInputIgnore <= labelsList.Count)
+            {
+                foreach (TrelloObjectLabels aLabel in labelsList)
+                    if (aLabel.CardID.Equals(iInputIgnore))
+                    {
+                        if (CheckIgnored(aLabel.CardLabel))
+                        {
+                            ignoredLabelsList.Remove(aLabel);
+                            if (ignoredLabelsList.Count == 0)
+                                ignoredLabelsListFilled = false;
+                        }
+                        else
+                        {
+                            ignoredLabelsList.Add(aLabel);
+                            ignoredLabelsListFilled = true;
+                        }
+                    }
+            }
+            Application.DoEvents();
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        // —охранение списка игнорируемых €рлыков
+        private void button12_Click(object sender, EventArgs e)
+        {
+            int count = dataGridView2.Rows.Count;
+            if (count > 0)
+                for (int i = 0; i < count; i++)
+                {
+                    dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+                }
+            LabelsList();
         }
     }
     public class API_Req

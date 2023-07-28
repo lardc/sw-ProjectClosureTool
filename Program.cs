@@ -328,6 +328,8 @@ namespace ProjectClosureToolV2
                     {
                         if (!CheckLabels(aLabel.CardLabel) || iInputIgnore > labelsList.Count)
                             Console.WriteLine($"Нет ярлыка с номером <{iInputIgnore}>. Введите другой номер.");
+                        else if (CheckIgnored(aLabel.CardLabel))
+                            Console.WriteLine($"Ярлык с номером {iInputIgnore} уже содержится в списке игнорируемых");
                         else
                         {
                             if (isIgnored)
@@ -499,7 +501,7 @@ namespace ProjectClosureToolV2
                         }
                 }
                 distinctCombinations = combinationsList.Distinct();
-                distinctCombinationsList = distinctCombinationsI.ToList();
+                distinctCombinationsList = distinctCombinations.ToList();
                 distinctCombinationsList.Sort();
                 foreach (string aCombination in distinctCombinationsList)
                     Console.WriteLine(aCombination);

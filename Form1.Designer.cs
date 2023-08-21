@@ -51,8 +51,14 @@
             dataGridView2 = new DataGridView();
             button5 = new Button();
             button12 = new Button();
+            dataGridView3 = new DataGridView();
+            dataGridView4 = new DataGridView();
+            dataGridView5 = new DataGridView();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView4).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView5).BeginInit();
             SuspendLayout();
             // 
             // label1
@@ -148,19 +154,21 @@
             // 
             // button2
             // 
-            button2.Location = new Point(11, 211);
+            button2.Location = new Point(11, 448);
             button2.Margin = new Padding(2, 4, 2, 4);
             button2.Name = "button2";
             button2.Size = new Size(465, 39);
             button2.TabIndex = 10;
             button2.Text = "Список ярлыков";
             button2.UseVisualStyleBackColor = true;
+            button2.Visible = false;
             button2.Click += button2_Click;
             // 
             // dataGridView1
             // 
+            dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToOrderColumns = true;
-            dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -172,35 +180,38 @@
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
-            dataGridView1.Location = new Point(1012, 6);
+            dataGridView1.Location = new Point(1522, 6);
             dataGridView1.Margin = new Padding(4);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(662, 836);
+            dataGridView1.Size = new Size(294, 722);
             dataGridView1.TabIndex = 11;
+            dataGridView1.Visible = false;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
             // 
             // button3
             // 
-            button3.Location = new Point(11, 258);
+            button3.Location = new Point(8, 494);
             button3.Margin = new Padding(2, 4, 2, 4);
             button3.Name = "button3";
-            button3.Size = new Size(468, 39);
+            button3.Size = new Size(468, 26);
             button3.TabIndex = 12;
             button3.Text = "Список блоков";
             button3.UseVisualStyleBackColor = true;
+            button3.Visible = false;
             button3.Click += button3_Click;
             // 
             // button4
             // 
-            button4.Location = new Point(11, 399);
+            button4.Location = new Point(8, 541);
             button4.Margin = new Padding(2, 4, 2, 4);
             button4.Name = "button4";
-            button4.Size = new Size(468, 39);
+            button4.Size = new Size(468, 26);
             button4.TabIndex = 13;
             button4.Text = "Список комбинаций ярлыков";
             button4.UseVisualStyleBackColor = true;
+            button4.Visible = false;
             button4.Click += button4_Click;
             // 
             // button6
@@ -217,24 +228,26 @@
             // 
             // button7
             // 
-            button7.Location = new Point(11, 352);
+            button7.Location = new Point(8, 654);
             button7.Margin = new Padding(2, 4, 2, 4);
             button7.Name = "button7";
             button7.Size = new Size(468, 39);
             button7.TabIndex = 16;
             button7.Text = "Очистка списка игнорируемых ярлыков";
             button7.UseVisualStyleBackColor = true;
+            button7.Visible = false;
             button7.Click += button7_Click;
             // 
             // button8
             // 
-            button8.Location = new Point(11, 446);
+            button8.Location = new Point(8, 588);
             button8.Margin = new Padding(2, 4, 2, 4);
             button8.Name = "button8";
-            button8.Size = new Size(468, 69);
+            button8.Size = new Size(468, 56);
             button8.TabIndex = 17;
             button8.Text = "Список комбинаций ярлыков (игнорируемые не учитываются)";
             button8.UseVisualStyleBackColor = true;
+            button8.Visible = false;
             button8.Click += button8_Click;
             // 
             // button9
@@ -252,23 +265,23 @@
             // 
             // button10
             // 
-            button10.Location = new Point(11, 523);
+            button10.Location = new Point(11, 199);
             button10.Margin = new Padding(2, 4, 2, 4);
             button10.Name = "button10";
             button10.Size = new Size(468, 74);
             button10.TabIndex = 19;
-            button10.Text = "Суммарные оценки для конкретнго блока для всех комбинаций ярлыков";
+            button10.Text = "Суммарные оценки для выбранных блоков для всех комбинаций ярлыков";
             button10.UseVisualStyleBackColor = true;
             button10.Click += button10_Click;
             // 
             // button11
             // 
-            button11.Location = new Point(11, 605);
+            button11.Location = new Point(11, 281);
             button11.Margin = new Padding(2, 4, 2, 4);
             button11.Name = "button11";
             button11.Size = new Size(468, 88);
             button11.TabIndex = 20;
-            button11.Text = "Суммарные оценки для конкретнго блока для конкретной комбинации ярлыков";
+            button11.Text = "Суммарные оценки для выбранных блоков для выбранных комбинаций ярлыков";
             button11.UseVisualStyleBackColor = true;
             button11.Click += button11_Click;
             // 
@@ -276,15 +289,15 @@
             // 
             dataGridView2.AllowUserToAddRows = false;
             dataGridView2.AllowUserToOrderColumns = true;
-            dataGridView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Location = new Point(498, 6);
+            dataGridView2.Location = new Point(499, 6);
             dataGridView2.Margin = new Padding(4);
             dataGridView2.Name = "dataGridView2";
+            dataGridView2.RowHeadersVisible = false;
             dataGridView2.RowHeadersWidth = 51;
             dataGridView2.RowTemplate.Height = 29;
-            dataGridView2.Size = new Size(492, 822);
+            dataGridView2.Size = new Size(268, 722);
             dataGridView2.TabIndex = 21;
             dataGridView2.CellContentClick += dataGridView2_CellContentClick;
             // 
@@ -302,20 +315,73 @@
             // 
             // button12
             // 
-            button12.Location = new Point(11, 305);
+            button12.Location = new Point(8, 701);
             button12.Margin = new Padding(2, 4, 2, 4);
             button12.Name = "button12";
             button12.Size = new Size(465, 39);
             button12.TabIndex = 22;
             button12.Text = "Сохранение списка игнорируемых ярлыков";
             button12.UseVisualStyleBackColor = true;
+            button12.Visible = false;
             button12.Click += button12_Click;
+            // 
+            // dataGridView3
+            // 
+            dataGridView3.AllowUserToAddRows = false;
+            dataGridView3.AllowUserToOrderColumns = true;
+            dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView3.Location = new Point(774, 6);
+            dataGridView3.Margin = new Padding(4);
+            dataGridView3.Name = "dataGridView3";
+            dataGridView3.RowHeadersVisible = false;
+            dataGridView3.RowHeadersWidth = 51;
+            dataGridView3.RowTemplate.Height = 29;
+            dataGridView3.Size = new Size(259, 722);
+            dataGridView3.TabIndex = 23;
+            dataGridView3.CellContentClick += dataGridView3_CellContentClick;
+            // 
+            // dataGridView4
+            // 
+            dataGridView4.AllowUserToAddRows = false;
+            dataGridView4.AllowUserToOrderColumns = true;
+            dataGridView4.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView4.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView4.Location = new Point(1040, 6);
+            dataGridView4.Margin = new Padding(4);
+            dataGridView4.Name = "dataGridView4";
+            dataGridView4.RowHeadersVisible = false;
+            dataGridView4.RowHeadersWidth = 51;
+            dataGridView4.RowTemplate.Height = 29;
+            dataGridView4.Size = new Size(475, 722);
+            dataGridView4.TabIndex = 24;
+            dataGridView4.CellContentClick += dataGridView4_CellContentClick;
+            // 
+            // dataGridView5
+            // 
+            dataGridView5.AllowUserToAddRows = false;
+            dataGridView5.AllowUserToOrderColumns = true;
+            dataGridView5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridView5.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView5.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView5.Location = new Point(499, 736);
+            dataGridView5.Margin = new Padding(4);
+            dataGridView5.Name = "dataGridView5";
+            dataGridView5.RowHeadersVisible = false;
+            dataGridView5.RowHeadersWidth = 51;
+            dataGridView5.RowTemplate.Height = 29;
+            dataGridView5.Size = new Size(1332, 130);
+            dataGridView5.TabIndex = 25;
+            dataGridView5.CellContentClick += dataGridView5_CellContentClick;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1735, 866);
+            ClientSize = new Size(1831, 866);
+            Controls.Add(dataGridView5);
+            Controls.Add(dataGridView4);
+            Controls.Add(dataGridView3);
             Controls.Add(button12);
             Controls.Add(dataGridView2);
             Controls.Add(button11);
@@ -344,6 +410,9 @@
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView4).EndInit();
+            ((System.ComponentModel.ISupportInitialize)dataGridView5).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -372,5 +441,8 @@
         private DataGridView dataGridView2;
         private Button button5;
         private Button button12;
+        private DataGridView dataGridView3;
+        private DataGridView dataGridView4;
+        private DataGridView dataGridView5;
     }
 }

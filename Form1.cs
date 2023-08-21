@@ -5,6 +5,7 @@ using System.Data;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using System.ComponentModel;
+using Microsoft.VisualBasic.Devices;
 
 namespace ProjectClosureToolWinFormsNET6
 {
@@ -14,19 +15,19 @@ namespace ProjectClosureToolWinFormsNET6
         private static readonly byte[] s_UrlUtf8 = Encoding.UTF8.GetBytes("shortUrl");
         private static readonly byte[] s_cardRoleUtf8 = Encoding.UTF8.GetBytes("cardRole");
 
-        public static List<TrelloObject> cards = new List<TrelloObject>();
+        private static List<TrelloObject> cards = new List<TrelloObject>();
         static List<TrelloObjectLabels> labels = new List<TrelloObjectLabels>();
         static List<TrelloObjectLabels> labelsList = new List<TrelloObjectLabels>();
         static List<TrelloObjectLabels> ignoredLabelsList = new List<TrelloObjectLabels>();
-        public static List<string> units = new List<string>();
+        private static List<string> units = new List<string>();
         static IEnumerable<string> distinctUnits = new List<string>();
-        public static List<string> distinctUnitsList;
+        private static List<string> distinctUnitsList;
         static List<string> combinationsList = new List<string>();
         static List<string> combinationsListI = new List<string>();
         static IEnumerable<string> distinctCombinations = new List<string>();
         static IEnumerable<string> distinctCombinationsI = new List<string>();
         private static List<string> distinctCombinationsList;
-        private static List<string> distinctCombinationsListI;
+        private static List<string> distinctCombinationsListI = new List<string>();
         private static bool labelsListFilled;
         private static bool ignoredLabelsListFilled;
         private static bool unitsListFilled;
@@ -44,8 +45,14 @@ namespace ProjectClosureToolWinFormsNET6
         private static int iDeleteIgnore;
         private static int iUnit;
         private static int iCombination;
+        //private static int iSelectedUnit = -1;
+        //private static int iSelectedCombination = -1;
+        private static List<string> selectedUnits = new List<string>();
+        private static List<string> selectedCombinations = new List<string>();
 
         private static bool isIgnoredDGV2 = false;
+        private static bool isCheckedDGV3 = false;
+        private static bool isCheckedDGV4 = false;
 
         private void EMessage(string eM)
         {
@@ -63,8 +70,23 @@ namespace ProjectClosureToolWinFormsNET6
         {
             dataGridView2_new_string(mss);
         }
+        private void DGV3Up(string mss)
+        {
+            dataGridView3_new_string(mss);
+        }
+        private void DGV4Up(string mss)
+        {
+            dataGridView4_new_string(mss);
+        }
+        private void DGV5Up(string mssU, string mssC, string mssSE, string mssSP)
+        {
+            dataGridView5_new_string(mssU, mssC, mssSE, mssSP);
+        }
         public static DataTable table = new DataTable();
         public static DataTable tableDGV2 = new DataTable();
+        public static DataTable tableDGV3 = new DataTable();
+        public static DataTable tableDGV4 = new DataTable();
+        public static DataTable tableDGV5 = new DataTable();
 
         //-------------------------------------
         public struct MyOut
@@ -81,17 +103,54 @@ namespace ProjectClosureToolWinFormsNET6
 
         public struct MyOutDGV2
         {
-            public int numStr;
             public string strOUT;
             public bool isIgn;
-            public MyOutDGV2(int _numStr, string _strOUT, bool _isIgn)
+            public MyOutDGV2(string _strOUT, bool _isIgn)
             {
-                numStr = _numStr;
                 strOUT = _strOUT;
                 isIgn = _isIgn;
             }
         }
         public static List<MyOutDGV2> myOutsDGV2 = new List<MyOutDGV2>();
+
+        public struct MyOutDGV3
+        {
+            public string strOUT;
+            public bool isCh;
+            public MyOutDGV3(string _strOUT, bool _isCh)
+            {
+                strOUT = _strOUT;
+                isCh = _isCh;
+            }
+        }
+        public static List<MyOutDGV3> myOutsDGV3 = new List<MyOutDGV3>();
+
+        public struct MyOutDGV4
+        {
+            public string strOUT;
+            public bool isCh;
+            public MyOutDGV4(string _strOUT, bool _isCh)
+            {
+                strOUT = _strOUT;
+                isCh = _isCh;
+            }
+        }
+        public static List<MyOutDGV4> myOutsDGV4 = new List<MyOutDGV4>();
+        public struct MyOutDGV5
+        {
+            public string unit;
+            public string combination;
+            public string sumEst;
+            public string sumPoint;
+            public MyOutDGV5(string _unit, string _combination, string _sumEst, string _sumPoint)
+            {
+                unit = _unit;
+                combination = _combination;
+                sumEst = _sumEst;
+                sumPoint = _sumPoint;
+            }
+        }
+        public static List<MyOutDGV5> myOutsDGV5 = new List<MyOutDGV5>();
 
         public Form1()
         {
@@ -101,12 +160,20 @@ namespace ProjectClosureToolWinFormsNET6
         public void Form1_Load(object sender, EventArgs e)
         {
             dataGridView1.AllowUserToAddRows = false;
+            dataGridView5.AllowUserToAddRows = false;
             table.Columns.Add("N п/п", typeof(int));
             table.Columns.Add("Response", typeof(string));
             dataGridView1_start_string("---------------—тарт-----------");
-            tableDGV2.Columns.Add("N п/п", typeof(int));
             tableDGV2.Columns.Add("Label", typeof(string));
             tableDGV2.Columns.Add("Ignored", typeof(bool));
+            tableDGV3.Columns.Add("Unit", typeof(string));
+            tableDGV3.Columns.Add("Selected", typeof(bool));
+            tableDGV4.Columns.Add("Selected", typeof(bool));
+            tableDGV4.Columns.Add("Combination", typeof(string));
+            tableDGV5.Columns.Add("Unit", typeof(string));
+            tableDGV5.Columns.Add("Combination", typeof(string));
+            tableDGV5.Columns.Add("Sum Est.", typeof(string));
+            tableDGV5.Columns.Add("Sum P.", typeof(string));
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -409,9 +476,27 @@ namespace ProjectClosureToolWinFormsNET6
             unitsListFilled = false;
             int count = dataGridView2.Rows.Count;
             if (count > 0)
-                for (int i = 0; i < count - 1; i++)
+                for (int i = 0; i < count; i++)
                 {
                     dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+                }
+            count = dataGridView3.Rows.Count;
+            if (count > 0)
+                for (int i = 0; i < count; i++)
+                {
+                    dataGridView3.Rows.Remove(dataGridView3.Rows[0]);
+                }
+            count = dataGridView4.Rows.Count;
+            if (count > 0)
+                for (int i = 0; i < count; i++)
+                {
+                    dataGridView4.Rows.Remove(dataGridView4.Rows[0]);
+                }
+            count = dataGridView5.Rows.Count;
+            if (count > 0)
+                for (int i = 0; i < count; i++)
+                {
+                    dataGridView5.Rows.Remove(dataGridView5.Rows[0]);
                 }
             try
             { API_Req.boardCode = textBox2.Text; }
@@ -423,6 +508,24 @@ namespace ProjectClosureToolWinFormsNET6
             ReadBoard();
             BoardM();
             ListUp("ќбработка завершена");
+            LabelsList();
+            if (unitsListFilled)
+            {
+                distinctUnits = units.Distinct();
+                distinctUnitsList = distinctUnits.ToList();
+                distinctUnitsList.Sort();
+                iUnit = 1;
+                foreach (string aUnit in distinctUnitsList)
+                {
+                    isCheckedDGV3 = selectedUnits.Contains(aUnit);
+                    //isCheckedDGV3 = iSelectedUnit == distinctUnitsList.IndexOf(aUnit);
+                    DGV3Up($"{iUnit}. {aUnit}");
+                    isCheckedDGV3 = false;
+                    iUnit++;
+                }
+                iUnit = 0;
+            }
+            LabelCombinationsI();
         }
 
         private void dataGridView1_start_string(string mss)
@@ -431,14 +534,6 @@ namespace ProjectClosureToolWinFormsNET6
             table.Rows.Clear();
             table.Rows.Add(0, myOuts[0].strOUT);
             dataGridView1.DataSource = table;
-        }
-
-        private void dataGridView2_start_string(string mss)
-        {
-            myOutsDGV2.Add(new MyOutDGV2(0, mss, false));
-            tableDGV2.Rows.Clear();
-            tableDGV2.Rows.Add(0, myOutsDGV2[0].strOUT);
-            dataGridView2.DataSource = tableDGV2;
         }
 
         private void dataGridView1_new_string(string mss)
@@ -453,22 +548,53 @@ namespace ProjectClosureToolWinFormsNET6
         private void dataGridView2_new_string(string mss)
         {
             int k = myOutsDGV2.Count;
-            myOutsDGV2.Add(new MyOutDGV2(k, mss, isIgnoredDGV2));
-            tableDGV2.Rows.Add(myOutsDGV2[k].numStr + 1, myOutsDGV2[k].strOUT, myOutsDGV2[k].isIgn);
+            myOutsDGV2.Add(new MyOutDGV2(mss, isIgnoredDGV2));
+            tableDGV2.Rows.Add(myOutsDGV2[k].strOUT, myOutsDGV2[k].isIgn);
             dataGridView2.DataSource = tableDGV2;
             //if (k > 1)
             //    dataGridView2.CurrentCell = dataGridView2[0, k - 1];
         }
 
+        private void dataGridView3_new_string(string mss)
+        {
+            int k = myOutsDGV3.Count;
+            myOutsDGV3.Add(new MyOutDGV3(mss, isCheckedDGV3));
+            tableDGV3.Rows.Add(myOutsDGV3[k].strOUT, myOutsDGV3[k].isCh);
+            dataGridView3.DataSource = tableDGV3;
+        }
+
+        private void dataGridView4_new_string(string mss)
+        {
+            int k = myOutsDGV4.Count;
+            myOutsDGV4.Add(new MyOutDGV4(mss, isCheckedDGV4));
+            tableDGV4.Rows.Add(myOutsDGV4[k].isCh, myOutsDGV4[k].strOUT);
+            dataGridView4.DataSource = tableDGV4;
+        }
+
+        private void dataGridView5_new_string(string mssU, string mssC, string mssSE, string mssSP)
+        {
+            int k = myOutsDGV5.Count;
+            myOutsDGV5.Add(new MyOutDGV5(mssU, mssC, mssSE, mssSP));
+            tableDGV5.Rows.Add(myOutsDGV5[k].unit, myOutsDGV5[k].combination, myOutsDGV5[k].sumEst, myOutsDGV5[k].sumPoint);
+            dataGridView5.DataSource = tableDGV5;
+            //if (k > 0)
+            //    dataGridView5.CurrentCell = dataGridView5[0, k - 1];
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
-            int count = dataGridView2.Rows.Count;
-            if (count > 0)
-                for (int i = 0; i < count - 1; i++)
-                {
-                    dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
-                }
-            LabelsList();
+            //dataGridView2.Visible = true;
+            //dataGridView3.Visible = false;
+            //dataGridView4.Visible = false;
+            //dataGridView5.Visible = false;
+
+            //int count = dataGridView2.Rows.Count;
+            //if (count > 0)
+            //    for (int i = 0; i < count; i++)
+            //    {
+            //        dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+            //    }
+            //LabelsList();
         }
 
         private void LabelsList()
@@ -505,14 +631,49 @@ namespace ProjectClosureToolWinFormsNET6
             }
         }
 
+        // —писок блоков
         private void button3_Click(object sender, EventArgs e)
         {
-            ListUp("—писок блоков:");
-            UnitsList();
+            //dataGridView2.Visible = false;
+            //dataGridView3.Visible = true;
+            //dataGridView4.Visible = false;
+            //dataGridView5.Visible = false;
+
+            //int count = dataGridView3.Rows.Count;
+            //if (count > 0)
+            //    for (int i = 0; i < count; i++)
+            //    {
+            //        dataGridView3.Rows.Remove(dataGridView3.Rows[0]);
+            //    }
+            //if (unitsListFilled)
+            //{
+            //    distinctUnits = units.Distinct();
+            //    distinctUnitsList = distinctUnits.ToList();
+            //    distinctUnitsList.Sort();
+            //    iUnit = 1;
+            //    foreach (string aUnit in distinctUnitsList)
+            //    {
+            //        isCheckedDGV3 = iSelectedUnit == distinctUnitsList.IndexOf(aUnit);
+            //        DGV3Up($"{iUnit}. {aUnit}");
+            //        isCheckedDGV3 = false;
+            //        iUnit++;
+            //    }
+            //    iUnit = 0;
+            //}
         }
 
         public void LabelCombinations()
         {
+            //dataGridView2.Visible = false;
+            //dataGridView3.Visible = false;
+            //dataGridView4.Visible = true;
+            //dataGridView5.Visible = false;
+            int count = dataGridView4.Rows.Count;
+            if (count > 0)
+                for (int i = 0; i < count; i++)
+                {
+                    dataGridView4.Rows.Remove(dataGridView4.Rows[0]);
+                }
             combinationsList.Clear();
             distinctCombinations = Enumerable.Empty<string>();
             labels.Sort();
@@ -537,7 +698,10 @@ namespace ProjectClosureToolWinFormsNET6
                 iCombination = 1;
                 foreach (string aCombination in distinctCombinationsList)
                 {
-                    ListUp($"{iCombination}. {aCombination}");
+                    //isCheckedDGV3 = iSelectedUnit == distinctUnitsList.IndexOf(aUnit);
+                    //isCheckedDGV4 = iSelectedCombination == distinctCombinationsList.IndexOf(aCombination);
+                    DGV4Up($"{iCombination}. {aCombination}");
+                    //isCheckedDGV4 = false;
                     iCombination++;
                 }
                 iCombination = 0;
@@ -551,6 +715,16 @@ namespace ProjectClosureToolWinFormsNET6
 
         private void LabelCombinationsI()
         {
+            //dataGridView2.Visible = false;
+            //dataGridView3.Visible = false;
+            //dataGridView4.Visible = true;
+            //dataGridView5.Visible = false;
+            int count = dataGridView4.Rows.Count;
+            if (count > 0)
+                for (int i = 0; i < count; i++)
+                {
+                    dataGridView4.Rows.Remove(dataGridView4.Rows[0]);
+                }
             combinationsListI.Clear();
             distinctCombinationsI = Enumerable.Empty<string>();
             labels.Sort();
@@ -575,7 +749,10 @@ namespace ProjectClosureToolWinFormsNET6
                 iCombination = 1;
                 foreach (string aCombination in distinctCombinationsListI)
                 {
-                    ListUp($"{iCombination}. {aCombination}");
+                    isCheckedDGV4 = selectedCombinations.Contains(aCombination);
+                    //isCheckedDGV4 = iSelectedCombination == distinctCombinationsListI.IndexOf(aCombination);
+                    DGV4Up($"{iCombination}. {aCombination}");
+                    isCheckedDGV4 = false;
                     iCombination++;
                 }
                 iCombination = 0;
@@ -590,8 +767,7 @@ namespace ProjectClosureToolWinFormsNET6
         // —писок комбинаций €рлыков
         private void button4_Click(object sender, EventArgs e)
         {
-            ListUp("—писок комбинаций €рлыков:");
-            LabelCombinations();
+            //LabelCombinations();
         }
 
         private bool CheckLabels(string rr)
@@ -700,22 +876,21 @@ namespace ProjectClosureToolWinFormsNET6
         // ќчистка списка игнорируемых €рлыков
         private void button7_Click(object sender, EventArgs e)
         {
-            ignoredLabelsList.Clear();
-            ignoredLabelsListFilled = false;
-            int count = dataGridView2.Rows.Count;
-            if (count > 0)
-                for (int i = 0; i < count; i++)
-                {
-                    dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
-                }
-            LabelsList();
+            //ignoredLabelsList.Clear();
+            //ignoredLabelsListFilled = false;
+            //int count = dataGridView2.Rows.Count;
+            //if (count > 0)
+            //    for (int i = 0; i < count; i++)
+            //    {
+            //        dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+            //    }
+            //LabelsList();
         }
 
         // —писок комбинаций €рлыков (игнорируемые не учитываютс€)
         private void button8_Click(object sender, EventArgs e)
         {
-            ListUp("—писок комбинаций €рлыков (игнорируемые не учитываютс€):");
-            LabelCombinationsI();
+            //LabelCombinationsI();
         }
 
         private void DeleteIgnoredLabel()
@@ -804,7 +979,7 @@ namespace ProjectClosureToolWinFormsNET6
         {
             sumEstimate = 0;
             sumPoint = 0;
-            string unit = distinctUnitsList.ElementAt(i - 1);
+            string unit = distinctUnitsList.ElementAt(i);
             string combination = distinctCombinationsListI.ElementAt(j - 1);
             int sumT = 0;
             foreach (TrelloObject aCard in cards)
@@ -816,11 +991,12 @@ namespace ProjectClosureToolWinFormsNET6
                 }
             if (sumT > 0)
             {
-                ListUp($"Ѕлок: {unit}");
-                ListUp($" омбинаци€ €рлыков:");
-                ListUp($"{combination}");
-                ListUp($"—уммарное оценочное значение: ({sumEstimate})");
-                ListUp($"—уммарное реальное значение: [{sumPoint}].");
+                DGV5Up(unit, combination, sumEstimate.ToString(), sumPoint.ToString());
+                //DGV5Up($"Ѕлок: {unit}");
+                //DGV5Up($" омбинаци€ €рлыков:");
+                //DGV5Up($"{combination}");
+                //DGV5Up($"—уммарное оценочное значение: ({sumEstimate})");
+                //DGV5Up($"—уммарное реальное значение: [{sumPoint}].");
             }
         }
 
@@ -831,22 +1007,24 @@ namespace ProjectClosureToolWinFormsNET6
                 ListUp("¬ыполните команду ввода кода доски");
             else
             {
-                ListUp("—писок комбинаций €рлыков (игнорируемые не учитываютс€):");
+                int count = dataGridView5.Rows.Count;
+                if (count > 0)
+                    for (int i = 0; i < count; i++)
+                    {
+                        dataGridView5.Rows.Remove(dataGridView5.Rows[0]);
+                    }
                 LabelCombinationsI();
-                Application.DoEvents();
-                ListUp("—писок блоков:");
-                UnitsList();
-                Application.DoEvents();
-                try { iUnit = int.Parse(Interaction.InputBox("¬ведите номер блока")); }
-                catch (Exception ex)
-                {
-                    ListUp(ex.Message);
-                    return;
-                }
-                if (iUnit > distinctUnitsList.Count || iUnit < 1)
-                    ListUp("¬ведите корректный номер блока");
-                else for (int i = 0; i < distinctCombinationsI.ToList().Count; i++)
-                        Sum(iUnit, i + 1);
+                //dataGridView5.Visible = true;
+                foreach (string aUnit in selectedUnits)
+                    foreach (string aCombination in distinctCombinationsListI)
+                        Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                //foreach (string aUnit in distinctUnitsList)
+                //{
+                //    if (selectedUnits.Contains(aUnit))
+                //    //if (iSelectedUnit == distinctUnitsList.IndexOf(aUnit))
+                //        for (int i = 0; i < distinctCombinationsListI.Count; i++)
+                //            Sum(distinctUnitsList.IndexOf(aUnit), i + 1);
+                //}
             }
         }
 
@@ -857,32 +1035,19 @@ namespace ProjectClosureToolWinFormsNET6
                 ListUp("¬ыполните команду ввода кода доски");
             else
             {
-                ListUp("—писок блоков:");
-                UnitsList();
-                Application.DoEvents();
-                try { iUnit = int.Parse(Interaction.InputBox("¬ведите номер блока")); }
-                catch (Exception ex)
-                {
-                    ListUp(ex.Message);
-                    return;
-                }
-                if (iUnit > distinctUnitsList.Count || iUnit < 1)
-                    ListUp("¬ведите корректный номер блока");
-                else
-                {
-                    ListUp("—писок комбинаций €рлыков (игнорируемые не учитываютс€):");
-                    LabelCombinationsI();
-                    Application.DoEvents();
-                    try { iCombination = int.Parse(Interaction.InputBox("¬ведите номер комбинации")); }
-                    catch (Exception ex)
+                int count = dataGridView5.Rows.Count;
+                if (count > 0)
+                    for (int i = 0; i < count; i++)
                     {
-                        ListUp(ex.Message);
-                        return;
+                        dataGridView5.Rows.Remove(dataGridView5.Rows[0]);
                     }
-                    if (iCombination > distinctCombinationsListI.Count || iCombination < 1)
-                    { ListUp("¬ведите корректный номер комбинации"); }
-                    else Sum(iUnit, iCombination);
-                }
+                foreach (string aUnit in selectedUnits)
+                    foreach (string aCombination in selectedCombinations)
+                        Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                //Sum(iSelectedUnit, iSelectedCombination + 1);
+
+                //dataGridView3.Visible = false;
+                //dataGridView5.Visible = true;
             }
         }
 
@@ -907,7 +1072,7 @@ namespace ProjectClosureToolWinFormsNET6
                         }
                     }
             }
-            Application.DoEvents();
+            LabelCombinationsI();
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -918,13 +1083,53 @@ namespace ProjectClosureToolWinFormsNET6
         // —охранение списка игнорируемых €рлыков
         private void button12_Click(object sender, EventArgs e)
         {
-            int count = dataGridView2.Rows.Count;
-            if (count > 0)
-                for (int i = 0; i < count; i++)
-                {
-                    dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
-                }
-            LabelsList();
+            //int count = dataGridView2.Rows.Count;
+            //if (count > 0)
+            //    for (int i = 0; i < count; i++)
+            //    {
+            //        dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
+            //    }
+            //LabelsList();
+        }
+
+        private void dataGridView3_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int iInputUnit = dataGridView3.CurrentCell.RowIndex;
+            if (iInputUnit < distinctUnitsList.Count)
+            {
+                if (selectedUnits.Contains(distinctUnitsList.ElementAt(iInputUnit)))
+                    selectedUnits.Remove(distinctUnitsList.ElementAt(iInputUnit));
+                else selectedUnits.Add(distinctUnitsList.ElementAt(iInputUnit));
+            }
+            //if (iInputUnit < distinctUnitsList.Count/* && iSelectedUnit != iInputUnit*/)
+            //{
+            //    foreach (string aUnit in distinctUnitsList)
+            //        if (distinctUnitsList.IndexOf(aUnit) == iInputUnit)
+            //            iSelectedUnit = iInputUnit;
+            //}
+        }
+
+        private void dataGridView4_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            int iInputCombination = dataGridView4.CurrentCell.RowIndex;
+            if (iInputCombination < distinctCombinationsListI.Count)
+            {
+                if (selectedCombinations.Contains(distinctCombinationsListI.ElementAt(iInputCombination)))
+                    selectedCombinations.Remove(distinctCombinationsListI.ElementAt(iInputCombination));
+                else selectedCombinations.Add(distinctCombinationsListI.ElementAt(iInputCombination));
+            }
+            //int iInputCombination = dataGridView4.CurrentCell.RowIndex;
+            //if (iInputCombination < distinctCombinationsListI.Count()/* && iSelectedCombination != iInputCombination*/)
+            //{
+            //    foreach (string aCombination in distinctCombinationsListI)
+            //        if (distinctCombinationsListI.IndexOf(aCombination) == iInputCombination)
+            //            iSelectedCombination = iInputCombination;
+            //}
+        }
+
+        private void dataGridView5_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
         }
     }
     public class API_Req

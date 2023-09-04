@@ -57,4 +57,11 @@ namespace ProjectClosureToolWinFormsNET6
             return CardID;
         }
     }
+    public partial class TrelloObjectSums
+    {
+        public string CardUnit { get; set; }
+        public string LabelCombinationI { get; set; }
+        public double SumEstimate { get; set; }
+        public double SumPoint { get; set; }
+    }
 }

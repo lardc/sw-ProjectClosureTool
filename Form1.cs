@@ -6,6 +6,8 @@ using System.Windows.Forms;
 using Microsoft.VisualBasic;
 using System.ComponentModel;
 using Microsoft.VisualBasic.Devices;
+using System.Linq;
+using OfficeOpenXml;
 
 namespace ProjectClosureToolWinFormsNET6
 {
@@ -31,6 +33,7 @@ namespace ProjectClosureToolWinFormsNET6
         private static bool labelsListFilled;
         private static bool ignoredLabelsListFilled;
         private static bool unitsListFilled;
+        private static bool distinctCombinationsListFilled = false;
         private static int iLabels;
         private static string[] cardLabels = new string[1000];
 
@@ -45,14 +48,16 @@ namespace ProjectClosureToolWinFormsNET6
         private static int iDeleteIgnore;
         private static int iUnit;
         private static int iCombination;
-        //private static int iSelectedUnit = -1;
-        //private static int iSelectedCombination = -1;
         private static List<string> selectedUnits = new List<string>();
         private static List<string> selectedCombinations = new List<string>();
 
+        private static bool selectedCombinationsFilled = false;
+        private static bool sumsListFilled = false;
         private static bool isIgnoredDGV2 = false;
         private static bool isCheckedDGV3 = false;
         private static bool isCheckedDGV4 = false;
+
+        static List<TrelloObjectSums> sums = new List<TrelloObjectSums>();
 
         private void EMessage(string eM)
         {
@@ -88,7 +93,6 @@ namespace ProjectClosureToolWinFormsNET6
         public static DataTable tableDGV4 = new DataTable();
         public static DataTable tableDGV5 = new DataTable();
 
-        //-------------------------------------
         public struct MyOut
         {
             public int numStr;
@@ -474,30 +478,14 @@ namespace ProjectClosureToolWinFormsNET6
             ClearLabels();
             labelsListFilled = false;
             unitsListFilled = false;
-            int count = dataGridView2.Rows.Count;
-            if (count > 0)
-                for (int i = 0; i < count; i++)
-                {
-                    dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
-                }
-            count = dataGridView3.Rows.Count;
-            if (count > 0)
-                for (int i = 0; i < count; i++)
-                {
-                    dataGridView3.Rows.Remove(dataGridView3.Rows[0]);
-                }
-            count = dataGridView4.Rows.Count;
-            if (count > 0)
-                for (int i = 0; i < count; i++)
-                {
-                    dataGridView4.Rows.Remove(dataGridView4.Rows[0]);
-                }
-            count = dataGridView5.Rows.Count;
-            if (count > 0)
-                for (int i = 0; i < count; i++)
-                {
-                    dataGridView5.Rows.Remove(dataGridView5.Rows[0]);
-                }
+            ignoredLabelsList.Clear();
+            ignoredLabelsListFilled = false;
+            selectedUnits.Clear();
+            selectedCombinations.Clear();
+            dataGridView2_clear_string();
+            dataGridView3_clear_string();
+            dataGridView4_clear_string();
+            dataGridView5_clear_string();
             try
             { API_Req.boardCode = textBox2.Text; }
             catch (Exception ex)
@@ -518,7 +506,6 @@ namespace ProjectClosureToolWinFormsNET6
                 foreach (string aUnit in distinctUnitsList)
                 {
                     isCheckedDGV3 = selectedUnits.Contains(aUnit);
-                    //isCheckedDGV3 = iSelectedUnit == distinctUnitsList.IndexOf(aUnit);
                     DGV3Up($"{iUnit}. {aUnit}");
                     isCheckedDGV3 = false;
                     iUnit++;
@@ -561,6 +548,30 @@ namespace ProjectClosureToolWinFormsNET6
             myOutsDGV3.Add(new MyOutDGV3(mss, isCheckedDGV3));
             tableDGV3.Rows.Add(myOutsDGV3[k].strOUT, myOutsDGV3[k].isCh);
             dataGridView3.DataSource = tableDGV3;
+        }
+
+        private void dataGridView2_clear_string()
+        {
+            tableDGV2.Rows.Clear();
+            dataGridView2.DataSource = tableDGV2;
+        }
+
+        private void dataGridView3_clear_string()
+        {
+            tableDGV3.Rows.Clear();
+            dataGridView3.DataSource = tableDGV3;
+        }
+
+        private void dataGridView4_clear_string()
+        {
+            tableDGV4.Rows.Clear();
+            dataGridView4.DataSource = tableDGV4;
+        }
+
+        private void dataGridView5_clear_string()
+        {
+            tableDGV5.Rows.Clear();
+            dataGridView5.DataSource = tableDGV5;
         }
 
         private void dataGridView4_new_string(string mss)
@@ -664,16 +675,7 @@ namespace ProjectClosureToolWinFormsNET6
 
         public void LabelCombinations()
         {
-            //dataGridView2.Visible = false;
-            //dataGridView3.Visible = false;
-            //dataGridView4.Visible = true;
-            //dataGridView5.Visible = false;
-            int count = dataGridView4.Rows.Count;
-            if (count > 0)
-                for (int i = 0; i < count; i++)
-                {
-                    dataGridView4.Rows.Remove(dataGridView4.Rows[0]);
-                }
+            dataGridView4_clear_string();
             combinationsList.Clear();
             distinctCombinations = Enumerable.Empty<string>();
             labels.Sort();
@@ -698,10 +700,7 @@ namespace ProjectClosureToolWinFormsNET6
                 iCombination = 1;
                 foreach (string aCombination in distinctCombinationsList)
                 {
-                    //isCheckedDGV3 = iSelectedUnit == distinctUnitsList.IndexOf(aUnit);
-                    //isCheckedDGV4 = iSelectedCombination == distinctCombinationsList.IndexOf(aCombination);
                     DGV4Up($"{iCombination}. {aCombination}");
-                    //isCheckedDGV4 = false;
                     iCombination++;
                 }
                 iCombination = 0;
@@ -715,16 +714,7 @@ namespace ProjectClosureToolWinFormsNET6
 
         private void LabelCombinationsI()
         {
-            //dataGridView2.Visible = false;
-            //dataGridView3.Visible = false;
-            //dataGridView4.Visible = true;
-            //dataGridView5.Visible = false;
-            int count = dataGridView4.Rows.Count;
-            if (count > 0)
-                for (int i = 0; i < count; i++)
-                {
-                    dataGridView4.Rows.Remove(dataGridView4.Rows[0]);
-                }
+            dataGridView4_clear_string();
             combinationsListI.Clear();
             distinctCombinationsI = Enumerable.Empty<string>();
             labels.Sort();
@@ -733,7 +723,7 @@ namespace ProjectClosureToolWinFormsNET6
                 string sCombination = "";
                 foreach (TrelloObjectLabels aLabel in labels)
                     if (aLabel.CardID.Equals(i) && !ignoredLabelsList.Contains(aLabel))
-                        sCombination += $"{aLabel.CardLabel}        ";
+                        sCombination += $"{aLabel.CardLabel}\n";
                 foreach (TrelloObject aCard in cards)
                     if (aCard.CardID.Equals(i) && sCombination != "")
                     {
@@ -744,13 +734,13 @@ namespace ProjectClosureToolWinFormsNET6
             distinctCombinationsI = combinationsListI.Distinct();
             distinctCombinationsListI = distinctCombinationsI.ToList();
             distinctCombinationsListI.Sort();
+            distinctCombinationsListFilled = true;
             try
             {
                 iCombination = 1;
                 foreach (string aCombination in distinctCombinationsListI)
                 {
                     isCheckedDGV4 = selectedCombinations.Contains(aCombination);
-                    //isCheckedDGV4 = iSelectedCombination == distinctCombinationsListI.IndexOf(aCombination);
                     DGV4Up($"{iCombination}. {aCombination}");
                     isCheckedDGV4 = false;
                     iCombination++;
@@ -822,12 +812,7 @@ namespace ProjectClosureToolWinFormsNET6
                             }
                         }
                     }
-                int count = dataGridView2.Rows.Count;
-                if (count > 0)
-                    for (int i = 0; i < count - 1; i++)
-                    {
-                        dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
-                    }
+                dataGridView2_clear_string();
                 LabelsList();
                 Application.DoEvents();
                 try { iInputIgnore = int.Parse(Interaction.InputBox("¬ведите номер €рлыка")); }
@@ -921,12 +906,7 @@ namespace ProjectClosureToolWinFormsNET6
                 {
                     ignoredLabelsListFilled = false;
                     iDeleteIgnore = 0;
-                    int count = dataGridView2.Rows.Count;
-                    if (count > 0)
-                        for (int i = 0; i < count - 1; i++)
-                        {
-                            dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
-                        }
+                    dataGridView2_clear_string();
                     LabelsList();
                     Application.DoEvents();
                 }
@@ -935,12 +915,7 @@ namespace ProjectClosureToolWinFormsNET6
                     foreach (TrelloObjectLabels aLabel in temp)
                         if (ignoredLabelsList.Contains(aLabel))
                             ignoredLabelsList.Remove(aLabel);
-                    int count = dataGridView2.Rows.Count;
-                    if (count > 0)
-                        for (int i = 0; i < count - 1; i++)
-                        {
-                            dataGridView2.Rows.Remove(dataGridView2.Rows[0]);
-                        }
+                    dataGridView2_clear_string();
                     LabelsList();
                     Application.DoEvents();
                     try { iDeleteIgnore = int.Parse(Interaction.InputBox("¬ведите номер удал€емого из списка игнорируемых €рлыка")); }
@@ -988,63 +963,47 @@ namespace ProjectClosureToolWinFormsNET6
                     sumEstimate += aCard.CardEstimate;
                     sumPoint += aCard.CardPoint;
                     sumT++;
+                    sums.Add(new TrelloObjectSums()
+                    {
+                        CardUnit = unit,
+                        LabelCombinationI = combination,
+                        SumEstimate = sumEstimate,
+                        SumPoint = sumPoint
+                    });
                 }
             if (sumT > 0)
             {
                 DGV5Up(unit, combination, sumEstimate.ToString(), sumPoint.ToString());
-                //DGV5Up($"Ѕлок: {unit}");
-                //DGV5Up($" омбинаци€ €рлыков:");
-                //DGV5Up($"{combination}");
-                //DGV5Up($"—уммарное оценочное значение: ({sumEstimate})");
-                //DGV5Up($"—уммарное реальное значение: [{sumPoint}].");
+                sumsListFilled = true;
             }
         }
 
-        // —уммарные оценки дл€ конкретнго блока дл€ всех комбинаций €рлыков
+        // —уммарные оценки дл€ выбранных блоков дл€ всех комбинаций €рлыков
         private void button10_Click(object sender, EventArgs e)
         {
             if (!labelsListFilled || !unitsListFilled)
                 ListUp("¬ыполните команду ввода кода доски");
             else
             {
-                int count = dataGridView5.Rows.Count;
-                if (count > 0)
-                    for (int i = 0; i < count; i++)
-                    {
-                        dataGridView5.Rows.Remove(dataGridView5.Rows[0]);
-                    }
+                dataGridView5_clear_string();
                 LabelCombinationsI();
-                //dataGridView5.Visible = true;
                 foreach (string aUnit in selectedUnits)
                     foreach (string aCombination in distinctCombinationsListI)
                         Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
-                //foreach (string aUnit in distinctUnitsList)
-                //{
-                //    if (selectedUnits.Contains(aUnit))
-                //    //if (iSelectedUnit == distinctUnitsList.IndexOf(aUnit))
-                //        for (int i = 0; i < distinctCombinationsListI.Count; i++)
-                //            Sum(distinctUnitsList.IndexOf(aUnit), i + 1);
-                //}
             }
         }
 
-        // —уммарные оценки дл€ конкретнго блока дл€ конкретной комбинации €рлыков
+        // —уммарные оценки дл€ выбранных блоков дл€ выбранных комбинаций €рлыков
         private void button11_Click(object sender, EventArgs e)
         {
             if (!labelsListFilled || !unitsListFilled)
                 ListUp("¬ыполните команду ввода кода доски");
             else
             {
-                int count = dataGridView5.Rows.Count;
-                if (count > 0)
-                    for (int i = 0; i < count; i++)
-                    {
-                        dataGridView5.Rows.Remove(dataGridView5.Rows[0]);
-                    }
+                dataGridView5_clear_string();
                 foreach (string aUnit in selectedUnits)
                     foreach (string aCombination in selectedCombinations)
                         Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
-                //Sum(iSelectedUnit, iSelectedCombination + 1);
 
                 //dataGridView3.Visible = false;
                 //dataGridView5.Visible = true;
@@ -1071,8 +1030,20 @@ namespace ProjectClosureToolWinFormsNET6
                             ignoredLabelsListFilled = true;
                         }
                     }
+                selectedCombinations.Clear();
+                dataGridView4_clear_string();
             }
             LabelCombinationsI();
+            dataGridView5_clear_string();
+            foreach (string aUnit in selectedUnits)
+            {
+                if (selectedCombinationsFilled)
+                    foreach (string aCombination in selectedCombinations)
+                        Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                else
+                    foreach (string aCombination in distinctCombinationsListI)
+                        Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+            }
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -1097,16 +1068,21 @@ namespace ProjectClosureToolWinFormsNET6
             int iInputUnit = dataGridView3.CurrentCell.RowIndex;
             if (iInputUnit < distinctUnitsList.Count)
             {
+                dataGridView5_clear_string();
                 if (selectedUnits.Contains(distinctUnitsList.ElementAt(iInputUnit)))
                     selectedUnits.Remove(distinctUnitsList.ElementAt(iInputUnit));
                 else selectedUnits.Add(distinctUnitsList.ElementAt(iInputUnit));
+                LabelCombinationsI();
+                foreach (string aUnit in selectedUnits)
+                {
+                    if (selectedCombinationsFilled)
+                        foreach (string aCombination in selectedCombinations)
+                            Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                    else
+                        foreach (string aCombination in distinctCombinationsListI)
+                            Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                }
             }
-            //if (iInputUnit < distinctUnitsList.Count/* && iSelectedUnit != iInputUnit*/)
-            //{
-            //    foreach (string aUnit in distinctUnitsList)
-            //        if (distinctUnitsList.IndexOf(aUnit) == iInputUnit)
-            //            iSelectedUnit = iInputUnit;
-            //}
         }
 
         private void dataGridView4_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -1115,21 +1091,108 @@ namespace ProjectClosureToolWinFormsNET6
             if (iInputCombination < distinctCombinationsListI.Count)
             {
                 if (selectedCombinations.Contains(distinctCombinationsListI.ElementAt(iInputCombination)))
+                {
                     selectedCombinations.Remove(distinctCombinationsListI.ElementAt(iInputCombination));
-                else selectedCombinations.Add(distinctCombinationsListI.ElementAt(iInputCombination));
+                    if (selectedCombinations.Count == 0)
+                        selectedCombinationsFilled = false;
+                }
+                else
+                {
+                    selectedCombinations.Add(distinctCombinationsListI.ElementAt(iInputCombination));
+                    selectedCombinationsFilled = true;
+                }
+                dataGridView5_clear_string();
+                foreach (string aUnit in selectedUnits)
+                {
+                    if (selectedCombinationsFilled)
+                        foreach (string aCombination in selectedCombinations)
+                            Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                    else
+                        foreach (string aCombination in distinctCombinationsListI)
+                            Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                }
             }
-            //int iInputCombination = dataGridView4.CurrentCell.RowIndex;
-            //if (iInputCombination < distinctCombinationsListI.Count()/* && iSelectedCombination != iInputCombination*/)
-            //{
-            //    foreach (string aCombination in distinctCombinationsListI)
-            //        if (distinctCombinationsListI.IndexOf(aCombination) == iInputCombination)
-            //            iSelectedCombination = iInputCombination;
-            //}
         }
 
         private void dataGridView5_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
+        }
+
+        private void FillExcel()
+        {
+            DateTime DTnow = DateTime.Now;
+            string DTyear = DTnow.Year.ToString();
+            string DTmonth = DTnow.Month.ToString();
+            string DTday = DTnow.Day.ToString();
+            string DThour = DTnow.Hour.ToString();
+            string DTminute = DTnow.Minute.ToString();
+            string DTsecond = DTnow.Second.ToString();
+            string fileName = $"{API_Req.boardCode}_D{DTyear}-{DTmonth}-{DTday}_T{DThour}-{DTminute}-{DTsecond}.xlsx";
+            using (ExcelPackage excel_result = new ExcelPackage())
+            {
+                excel_result.Workbook.Worksheets.Add("Estimations");
+                excel_result.Workbook.Worksheets.Add("Points");
+                FileInfo fout = new FileInfo(fileName);
+                if (fout.Exists)
+                {
+                    fout.Delete();
+                    fout = new FileInfo(@"{API_Req.boardCode}_D{DTyear}-{DTmonth}-{DTday}_T{DThour}-{DTminute}-{DTsecond}.xlsx");
+                }
+                excel_result.SaveAs(fout);
+                var estimateWorksheet = excel_result.Workbook.Worksheets["Estimations"];
+                var pointWorksheet = excel_result.Workbook.Worksheets["Points"];
+                for (int iU = 1; iU <= distinctUnitsList.Count; iU++)
+                {
+                    estimateWorksheet.Cells[iU + 1, 1].Style.WrapText = true;
+                    pointWorksheet.Cells[iU + 1, 1].Style.WrapText = true;
+                    estimateWorksheet.Cells[iU + 1, 1].Value = distinctUnitsList[iU - 1];
+                    pointWorksheet.Cells[iU + 1, 1].Value = distinctUnitsList[iU - 1];
+                    for (int iC = 1; iC <= distinctCombinationsListI.Count; iC++)
+                    {
+                        estimateWorksheet.Cells[1, iC + 1].Style.WrapText = true;
+                        pointWorksheet.Cells[1, iC + 1].Style.WrapText = true;
+                        if (iU == distinctUnitsList.Count)
+                        {
+                            estimateWorksheet.Cells[1, iC + 1].Value = distinctCombinationsListI[iC - 1];
+                            pointWorksheet.Cells[1, iC + 1].Value = distinctCombinationsListI[iC - 1];
+                        }
+                        estimateWorksheet.Column(iC).Width = 19;
+                        estimateWorksheet.Column(iC + 1).Width = 19;
+                        pointWorksheet.Column(iC).Width = 19;
+                        pointWorksheet.Column(iC + 1).Width = 19;
+                    }
+                }
+                excel_result.SaveAs(fout);
+                for (int iU = 1; iU <= distinctUnitsList.Count; iU++)
+                {
+                    for (int iC = 1; iC <= distinctCombinationsListI.Count; iC++)
+                    {
+                        string unit = distinctUnitsList.ElementAt(iU - 1);
+                        string combination = distinctCombinationsListI.ElementAt(iC - 1);
+                        estimateWorksheet.Cells[iU + 1, iC + 1].Style.WrapText = true;
+                        pointWorksheet.Cells[iU + 1, iC + 1].Style.WrapText = true;
+                        foreach (TrelloObjectSums aSum in sums)
+                            if (aSum.CardUnit.Equals(unit) && aSum.LabelCombinationI.Equals(combination))
+                            {
+                                estimateWorksheet.Cells[iU + 1, iC + 1].Value = aSum.SumEstimate;
+                                pointWorksheet.Cells[iU + 1, iC + 1].Value = aSum.SumPoint;
+                            }
+                    }
+                }
+                excel_result.SaveAs(fout);
+            }
+        }
+
+        private void button13_Click(object sender, EventArgs e)
+        {
+            if (labelsListFilled && unitsListFilled && distinctCombinationsListFilled)
+            {
+                foreach (string aUnit in distinctUnitsList)
+                    foreach (string aCombination in distinctCombinationsListI)
+                        Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                FillExcel();
+            }
         }
     }
     public class API_Req

@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
@@ -54,6 +56,7 @@
             dataGridView3 = new DataGridView();
             dataGridView4 = new DataGridView();
             dataGridView5 = new DataGridView();
+            button13 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)dataGridView3).BeginInit();
@@ -64,7 +67,7 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(11, 15);
+            label1.Location = new Point(224, 15);
             label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
             label1.Size = new Size(96, 25);
@@ -74,7 +77,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(11, 56);
+            label2.Location = new Point(222, 55);
             label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
             label2.Size = new Size(104, 25);
@@ -84,7 +87,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(11, 106);
+            label3.Location = new Point(720, 11);
             label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
             label3.Size = new Size(67, 25);
@@ -94,7 +97,7 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(11, 156);
+            label4.Location = new Point(720, 58);
             label4.Margin = new Padding(2, 0, 2, 0);
             label4.Name = "label4";
             label4.Size = new Size(124, 25);
@@ -103,7 +106,7 @@
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(145, 18);
+            textBox1.Location = new Point(356, 6);
             textBox1.Margin = new Padding(2, 4, 2, 4);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(235, 31);
@@ -113,7 +116,7 @@
             // 
             // textBox2
             // 
-            textBox2.Location = new Point(145, 56);
+            textBox2.Location = new Point(356, 51);
             textBox2.Margin = new Padding(2, 4, 2, 4);
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(98, 31);
@@ -123,7 +126,7 @@
             // 
             // textBox3
             // 
-            textBox3.Location = new Point(145, 101);
+            textBox3.Location = new Point(854, 6);
             textBox3.Margin = new Padding(2, 4, 2, 4);
             textBox3.Name = "textBox3";
             textBox3.Size = new Size(150, 31);
@@ -133,7 +136,7 @@
             // 
             // textBox4
             // 
-            textBox4.Location = new Point(145, 150);
+            textBox4.Location = new Point(854, 51);
             textBox4.Margin = new Padding(2, 4, 2, 4);
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(150, 31);
@@ -143,10 +146,10 @@
             // 
             // button1
             // 
-            button1.Location = new Point(351, 75);
+            button1.Location = new Point(11, 11);
             button1.Margin = new Padding(2, 4, 2, 4);
             button1.Name = "button1";
-            button1.Size = new Size(128, 88);
+            button1.Size = new Size(135, 43);
             button1.TabIndex = 8;
             button1.Text = "Обработка";
             button1.UseVisualStyleBackColor = true;
@@ -167,8 +170,9 @@
             // dataGridView1
             // 
             dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
             dataGridView1.AllowUserToOrderColumns = true;
-            dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            dataGridView1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView1.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -180,12 +184,12 @@
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             dataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
-            dataGridView1.Location = new Point(1522, 6);
+            dataGridView1.Location = new Point(548, 228);
             dataGridView1.Margin = new Padding(4);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 29;
-            dataGridView1.Size = new Size(294, 722);
+            dataGridView1.Size = new Size(471, 403);
             dataGridView1.TabIndex = 11;
             dataGridView1.Visible = false;
             dataGridView1.CellContentClick += dataGridView1_CellContentClick;
@@ -272,32 +276,36 @@
             button10.TabIndex = 19;
             button10.Text = "Суммарные оценки для выбранных блоков для всех комбинаций ярлыков";
             button10.UseVisualStyleBackColor = true;
+            button10.Visible = false;
             button10.Click += button10_Click;
             // 
             // button11
             // 
-            button11.Location = new Point(11, 281);
+            button11.Location = new Point(11, 302);
             button11.Margin = new Padding(2, 4, 2, 4);
             button11.Name = "button11";
             button11.Size = new Size(468, 88);
             button11.TabIndex = 20;
             button11.Text = "Суммарные оценки для выбранных блоков для выбранных комбинаций ярлыков";
             button11.UseVisualStyleBackColor = true;
+            button11.Visible = false;
             button11.Click += button11_Click;
             // 
             // dataGridView2
             // 
             dataGridView2.AllowUserToAddRows = false;
-            dataGridView2.AllowUserToOrderColumns = true;
+            dataGridView2.AllowUserToDeleteRows = false;
+            dataGridView2.AllowUserToResizeColumns = false;
+            dataGridView2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dataGridView2.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView2.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView2.Location = new Point(499, 6);
+            dataGridView2.Location = new Point(8, 102);
             dataGridView2.Margin = new Padding(4);
             dataGridView2.Name = "dataGridView2";
             dataGridView2.RowHeadersVisible = false;
             dataGridView2.RowHeadersWidth = 51;
             dataGridView2.RowTemplate.Height = 29;
-            dataGridView2.Size = new Size(268, 722);
+            dataGridView2.Size = new Size(372, 529);
             dataGridView2.TabIndex = 21;
             dataGridView2.CellContentClick += dataGridView2_CellContentClick;
             // 
@@ -328,73 +336,94 @@
             // dataGridView3
             // 
             dataGridView3.AllowUserToAddRows = false;
-            dataGridView3.AllowUserToOrderColumns = true;
+            dataGridView3.AllowUserToDeleteRows = false;
+            dataGridView3.AllowUserToResizeColumns = false;
+            dataGridView3.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dataGridView3.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dataGridView3.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView3.Location = new Point(774, 6);
+            dataGridView3.Location = new Point(388, 102);
             dataGridView3.Margin = new Padding(4);
             dataGridView3.Name = "dataGridView3";
             dataGridView3.RowHeadersVisible = false;
             dataGridView3.RowHeadersWidth = 51;
             dataGridView3.RowTemplate.Height = 29;
-            dataGridView3.Size = new Size(259, 722);
+            dataGridView3.Size = new Size(349, 529);
             dataGridView3.TabIndex = 23;
             dataGridView3.CellContentClick += dataGridView3_CellContentClick;
             // 
             // dataGridView4
             // 
             dataGridView4.AllowUserToAddRows = false;
-            dataGridView4.AllowUserToOrderColumns = true;
+            dataGridView4.AllowUserToDeleteRows = false;
+            dataGridView4.AllowUserToResizeColumns = false;
+            dataGridView4.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
             dataGridView4.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView4.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             dataGridView4.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView4.Location = new Point(1040, 6);
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            dataGridView4.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridView4.Location = new Point(744, 102);
             dataGridView4.Margin = new Padding(4);
             dataGridView4.Name = "dataGridView4";
             dataGridView4.RowHeadersVisible = false;
             dataGridView4.RowHeadersWidth = 51;
             dataGridView4.RowTemplate.Height = 29;
-            dataGridView4.Size = new Size(475, 722);
+            dataGridView4.Size = new Size(350, 529);
             dataGridView4.TabIndex = 24;
             dataGridView4.CellContentClick += dataGridView4_CellContentClick;
             // 
             // dataGridView5
             // 
             dataGridView5.AllowUserToAddRows = false;
-            dataGridView5.AllowUserToOrderColumns = true;
+            dataGridView5.AllowUserToDeleteRows = false;
+            dataGridView5.AllowUserToResizeColumns = false;
+            dataGridView5.AllowUserToResizeRows = false;
             dataGridView5.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            dataGridView5.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridView5.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCellsExceptHeaders;
             dataGridView5.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView5.Location = new Point(499, 736);
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = SystemColors.Window;
+            dataGridViewCellStyle3.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            dataGridViewCellStyle3.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            dataGridView5.DefaultCellStyle = dataGridViewCellStyle3;
+            dataGridView5.Location = new Point(1102, 102);
             dataGridView5.Margin = new Padding(4);
             dataGridView5.Name = "dataGridView5";
             dataGridView5.RowHeadersVisible = false;
             dataGridView5.RowHeadersWidth = 51;
             dataGridView5.RowTemplate.Height = 29;
-            dataGridView5.Size = new Size(1332, 130);
+            dataGridView5.Size = new Size(171, 529);
             dataGridView5.TabIndex = 25;
             dataGridView5.CellContentClick += dataGridView5_CellContentClick;
+            // 
+            // button13
+            // 
+            button13.Location = new Point(1125, 11);
+            button13.Margin = new Padding(2, 4, 2, 4);
+            button13.Name = "button13";
+            button13.Size = new Size(148, 43);
+            button13.TabIndex = 26;
+            button13.Text = "Экспорт в Excel";
+            button13.UseVisualStyleBackColor = true;
+            button13.Click += button13_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1831, 866);
+            ClientSize = new Size(1286, 646);
+            Controls.Add(button13);
             Controls.Add(dataGridView5);
             Controls.Add(dataGridView4);
-            Controls.Add(dataGridView3);
-            Controls.Add(button12);
-            Controls.Add(dataGridView2);
-            Controls.Add(button11);
-            Controls.Add(button10);
-            Controls.Add(button9);
-            Controls.Add(button8);
-            Controls.Add(button7);
-            Controls.Add(button6);
-            Controls.Add(button5);
-            Controls.Add(button4);
-            Controls.Add(button3);
-            Controls.Add(dataGridView1);
-            Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(textBox4);
             Controls.Add(textBox3);
@@ -404,6 +433,20 @@
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
+            Controls.Add(dataGridView2);
+            Controls.Add(dataGridView3);
+            Controls.Add(dataGridView1);
+            Controls.Add(button12);
+            Controls.Add(button11);
+            Controls.Add(button10);
+            Controls.Add(button9);
+            Controls.Add(button8);
+            Controls.Add(button7);
+            Controls.Add(button6);
+            Controls.Add(button5);
+            Controls.Add(button4);
+            Controls.Add(button3);
+            Controls.Add(button2);
             Margin = new Padding(2, 4, 2, 4);
             Name = "Form1";
             Text = "Form1";
@@ -444,5 +487,6 @@
         private DataGridView dataGridView3;
         private DataGridView dataGridView4;
         private DataGridView dataGridView5;
+        private Button button13;
     }
 }

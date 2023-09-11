@@ -172,8 +172,8 @@ namespace ProjectClosureToolWinFormsNET6
             tableDGV2.Columns.Add("Ignored", typeof(bool));
             tableDGV3.Columns.Add("Unit", typeof(string));
             tableDGV3.Columns.Add("Selected", typeof(bool));
-            tableDGV4.Columns.Add("Selected", typeof(bool));
             tableDGV4.Columns.Add("Combination", typeof(string));
+            tableDGV4.Columns.Add("Selected", typeof(bool));
             tableDGV5.Columns.Add("Unit", typeof(string));
             tableDGV5.Columns.Add("Combination", typeof(string));
             tableDGV5.Columns.Add("Sum Est.", typeof(string));
@@ -519,6 +519,8 @@ namespace ProjectClosureToolWinFormsNET6
         {
             myOuts.Add(new MyOut(0, mss));
             table.Rows.Clear();
+            Application.DoEvents();
+
             table.Rows.Add(0, myOuts[0].strOUT);
             dataGridView1.DataSource = table;
         }
@@ -532,12 +534,18 @@ namespace ProjectClosureToolWinFormsNET6
             dataGridView1.CurrentCell = dataGridView1[0, k];
         }
 
+
         private void dataGridView2_new_string(string mss)
         {
             int k = myOutsDGV2.Count;
             myOutsDGV2.Add(new MyOutDGV2(mss, isIgnoredDGV2));
             tableDGV2.Rows.Add(myOutsDGV2[k].strOUT, myOutsDGV2[k].isIgn);
             dataGridView2.DataSource = tableDGV2;
+            dataGridView2.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView2.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView2.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView2.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView2.Columns[1].Width = 50;
             //if (k > 1)
             //    dataGridView2.CurrentCell = dataGridView2[0, k - 1];
         }
@@ -548,38 +556,97 @@ namespace ProjectClosureToolWinFormsNET6
             myOutsDGV3.Add(new MyOutDGV3(mss, isCheckedDGV3));
             tableDGV3.Rows.Add(myOutsDGV3[k].strOUT, myOutsDGV3[k].isCh);
             dataGridView3.DataSource = tableDGV3;
+            dataGridView3.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView3.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView3.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView3.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView3.Columns[1].Width = 55;
         }
 
         private void dataGridView2_clear_string()
         {
             tableDGV2.Rows.Clear();
+            Application.DoEvents();
+
             dataGridView2.DataSource = tableDGV2;
+            dataGridView2.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView2.Columns[0].Selected = false;
+            dataGridView2.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView2.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView2.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView2.Columns[1].Width = 50;
         }
 
         private void dataGridView3_clear_string()
         {
             tableDGV3.Rows.Clear();
+            Application.DoEvents();
             dataGridView3.DataSource = tableDGV3;
+
+            if (unitsListFilled)
+            {
+                distinctUnits = units.Distinct();
+                distinctUnitsList = distinctUnits.ToList();
+                distinctUnitsList.Sort();
+                iUnit = 1;
+                foreach (string aUnit in distinctUnitsList)
+                {
+                    isCheckedDGV3 = false;
+                    DGV3Up($"{iUnit}. {aUnit}");
+                    iUnit++;
+                }
+                iUnit = 0;
+            }
+
+            dataGridView3.DataSource = tableDGV3;
+
+            dataGridView3.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView3.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView3.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView3.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView3.Columns[1].Width = 55;
         }
 
         private void dataGridView4_clear_string()
         {
             tableDGV4.Rows.Clear();
+            Application.DoEvents();
             dataGridView4.DataSource = tableDGV4;
+            dataGridView4.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView4.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView4.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView4.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView4.Columns[1].Width = 55;
         }
 
         private void dataGridView5_clear_string()
         {
             tableDGV5.Rows.Clear();
+            Application.DoEvents();
             dataGridView5.DataSource = tableDGV5;
+            dataGridView5.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView5.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView5.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView5.Columns[2].Width = 75;
+            dataGridView5.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView5.Columns[3].Width = 75;
+            dataGridView5.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView5.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView5.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView5.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable;
         }
 
         private void dataGridView4_new_string(string mss)
         {
             int k = myOutsDGV4.Count;
             myOutsDGV4.Add(new MyOutDGV4(mss, isCheckedDGV4));
-            tableDGV4.Rows.Add(myOutsDGV4[k].isCh, myOutsDGV4[k].strOUT);
+            tableDGV4.Rows.Add(myOutsDGV4[k].strOUT, myOutsDGV4[k].isCh);
             dataGridView4.DataSource = tableDGV4;
+            dataGridView4.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView4.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView4.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView4.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView4.Columns[1].Width = 55;
         }
 
         private void dataGridView5_new_string(string mssU, string mssC, string mssSE, string mssSP)
@@ -588,6 +655,16 @@ namespace ProjectClosureToolWinFormsNET6
             myOutsDGV5.Add(new MyOutDGV5(mssU, mssC, mssSE, mssSP));
             tableDGV5.Rows.Add(myOutsDGV5[k].unit, myOutsDGV5[k].combination, myOutsDGV5[k].sumEst, myOutsDGV5[k].sumPoint);
             dataGridView5.DataSource = tableDGV5;
+            dataGridView5.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView5.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dataGridView5.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView5.Columns[2].Width = 75;
+            dataGridView5.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.None;
+            dataGridView5.Columns[3].Width = 75;
+            dataGridView5.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView5.Columns[1].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView5.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+            dataGridView5.Columns[3].SortMode = DataGridViewColumnSortMode.NotSortable;
             //if (k > 0)
             //    dataGridView5.CurrentCell = dataGridView5[0, k - 1];
         }
@@ -675,8 +752,8 @@ namespace ProjectClosureToolWinFormsNET6
 
         public void LabelCombinations()
         {
-            dataGridView4_clear_string();
             combinationsList.Clear();
+            dataGridView4_clear_string();
             distinctCombinations = Enumerable.Empty<string>();
             labels.Sort();
             for (int i = 0; i < cards.Count; i++)
@@ -714,8 +791,8 @@ namespace ProjectClosureToolWinFormsNET6
 
         private void LabelCombinationsI()
         {
-            dataGridView4_clear_string();
             combinationsListI.Clear();
+            dataGridView4_clear_string();
             distinctCombinationsI = Enumerable.Empty<string>();
             labels.Sort();
             for (int i = 0; i < cards.Count; i++)
@@ -971,49 +1048,53 @@ namespace ProjectClosureToolWinFormsNET6
                         SumPoint = sumPoint
                     });
                 }
-            if (sumT > 0)
-            {
-                DGV5Up(unit, combination, sumEstimate.ToString(), sumPoint.ToString());
-                sumsListFilled = true;
-            }
+            if (sumT > 0) { sumsListFilled = true; }
         }
 
         // Суммарные оценки для выбранных блоков для всех комбинаций ярлыков
         private void button10_Click(object sender, EventArgs e)
         {
-            if (!labelsListFilled || !unitsListFilled)
-                ListUp("Выполните команду ввода кода доски");
-            else
-            {
-                dataGridView5_clear_string();
-                LabelCombinationsI();
-                foreach (string aUnit in selectedUnits)
-                    foreach (string aCombination in distinctCombinationsListI)
-                        Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
-            }
+            //if (!labelsListFilled || !unitsListFilled)
+            //    ListUp("Выполните команду ввода кода доски");
+            //else
+            //{
+            //    dataGridView5_clear_string();
+            //    LabelCombinationsI();
+            //    foreach (string aUnit in selectedUnits)
+            //        foreach (string aCombination in distinctCombinationsListI)
+            //        {
+            //            Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+            //            DGV5Up(aUnit, aCombination, sumEstimate.ToString(), sumPoint.ToString());
+            //        }
+
+            //}
         }
 
         // Суммарные оценки для выбранных блоков для выбранных комбинаций ярлыков
         private void button11_Click(object sender, EventArgs e)
         {
-            if (!labelsListFilled || !unitsListFilled)
-                ListUp("Выполните команду ввода кода доски");
-            else
-            {
-                dataGridView5_clear_string();
-                foreach (string aUnit in selectedUnits)
-                    foreach (string aCombination in selectedCombinations)
-                        Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
-
-                //dataGridView3.Visible = false;
-                //dataGridView5.Visible = true;
-            }
+            //if (!labelsListFilled || !unitsListFilled)
+            //    ListUp("Выполните команду ввода кода доски");
+            //else
+            //{
+            //    dataGridView5_clear_string();
+            //    foreach (string aUnit in selectedUnits)
+            //        foreach (string aCombination in selectedCombinations)
+            //        {
+            //            Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+            //            DGV5Up(aUnit, aCombination, sumEstimate.ToString(), sumPoint.ToString());
+            //        }
+            //}
         }
 
         private void dataGridView2_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             int iInputIgnore = dataGridView2.CurrentCell.RowIndex;
-            if (iInputIgnore <= labelsList.Count)
+            int iColumnIndex = dataGridView2.CurrentCell.ColumnIndex;
+            dataGridView5_clear_string();
+            dataGridView4_clear_string();
+            selectedCombinations.Clear();
+            if ((iInputIgnore <= labelsList.Count) && (iColumnIndex == 1) && iInputIgnore >= 0)
             {
                 foreach (TrelloObjectLabels aLabel in labelsList)
                     if (aLabel.CardID.Equals(iInputIgnore))
@@ -1021,28 +1102,27 @@ namespace ProjectClosureToolWinFormsNET6
                         if (CheckIgnored(aLabel.CardLabel))
                         {
                             ignoredLabelsList.Remove(aLabel);
+                            dataGridView2.CurrentCell.Value = false;
                             if (ignoredLabelsList.Count == 0)
                                 ignoredLabelsListFilled = false;
                         }
                         else
                         {
                             ignoredLabelsList.Add(aLabel);
+                            dataGridView2.CurrentCell.Value = true;
                             ignoredLabelsListFilled = true;
                         }
                     }
-                selectedCombinations.Clear();
-                dataGridView4_clear_string();
             }
             LabelCombinationsI();
             dataGridView5_clear_string();
             foreach (string aUnit in selectedUnits)
             {
-                if (selectedCombinationsFilled)
-                    foreach (string aCombination in selectedCombinations)
-                        Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
-                else
-                    foreach (string aCombination in distinctCombinationsListI)
-                        Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                foreach (string aCombination in distinctCombinationsListI)
+                {
+                    Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                    DGV5Up(aUnit, aCombination, sumEstimate.ToString(), sumPoint.ToString());
+                }
             }
         }
 
@@ -1066,21 +1146,28 @@ namespace ProjectClosureToolWinFormsNET6
         private void dataGridView3_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             int iInputUnit = dataGridView3.CurrentCell.RowIndex;
-            if (iInputUnit < distinctUnitsList.Count)
+            int iColumnIndex = dataGridView3.CurrentCell.ColumnIndex;
+            if ((iInputUnit <= distinctUnitsList.Count) && (iColumnIndex == 1))
             {
                 dataGridView5_clear_string();
                 if (selectedUnits.Contains(distinctUnitsList.ElementAt(iInputUnit)))
+                {
                     selectedUnits.Remove(distinctUnitsList.ElementAt(iInputUnit));
-                else selectedUnits.Add(distinctUnitsList.ElementAt(iInputUnit));
+                    dataGridView3.CurrentCell.Value = false;
+                }
+                else
+                {
+                    selectedUnits.Add(distinctUnitsList.ElementAt(iInputUnit));
+                    dataGridView3.CurrentCell.Value = true;
+                }
                 LabelCombinationsI();
                 foreach (string aUnit in selectedUnits)
                 {
-                    if (selectedCombinationsFilled)
-                        foreach (string aCombination in selectedCombinations)
-                            Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
-                    else
-                        foreach (string aCombination in distinctCombinationsListI)
-                            Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                    foreach (string aCombination in distinctCombinationsListI)
+                    {
+                        Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                        DGV5Up(aUnit, aCombination, sumEstimate.ToString(), sumPoint.ToString());
+                    }
                 }
             }
         }
@@ -1088,17 +1175,20 @@ namespace ProjectClosureToolWinFormsNET6
         private void dataGridView4_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             int iInputCombination = dataGridView4.CurrentCell.RowIndex;
-            if (iInputCombination < distinctCombinationsListI.Count)
+            int iColumnIndex = dataGridView4.CurrentCell.ColumnIndex;
+            if ((iInputCombination <= distinctCombinationsListI.Count) && (iColumnIndex == 1))
             {
                 if (selectedCombinations.Contains(distinctCombinationsListI.ElementAt(iInputCombination)))
                 {
                     selectedCombinations.Remove(distinctCombinationsListI.ElementAt(iInputCombination));
+                    dataGridView4.CurrentCell.Value = false;
                     if (selectedCombinations.Count == 0)
                         selectedCombinationsFilled = false;
                 }
                 else
                 {
                     selectedCombinations.Add(distinctCombinationsListI.ElementAt(iInputCombination));
+                    dataGridView4.CurrentCell.Value = true;
                     selectedCombinationsFilled = true;
                 }
                 dataGridView5_clear_string();
@@ -1106,10 +1196,16 @@ namespace ProjectClosureToolWinFormsNET6
                 {
                     if (selectedCombinationsFilled)
                         foreach (string aCombination in selectedCombinations)
+                        {
                             Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                            DGV5Up(aUnit, aCombination, sumEstimate.ToString(), sumPoint.ToString());
+                        }
                     else
                         foreach (string aCombination in distinctCombinationsListI)
+                        {
                             Sum(distinctUnitsList.IndexOf(aUnit), distinctCombinationsListI.IndexOf(aCombination) + 1);
+                            DGV5Up(aUnit, aCombination, sumEstimate.ToString(), sumPoint.ToString());
+                        }
                 }
             }
         }
@@ -1184,6 +1280,7 @@ namespace ProjectClosureToolWinFormsNET6
             }
         }
 
+        // Экспорт в Excel
         private void button13_Click(object sender, EventArgs e)
         {
             if (labelsListFilled && unitsListFilled && distinctCombinationsListFilled)

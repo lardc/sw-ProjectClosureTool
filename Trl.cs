@@ -13,14 +13,15 @@ namespace ProjectClosureToolMVVM
 
         //// ввод текущей карточки
         //public static string currentCardURL;
-        //public static string currentCardUnit;
+        public static string currentCardUnit;
         //public static string currentCardName;
         //public static double currentCardEstimate;
         //public static double currentCardPoint;
-        public static string[] cardLabels = new string[20];
+        //public static string[] cardLabels = new string[20];
 
         public static void SearchLabelsM(string rr)
         {
+            Download.cardLabels[iLabels] = rr;
             iLabels++;
         }
 
@@ -64,7 +65,10 @@ namespace ProjectClosureToolMVVM
                         //    return;
                         //}
                     }
-                    //string s_unit = rr.Substring(0, iDot).Trim();
+                    string s_unit = rr.Substring(0, iDot).Trim();
+                    currentCardUnit = s_unit;
+                    Download.units.Add(currentCardUnit);
+                    Download.unitsListFilled = true;
                     //try
                     //{
                     //    currentCardUnit = s_unit;
@@ -102,12 +106,5 @@ namespace ProjectClosureToolMVVM
                 //if (currentCardEstimate == 0 && currentCardPoint == 0 && ((iDot <= Math.Min(iOpeningParenthesis, iOpeningBracket) && Math.Min(iOpeningParenthesis, iOpeningBracket) >= 0) || (Math.Max(iOpeningParenthesis, iOpeningBracket) < 0))) iNone++;
             }
         }
-        //public static void EMessage(string eM)
-        //{
-        //    int s_err = eM.IndexOf("error", 0);
-        //    int s_dot = eM.IndexOf(".", 0);
-        //    string s_mess = eM.Substring(s_err, s_dot - s_err).Trim();
-        //    Console.WriteLine(s_mess);
-        //}
     }
 }

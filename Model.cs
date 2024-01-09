@@ -17,16 +17,7 @@ namespace ProjectClosureToolMVVM
         public static readonly byte[] s_badgesUtf8 = Encoding.UTF8.GetBytes("badges");
         public static readonly byte[] s_cardRoleUtf8 = Encoding.UTF8.GetBytes("cardRole");
 
-        //public const string c_boardURL = "https://trello.com/1/boards/";
-        //public const string с_boardCode = "dXURQTbH";
-        //public const string c_APIKey = "4b02fbde8c00369dc53e25222e864941";
-        //public const string c_myTrelloToken = "ATTA86486fcb69688e946cd7697952aedd037533786170a1840c5081a6e631b5878aCF905ED7";
-
         private static string readToEnd_string;
-        //public static string boardURL = c_boardURL;
-        //public static string boardCode = с_boardCode;
-        //public static string APIKey = c_APIKey;
-        //public static string myTrelloToken = c_myTrelloToken;
         public static string boardURL = "https://trello.com/1/boards/";
         public static string boardCode = "dXURQTbH";
         public static string APIKey = "4b02fbde8c00369dc53e25222e864941";
@@ -61,29 +52,18 @@ namespace ProjectClosureToolMVVM
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-        //private string? boardCode;
-        //public string BoardCode { get => boardCode; set { boardCode = value; OnPropertyChanged("BoardCode"); } }
-        //private string? apiKey;
-        //public string APIKey { get => apiKey; set { apiKey = value; OnPropertyChanged("APIKey"); } }
-        //private string? myTrelloToken;
-        //public string MyTrelloToken { get => myTrelloToken; set { myTrelloToken = value; OnPropertyChanged("MyTrelloToken"); } }
         private string label;
         public string Label { get => label; set { label = value; OnPropertyChanged("Label"); } }
         private bool ignored;
         public bool IsIgnored { get => ignored; set { ignored = value; OnPropertyChanged("IsIgnored"); } }
+        private string unit;
+        public string Unit { get => unit; set { unit = value; OnPropertyChanged("Unit"); } }
+        private bool selected;
+        public bool IsSelected { get => selected; set { selected = value; OnPropertyChanged("IsSelected"); } }
         public Model(string arg, bool ch)
         {
             Label = arg;
             IsIgnored = ch;
-            //if (IsIgnored)
-            //{
-            //    Download.ignoredLabelsList.Add(new TrelloObjectLabels()
-            //    {
-            //        CardID = Download.ignoredLabelsList.Count,
-            //        CardLabel = Label
-            //    });
-            //    Download.ignoredLabelsListFilled = true;
-            //}
         }
     }
 }

@@ -13,13 +13,13 @@
         <Button
             Content="Download"
             HorizontalAlignment="Left"
-            Margin="21,44,0,0"
+            Margin="37,45,0,0"
             VerticalAlignment="Top"
             RenderTransformOrigin="0.396,1.58" Click="Button_Click"/>
         <TextBox
             x:Name="textBox1"
             HorizontalAlignment="Left"
-            Margin="95,44,0,0"
+            Margin="112,46,0,0"
             TextWrapping="Wrap" 
             Text="{Binding BoardCode, UpdateSourceTrigger=PropertyChanged}"
             VerticalAlignment="Top"
@@ -27,7 +27,7 @@
         <TextBox
             x:Name="textBox2"
             HorizontalAlignment="Left"
-            Margin="232,44,0,0"
+            Margin="250,45,0,0"
             TextWrapping="Wrap"
             Text="{Binding APIKey, UpdateSourceTrigger=PropertyChanged}"
             VerticalAlignment="Top"
@@ -35,26 +35,39 @@
         <TextBox
             x:Name="textBox3"
             HorizontalAlignment="Left"
-            Margin="372,44,0,0"
+            Margin="387,44,0,0"
             TextWrapping="Wrap"
             Text="{Binding MyTrelloToken, UpdateSourceTrigger=PropertyChanged}"
             VerticalAlignment="Top"
             Width="120"
             RenderTransformOrigin="0.117,2.536" TextChanged="TextBox_TextChanged_3"/>
-        <Label Content="Board code" HorizontalAlignment="Left" Margin="122,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
-        <Label Content="API key" HorizontalAlignment="Left" Margin="271,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
-        <Label Content="Trello token" HorizontalAlignment="Left" Margin="396,10,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
+        <Label Content="Board code" HorizontalAlignment="Left" Margin="136,13,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
+        <Label Content="API key" HorizontalAlignment="Left" Margin="290,11,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
+        <Label Content="Trello token" HorizontalAlignment="Left" Margin="411,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
         <DataGrid
             ItemsSource="{Binding Models}"
             HorizontalContentAlignment="Center"
             ColumnWidth="*"
             VerticalContentAlignment="Center"
-            Margin="20,75,0,129"
+            Margin="39,110,0,94"
             HorizontalAlignment="Left"
             AutoGenerateColumns="False" Width="207">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Label" Binding="{Binding Label}"></DataGridTextColumn>
                 <DataGridCheckBoxColumn Header="Ignored" Binding="{Binding IsIgnored}"></DataGridCheckBoxColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid
+            ItemsSource="{Binding UnitModels}"
+            HorizontalContentAlignment="Center"
+            ColumnWidth="*"
+            VerticalContentAlignment="Center"
+            Margin="261,108,0,96"
+            HorizontalAlignment="Left"
+            AutoGenerateColumns="False" Width="207">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Unit" Binding="{Binding Label}"/>
+                <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsIgnored}"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

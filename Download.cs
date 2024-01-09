@@ -13,10 +13,15 @@ namespace ProjectClosureToolMVVM
         public static List<TrelloObjectLabels> labels = new List<TrelloObjectLabels>();
         public static List<TrelloObjectLabels> labelsList = new List<TrelloObjectLabels>();
         public static List<TrelloObjectLabels> ignoredLabelsList = new List<TrelloObjectLabels>();
+        public static List<string> units = new List<string>();
+        public static IEnumerable<string> distinctUnits = new List<string>();
+        public static List<string> distinctUnitsList;
+        public static List<string> selectedUnits = new List<string>();
 
         public static bool labelsListFilled = false;
         //public static int iLabels;
         public static bool ignoredLabelsListFilled = false;
+        public static bool unitsListFilled = false;
         public static string currentCardURL;
         public static string currentCardUnit;
         public static string currentCardName;
@@ -24,7 +29,7 @@ namespace ProjectClosureToolMVVM
         public static double currentCardPoint;
         public static double sumEstimate;
         public static double sumPoint;
-        private static string[] cardLabels = new string[1000];
+        public static string[] cardLabels = new string[1000];
 
         //private static bool isIgnoredDGV2 = false;
         //private static bool isCheckedDGV3 = false;
@@ -39,7 +44,7 @@ namespace ProjectClosureToolMVVM
         public static void ClearCardM()
         {
             currentCardURL = "";
-            //currentCardUnit = "";
+            currentCardUnit = "";
             //currentCardName = "";
             //currentCardEstimate = 0;
             //currentCardPoint = 0;
@@ -53,9 +58,8 @@ namespace ProjectClosureToolMVVM
             if (reader.GetString().StartsWith("name"))
             {
                 reader.Read();
-                //if (reader.CurrentDepth.Equals(2))
-                //    Trl.SearchUnitValuesM(reader.GetString().ToString());
-
+                if (reader.CurrentDepth.Equals(2))
+                    Trl.SearchUnitValuesM(reader.GetString().ToString());
                 //try { Trl.SearchUnitValuesM(reader.GetString().ToString()); }
                 //catch (Exception e)
                 //{
@@ -64,7 +68,7 @@ namespace ProjectClosureToolMVVM
                 //    Console.ReadKey();
                 //    return;
                 //}
-                /*else*/ if (reader.CurrentDepth.Equals(4))
+                else if (reader.CurrentDepth.Equals(4))
                     Trl.SearchLabelsM(reader.GetString().ToString());
                 //try { Trl.SearchLabelsM(reader.GetString().ToString()); }
                 //catch (Exception e)
@@ -98,8 +102,8 @@ namespace ProjectClosureToolMVVM
                 CardEstimate = currentCardEstimate,
                 CardPoint = currentCardPoint
             });
-            if (Trl.iLabels == 0) Trl.SearchLabelsM("No Labels");
-            for (int i = 0; i < Trl.iLabels; i++)
+            //if (Trl.iLabels == 0) Trl.SearchLabelsM("No Labels");
+            if (Trl.iLabels > 0) for (int i = 0; i < Trl.iLabels; i++)
             {
                 labels.Add(new TrelloObjectLabels()
                 {
@@ -128,10 +132,10 @@ namespace ProjectClosureToolMVVM
         {
             ClearCardM();
             cards.Clear();
-            //units.Clear();
+            units.Clear();
             labels.Clear();
             //combinationsList.Clear();
-            //distinctUnits = Enumerable.Empty<string>();
+            distinctUnits = Enumerable.Empty<string>();
             ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
             var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
             while (reader.Read())

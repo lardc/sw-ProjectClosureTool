@@ -18,6 +18,7 @@ namespace ProjectClosureToolMVVM
     {
         public event PropertyChangedEventHandler? PropertyChanged;
         ObservableCollection<Model> models = new ObservableCollection<Model>();
+        ObservableCollection<Model> unitModels = new ObservableCollection<Model>();
 
         public void OnPropertyChanged(string propertyName)
         {
@@ -25,10 +26,12 @@ namespace ProjectClosureToolMVVM
         }
 
         public ObservableCollection<Model> Models { get { return models; } set { models = value; OnPropertyChanged("Models"); } }
+        public ObservableCollection<Model> UnitModels { get { return unitModels; } set { unitModels = value; OnPropertyChanged("UnitModels"); } }
 
         public WindowBind()
         {
             Models = new ObservableCollection<Model>();
+            UnitModels = new ObservableCollection<Model>();
         }
 
         private string? boardCode;
@@ -42,10 +45,10 @@ namespace ProjectClosureToolMVVM
         {
             Download.ClearLabels();
             Download.labelsListFilled = false;
-            //unitsListFilled = false;
+            Download.unitsListFilled = false;
             Download.ignoredLabelsList.Clear();
             Download.ignoredLabelsListFilled = false;
-            //selectedUnits.Clear();
+            Download.selectedUnits.Clear();
             //selectedCombinations.Clear();
             Models.Clear();
             if (BoardCode != API_Req.boardCode && BoardCode != "" && BoardCode != null)
@@ -56,6 +59,15 @@ namespace ProjectClosureToolMVVM
                 { API_Req.myTrelloToken = myTrelloToken; }
             API_Req.RequestAsync(API_Req.APIKey, API_Req.myTrelloToken, API_Req.CardFilter, API_Req.CardFields, API_Req.boardCode);
             Download.BoardM();
+            if (Download.unitsListFilled)
+            {
+                Download.distinctUnits = Download.units.Distinct();
+                Download.distinctUnitsList = Download.distinctUnits.ToList();
+                Download.distinctUnitsList.Sort();
+                foreach (string aUnit in Download.distinctUnitsList)
+                    UnitModels.Add(new Model(aUnit, Download.selectedUnits.Contains(aUnit)));
+            }
+            //LabelCombinationsI();
             foreach (TrelloObjectLabels aLabel in Download.labelsList)
                 Models.Add(new Model(aLabel.CardLabel, Download.CheckIgnored(aLabel.CardLabel)));
         }

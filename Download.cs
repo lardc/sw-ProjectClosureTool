@@ -40,10 +40,6 @@ namespace ProjectClosureToolMVVM
         public static double sumPoint;
         public static string[] cardLabels = new string[1000];
 
-        //private static bool isIgnoredDGV2 = false;
-        //private static bool isCheckedDGV3 = false;
-        //private static bool isCheckedDGV4 = false;
-
         public static void ClearLabels()
         {
             labelsList.Clear();

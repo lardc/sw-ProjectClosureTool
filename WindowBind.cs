@@ -17,21 +17,24 @@ namespace ProjectClosureToolMVVM
     internal class WindowBind: INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        ObservableCollection<Model> models = new ObservableCollection<Model>();
+        ObservableCollection<Model> labelModels = new ObservableCollection<Model>();
         ObservableCollection<Model> unitModels = new ObservableCollection<Model>();
+        ObservableCollection<Model> combinationModels = new ObservableCollection<Model>();
 
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public ObservableCollection<Model> Models { get { return models; } set { models = value; OnPropertyChanged("Models"); } }
+        public ObservableCollection<Model> LabelModels { get { return labelModels; } set { labelModels = value; OnPropertyChanged("LabelModels"); } }
         public ObservableCollection<Model> UnitModels { get { return unitModels; } set { unitModels = value; OnPropertyChanged("UnitModels"); } }
+        public ObservableCollection<Model> CombinationModels { get { return combinationModels; } set { combinationModels = value; OnPropertyChanged("UnitModels"); } }
 
         public WindowBind()
         {
-            Models = new ObservableCollection<Model>();
+            LabelModels = new ObservableCollection<Model>();
             UnitModels = new ObservableCollection<Model>();
+            CombinationModels = new ObservableCollection<Model>();
         }
 
         private string? boardCode;
@@ -49,8 +52,9 @@ namespace ProjectClosureToolMVVM
             Download.ignoredLabelsList.Clear();
             Download.ignoredLabelsListFilled = false;
             Download.selectedUnits.Clear();
-            //selectedCombinations.Clear();
-            Models.Clear();
+            Download.selectedCombinations.Clear();
+            Download.selectedCombinationsFilled = false;
+            LabelModels.Clear();
             if (BoardCode != API_Req.boardCode && BoardCode != "" && BoardCode != null)
                 { API_Req.boardCode = BoardCode; }
             if (APIKey != "Default" && APIKey != "" && APIKey != null)
@@ -67,9 +71,11 @@ namespace ProjectClosureToolMVVM
                 foreach (string aUnit in Download.distinctUnitsList)
                     UnitModels.Add(new Model(aUnit, Download.selectedUnits.Contains(aUnit)));
             }
-            //LabelCombinationsI();
             foreach (TrelloObjectLabels aLabel in Download.labelsList)
-                Models.Add(new Model(aLabel.CardLabel, Download.CheckIgnored(aLabel.CardLabel)));
+                LabelModels.Add(new Model(aLabel.CardLabel, Download.CheckIgnored(aLabel.CardLabel)));
+            Download.LabelCombinationsI();
+            foreach (string aCombination in Download.distinctCombinationsListI)
+                CombinationModels.Add(new Model(aCombination, Download.selectedCombinations.Contains(aCombination)));
         }
 
         protected bool SetProperty<T>(ref T field, T newValue, [CallerMemberName] string? propertyName = null)

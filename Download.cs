@@ -17,7 +17,16 @@ namespace ProjectClosureToolMVVM
         public static IEnumerable<string> distinctUnits = new List<string>();
         public static List<string> distinctUnitsList;
         public static List<string> selectedUnits = new List<string>();
+        //static List<string> combinationsList = new List<string>();
+        static List<string> combinationsListI = new List<string>();
+        //static IEnumerable<string> distinctCombinations = new List<string>();
+        static IEnumerable<string> distinctCombinationsI = new List<string>();
+        //private static List<string> distinctCombinationsList;
+        public static List<string> distinctCombinationsListI = new List<string>();
+        public static List<string> selectedCombinations = new List<string>();
 
+        public static bool distinctCombinationsListFilled = false;
+        public static bool selectedCombinationsFilled = false;
         public static bool labelsListFilled = false;
         //public static int iLabels;
         public static bool ignoredLabelsListFilled = false;
@@ -135,6 +144,7 @@ namespace ProjectClosureToolMVVM
             units.Clear();
             labels.Clear();
             //combinationsList.Clear();
+            combinationsListI.Clear();
             distinctUnits = Enumerable.Empty<string>();
             ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
             var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
@@ -164,60 +174,6 @@ namespace ProjectClosureToolMVVM
                 }
             }
             labels.Sort();
-            //ListUp($"APIKey = {API_Req.APIKey}");
-            //ListUp($"myTrelloToken = {API_Req.myTrelloToken}");
-            //ListUp($"boardCode = {API_Req.boardCode}");
-            //try
-            //{
-            //    ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
-            //    var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
-            //    while (reader.Read())
-            //    {
-            //        JsonTokenType tokenType;
-            //        tokenType = reader.TokenType;
-            //        switch (tokenType)
-            //        {
-            //            case JsonTokenType.StartObject:
-            //                break;
-            //            case JsonTokenType.PropertyName:
-            //                if (reader.ValueTextEquals(s_nameUtf8))
-            //                {
-            //                    try { NameTokenM(reader); }
-            //                    catch (Exception e)
-            //                    {
-            //                        ListUp(e.Message);
-            //                        return;
-            //                    }
-            //                }
-            //                else if (reader.ValueTextEquals(s_UrlUtf8))
-            //                {
-            //                    try { ShortUrlTokenM(reader); }
-            //                    catch (Exception e)
-            //                    {
-            //                        ListUp(e.Message);
-            //                        return;
-            //                    }
-            //                }
-            //                else if (reader.ValueTextEquals(s_cardRoleUtf8))
-            //                {
-            //                    try { CardRoleTokenM(reader); }
-            //                    catch (Exception e)
-            //                    {
-            //                        ListUp(e.Message);
-            //                        return;
-            //                    }
-            //                    ClearCardM();
-            //                }
-            //                break;
-            //        }
-            //    }
-            //    labels.Sort();
-            //}
-            //catch (Exception e)
-            //{
-            //    ListUp(e.Message);
-            //    return;
-            //}
         }
 
         public static bool CheckIgnored(string rr)
@@ -229,6 +185,30 @@ namespace ProjectClosureToolMVVM
                     isIgnored = true;
             }
             return isIgnored;
+        }
+
+        public static void LabelCombinationsI()
+        {
+            combinationsListI.Clear();
+            distinctCombinationsI = Enumerable.Empty<string>();
+            labels.Sort();
+            for (int i = 0; i < cards.Count; i++)
+            {
+                string sCombination = "";
+                foreach (TrelloObjectLabels aLabel in labels)
+                    if (aLabel.CardID.Equals(i) && !ignoredLabelsList.Contains(aLabel))
+                        sCombination += $"{aLabel.CardLabel}\n";
+                foreach (TrelloObject aCard in cards)
+                    if (aCard.CardID.Equals(i) && sCombination != "")
+                    {
+                        aCard.LabelCombinationI = sCombination;
+                        combinationsListI.Add(sCombination);
+                    }
+            }
+            distinctCombinationsI = combinationsListI.Distinct();
+            distinctCombinationsListI = distinctCombinationsI.ToList();
+            distinctCombinationsListI.Sort();
+            distinctCombinationsListFilled = true;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.ComponentModel;
 
 namespace ProjectClosureToolMVVM
 {
@@ -55,11 +56,15 @@ namespace ProjectClosureToolMVVM
         private string label;
         public string Label { get => label; set { label = value; OnPropertyChanged("Label"); } }
         private bool ignored;
-        public bool IsIgnored { get => ignored; set { ignored = value; OnPropertyChanged("IsIgnored"); } }
-        private string unit;
-        public string Unit { get => unit; set { unit = value; OnPropertyChanged("Unit"); } }
-        private bool selected;
-        public bool IsSelected { get => selected; set { selected = value; OnPropertyChanged("IsSelected"); } }
+        public bool IsIgnored {
+            get { return ignored; }
+            set {
+                if (ignored == value) return;
+                ignored = value;
+                OnPropertyChanged("IsIgnored");
+            }
+        }
+
         public Model(string arg, bool ch)
         {
             Label = arg;

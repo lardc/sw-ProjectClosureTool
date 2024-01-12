@@ -27,7 +27,7 @@
         <TextBox
             x:Name="textBox2"
             HorizontalAlignment="Left"
-            Margin="250,45,0,0"
+            Margin="252,46,0,0"
             TextWrapping="Wrap"
             Text="{Binding APIKey, UpdateSourceTrigger=PropertyChanged}"
             VerticalAlignment="Top"
@@ -35,7 +35,7 @@
         <TextBox
             x:Name="textBox3"
             HorizontalAlignment="Left"
-            Margin="387,44,0,0"
+            Margin="392,46,0,0"
             TextWrapping="Wrap"
             Text="{Binding MyTrelloToken, UpdateSourceTrigger=PropertyChanged}"
             VerticalAlignment="Top"
@@ -45,7 +45,7 @@
         <Label Content="API key" HorizontalAlignment="Left" Margin="290,11,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
         <Label Content="Trello token" HorizontalAlignment="Left" Margin="411,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
         <DataGrid
-            ItemsSource="{Binding Models}"
+            ItemsSource="{Binding LabelModels}"
             HorizontalContentAlignment="Center"
             ColumnWidth="*"
             VerticalContentAlignment="Center"
@@ -62,11 +62,24 @@
             HorizontalContentAlignment="Center"
             ColumnWidth="*"
             VerticalContentAlignment="Center"
-            Margin="261,108,0,96"
+            Margin="251,109,0,95"
             HorizontalAlignment="Left"
             AutoGenerateColumns="False" Width="207">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Unit" Binding="{Binding Label}"/>
+                <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsIgnored}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <DataGrid
+            ItemsSource="{Binding CombinationModels}"
+            HorizontalContentAlignment="Center"
+            ColumnWidth="*"
+            VerticalContentAlignment="Center"
+            Margin="468,108,0,96"
+            HorizontalAlignment="Left"
+            AutoGenerateColumns="False" Width="207">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Combination" Binding="{Binding Label}"/>
                 <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsIgnored}"/>
             </DataGrid.Columns>
         </DataGrid>

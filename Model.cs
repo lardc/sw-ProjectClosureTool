@@ -8,6 +8,8 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.ComponentModel;
+using System.Windows.Input;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
 namespace ProjectClosureToolMVVM
 {
@@ -20,7 +22,8 @@ namespace ProjectClosureToolMVVM
 
         private static string readToEnd_string;
         public static string boardURL = "https://trello.com/1/boards/";
-        public static string boardCode = "dXURQTbH";
+        public static string boardCode = "Be1vZgJd";
+        //public static string boardCode = "dXURQTbH";
         public static string APIKey = "4b02fbde8c00369dc53e25222e864941";
         public static string myTrelloToken = "ATTA86486fcb69688e946cd7697952aedd037533786170a1840c5081a6e631b5878aCF905ED7";
         public static string CardFilter = "/cards/open";
@@ -56,6 +59,7 @@ namespace ProjectClosureToolMVVM
         private string label;
         public string Label { get => label; set { label = value; OnPropertyChanged("Label"); } }
         private bool ignored;
+
         public bool IsIgnored {
             get { return ignored; }
             set {
@@ -69,6 +73,34 @@ namespace ProjectClosureToolMVVM
         {
             Label = arg;
             IsIgnored = ch;
+        }
+    }
+
+    internal class ResultsModel : INotifyPropertyChanged
+    {
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+        private string unit;
+        public string Unit { get => unit; set { unit = value; OnPropertyChanged("Unit"); } }
+
+        private string combination;
+        public string Combination { get => combination; set { combination = value; OnPropertyChanged("Combination"); } }
+
+        private double sumEst;
+        public double SumEst { get => sumEst; set { sumEst = value; OnPropertyChanged("SumEst"); } }
+
+        private double sumP;
+        public double SumP { get => sumP; set { sumP = value; OnPropertyChanged("SumP"); } }
+
+        public ResultsModel(string arg1, string arg2, double argE, double argP)
+        {
+            Unit = arg1;
+            Combination = arg2;
+            SumEst = argE;
+            SumP = argP;
         }
     }
 }

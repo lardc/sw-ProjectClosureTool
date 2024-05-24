@@ -9,7 +9,7 @@ namespace ProjectClosureToolMVVM
 {
     internal class Download
     {
-        private static List<TrelloObject> cards = new List<TrelloObject>();
+        public static List<TrelloObject> cards = new List<TrelloObject>();
         public static List<TrelloObjectLabels> labels = new List<TrelloObjectLabels>();
         public static List<TrelloObjectLabels> labelsList = new List<TrelloObjectLabels>();
         public static List<TrelloObjectLabels> ignoredLabelsList = new List<TrelloObjectLabels>();
@@ -26,7 +26,6 @@ namespace ProjectClosureToolMVVM
         public static List<string> selectedCombinations = new List<string>();
 
         public static bool distinctCombinationsListFilled = false;
-        public static bool selectedCombinationsFilled = false;
         public static bool labelsListFilled = false;
         //public static int iLabels;
         public static bool ignoredLabelsListFilled = false;
@@ -51,8 +50,8 @@ namespace ProjectClosureToolMVVM
             currentCardURL = "";
             currentCardUnit = "";
             //currentCardName = "";
-            //currentCardEstimate = 0;
-            //currentCardPoint = 0;
+            currentCardEstimate = 0;
+            currentCardPoint = 0;
             for (int i = 0; i < 20; i++)
                 cardLabels[i] = "";
             Trl.iLabels = 0;
@@ -127,7 +126,7 @@ namespace ProjectClosureToolMVVM
                     {
                         CardID = labelsList.Count,
                         CardLabel = cardLabels[i]
-                    });
+                    });                    
                     labelsListFilled = true;
                 }
             }
@@ -143,6 +142,7 @@ namespace ProjectClosureToolMVVM
             combinationsListI.Clear();
             distinctUnits = Enumerable.Empty<string>();
             ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
+            //System.ArgumentNullException: "Value cannot be null. Arg_ParamName_Name"
             var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
             while (reader.Read())
             {
@@ -186,6 +186,8 @@ namespace ProjectClosureToolMVVM
         public static void LabelCombinationsI()
         {
             combinationsListI.Clear();
+            distinctCombinationsListI.Clear();
+            distinctCombinationsListFilled = false;
             distinctCombinationsI = Enumerable.Empty<string>();
             labels.Sort();
             for (int i = 0; i < cards.Count; i++)

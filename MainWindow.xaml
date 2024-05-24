@@ -9,17 +9,11 @@
     <Window.DataContext>
         <local:WindowBind/>
     </Window.DataContext>
-    <Grid Margin="0,9,0,0">
-        <Button
-            Content="Download"
-            HorizontalAlignment="Left"
-            Margin="37,45,0,0"
-            VerticalAlignment="Top"
-            RenderTransformOrigin="0.396,1.58" Click="Button_Click"/>
+    <Grid Margin="0,9,-1,0">
         <TextBox
             x:Name="textBox1"
             HorizontalAlignment="Left"
-            Margin="112,46,0,0"
+            Margin="153,46,0,0"
             TextWrapping="Wrap" 
             Text="{Binding BoardCode, UpdateSourceTrigger=PropertyChanged}"
             VerticalAlignment="Top"
@@ -27,7 +21,7 @@
         <TextBox
             x:Name="textBox2"
             HorizontalAlignment="Left"
-            Margin="252,46,0,0"
+            Margin="293,46,0,0"
             TextWrapping="Wrap"
             Text="{Binding APIKey, UpdateSourceTrigger=PropertyChanged}"
             VerticalAlignment="Top"
@@ -35,26 +29,35 @@
         <TextBox
             x:Name="textBox3"
             HorizontalAlignment="Left"
-            Margin="392,46,0,0"
+            Margin="433,46,0,0"
             TextWrapping="Wrap"
             Text="{Binding MyTrelloToken, UpdateSourceTrigger=PropertyChanged}"
             VerticalAlignment="Top"
             Width="120"
             RenderTransformOrigin="0.117,2.536" TextChanged="TextBox_TextChanged_3"/>
-        <Label Content="Board code" HorizontalAlignment="Left" Margin="136,13,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
-        <Label Content="API key" HorizontalAlignment="Left" Margin="290,11,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
-        <Label Content="Trello token" HorizontalAlignment="Left" Margin="411,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
+        <Label Content="Board code" HorizontalAlignment="Left" Margin="177,13,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
+        <Label Content="API key" HorizontalAlignment="Left" Margin="331,11,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
+        <Label Content="Trello token" HorizontalAlignment="Left" Margin="459,9,0,0" VerticalAlignment="Top" RenderTransformOrigin="-0.921,-3.331"/>
         <DataGrid
-            ItemsSource="{Binding LabelModels}"
+            x:Name="DataGridLabels"
+            ItemsSource="{Binding Path=LabelModels}"
             HorizontalContentAlignment="Center"
             ColumnWidth="*"
             VerticalContentAlignment="Center"
-            Margin="39,110,0,94"
+            Margin="43,110,0,94"
             HorizontalAlignment="Left"
-            AutoGenerateColumns="False" Width="207">
+            AutoGenerateColumns="False"
+            Width="140"
+            SelectionChanged="DataGridLabels_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Label" Binding="{Binding Label}"></DataGridTextColumn>
-                <DataGridCheckBoxColumn Header="Ignored" Binding="{Binding IsIgnored}"></DataGridCheckBoxColumn>
+                <DataGridTemplateColumn Header="Ignored">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsIgnored, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid
@@ -62,26 +65,55 @@
             HorizontalContentAlignment="Center"
             ColumnWidth="*"
             VerticalContentAlignment="Center"
-            Margin="251,109,0,95"
+            Margin="187,110,0,94"
             HorizontalAlignment="Left"
-            AutoGenerateColumns="False" Width="207">
+            AutoGenerateColumns="False" Width="140">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Unit" Binding="{Binding Label}"/>
                 <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsIgnored}"/>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid
-            ItemsSource="{Binding CombinationModels}"
+            x:Name="DataGridCombinations"
+            ItemsSource="{Binding Path=CombinationModels}"
             HorizontalContentAlignment="Center"
             ColumnWidth="*"
             VerticalContentAlignment="Center"
-            Margin="468,108,0,96"
+            Margin="330,111,0,93"
             HorizontalAlignment="Left"
-            AutoGenerateColumns="False" Width="207">
+            AutoGenerateColumns="False" Width="140">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Combination" Binding="{Binding Label}"/>
                 <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsIgnored}"/>
             </DataGrid.Columns>
         </DataGrid>
+        <Button
+            Content="Download"
+            HorizontalAlignment="Left"
+            Margin="40,45,0,0"
+            VerticalAlignment="Top"
+            RenderTransformOrigin="0.396,1.58" Click="Button_Click"/>
+        <Button Content="Combinations" Margin="41,79,0,0" Click="Button_Click_1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="79"/>
+        <Button Margin="597,44,0,0" Click="Button_Click_1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="79">
+            <Button Content="Export" Click="Button_Click_2" Width="76"/>
+        </Button>
+        <DataGrid
+            x:Name="DataGridResults"
+            ItemsSource="{Binding Path=ResultsModels}"
+            HorizontalContentAlignment="Center"
+            ColumnWidth="*"
+            VerticalContentAlignment="Center"
+            Margin="585,110,0,94"
+            AutoGenerateColumns="False"
+            HorizontalAlignment="Center"
+            Width="202">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Unit" Binding="{Binding Unit}"/>
+                <DataGridTextColumn Header="Combination" Binding="{Binding Combination}"/>
+                <DataGridTextColumn Header="SumEst" Binding="{Binding SumEst}"/>
+                <DataGridTextColumn Header="SumP" Binding="{Binding SumP}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Content="Results" HorizontalAlignment="Left" Height="24" Margin="613,76,0,0" VerticalAlignment="Top" Width="52" Click="Button_Click_3"/>
     </Grid>
 </Window>

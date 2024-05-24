@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -45,6 +46,31 @@ namespace ProjectClosureToolMVVM
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             ((WindowBind)DataContext).WindowBindDownload();
+        }
+
+        private void DataGridLabels_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            ((WindowBind)DataContext).CombinationsDownload();
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            ((WindowBind)DataContext).Export();
+        }
+
+        private void DataGridResults_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            ((WindowBind)DataContext).Results();
         }
     }
 }

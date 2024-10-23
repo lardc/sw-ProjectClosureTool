@@ -12,6 +12,7 @@ namespace ProjectClosureToolMVVM
         public static List<TrelloObject> cards = new List<TrelloObject>();
         public static List<TrelloObjectLabels> labels = new List<TrelloObjectLabels>();
         public static List<TrelloObjectLabels> labelsList = new List<TrelloObjectLabels>();
+        //public static List<TrelloObjectLabels> labelsListF = new List<TrelloObjectLabels>(labelsList);
         public static List<TrelloObjectLabels> ignoredLabelsList = new List<TrelloObjectLabels>();
         public static List<string> units = new List<string>();
         public static IEnumerable<string> distinctUnits = new List<string>();
@@ -23,6 +24,7 @@ namespace ProjectClosureToolMVVM
         static IEnumerable<string> distinctCombinationsI = new List<string>();
         //private static List<string> distinctCombinationsList;
         public static List<string> distinctCombinationsListI = new List<string>();
+        //public static List<string> distinctCombinationsListIF=new List<string>(distinctCombinationsListI);
         public static List<string> selectedCombinations = new List<string>();
 
         public static bool distinctCombinationsListFilled = false;
@@ -187,7 +189,6 @@ namespace ProjectClosureToolMVVM
         {
             combinationsListI.Clear();
             distinctCombinationsListI.Clear();
-            distinctCombinationsListFilled = false;
             distinctCombinationsI = Enumerable.Empty<string>();
             labels.Sort();
             for (int i = 0; i < cards.Count; i++)

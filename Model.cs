@@ -58,21 +58,21 @@ namespace ProjectClosureToolMVVM
         }
         private string label;
         public string Label { get => label; set { label = value; OnPropertyChanged("Label"); } }
-        private bool ignored;
+        private bool isChecked;
 
-        public bool IsIgnored {
-            get { return ignored; }
+        public bool IsChecked {
+            get { return isChecked; }
             set {
-                if (ignored == value) return;
-                ignored = value;
-                OnPropertyChanged("IsIgnored");
+                if (isChecked == value) return;
+                isChecked = value;
+                OnPropertyChanged("IsChecked");
             }
         }
 
         public Model(string arg, bool ch)
         {
             Label = arg;
-            IsIgnored = ch;
+            IsChecked = ch;
         }
     }
 

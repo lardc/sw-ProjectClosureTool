@@ -50,7 +50,32 @@ namespace ProjectClosureToolMVVM
 
         private void DataGridLabels_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            ((WindowBind)DataContext).CombinationsDownload();
 
+            //int iInputIgnore = DataGridLabels.Items.IndexOf(DataGridLabels.CurrentItem);
+            //int iColumnIndex = DataGridLabels.Items.IndexOf(DataGridLabels.CurrentItem);
+
+            //((WindowBind)DataContext).CombinationsDownload();
+            //if ((iInputIgnore <= Download.labelsList.Count) && (iColumnIndex == 1) && iInputIgnore >= 0)
+            //{
+            //    foreach (TrelloObjectLabels aLabel in Download.labelsList)
+            //        if (aLabel.CardID.Equals(iInputIgnore))
+            //        {
+            //            if (Download.CheckIgnored(aLabel.CardLabel))
+            //            {
+            //                Download.ignoredLabelsList.Remove(aLabel);
+            //                DataGridLabels.CurrentCell.Value = false;
+            //                if (Download.ignoredLabelsList.Count == 0)
+            //                    Download.ignoredLabelsListFilled = false;
+            //            }
+            //            else
+            //            {
+            //                Download.ignoredLabelsList.Add(aLabel);
+            //                DataGridLabels.CurrentCell.Value = true;
+            //                Download.ignoredLabelsListFilled = true;
+            //            }
+            //        }
+            //}
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -71,6 +96,16 @@ namespace ProjectClosureToolMVVM
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             ((WindowBind)DataContext).Results();
+        }
+
+        private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        private void DataGridCombinations_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

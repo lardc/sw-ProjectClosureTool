@@ -50,32 +50,29 @@ namespace ProjectClosureToolMVVM
 
         private void DataGridLabels_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ((WindowBind)DataContext).CombinationsDownload();
-
-            //int iInputIgnore = DataGridLabels.Items.IndexOf(DataGridLabels.CurrentItem);
-            //int iColumnIndex = DataGridLabels.Items.IndexOf(DataGridLabels.CurrentItem);
-
-            //((WindowBind)DataContext).CombinationsDownload();
-            //if ((iInputIgnore <= Download.labelsList.Count) && (iColumnIndex == 1) && iInputIgnore >= 0)
-            //{
-            //    foreach (TrelloObjectLabels aLabel in Download.labelsList)
-            //        if (aLabel.CardID.Equals(iInputIgnore))
-            //        {
-            //            if (Download.CheckIgnored(aLabel.CardLabel))
-            //            {
-            //                Download.ignoredLabelsList.Remove(aLabel);
-            //                DataGridLabels.CurrentCell.Value = false;
-            //                if (Download.ignoredLabelsList.Count == 0)
-            //                    Download.ignoredLabelsListFilled = false;
-            //            }
-            //            else
-            //            {
-            //                Download.ignoredLabelsList.Add(aLabel);
-            //                DataGridLabels.CurrentCell.Value = true;
-            //                Download.ignoredLabelsListFilled = true;
-            //            }
-            //        }
-            //}
+            int iInputIgnore = DataGridLabels.Items.IndexOf(DataGridLabels.CurrentItem);
+            int iColumnIndex = DataGridLabels.Items.IndexOf(DataGridLabels.CurrentItem);
+            if ((iInputIgnore <= Download.labelsList.Count) && (iColumnIndex == 1) && iInputIgnore >= 0)
+            {
+                foreach (TrelloObjectLabels aLabel in Download.labelsList)
+                    if (aLabel.CardID.Equals(iInputIgnore))
+                    {
+                        if (Download.CheckIgnored(aLabel.CardLabel))
+                        {
+                            Download.ignoredLabelsList.Remove(aLabel);
+                            DataGridLabels.CurrentItem = false;
+                            if (Download.ignoredLabelsList.Count == 0)
+                                Download.ignoredLabelsListFilled = false;
+                        }
+                        else
+                        {
+                            Download.ignoredLabelsList.Add(aLabel);
+                            DataGridLabels.CurrentItem = true;
+                            Download.ignoredLabelsListFilled = true;
+                        }
+                    }
+                ((WindowBind)DataContext).CombinationsDownloadCheckbox(iInputIgnore, iColumnIndex);
+            }
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)

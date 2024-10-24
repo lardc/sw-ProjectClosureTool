@@ -1,5 +1,6 @@
 ﻿<Window x:Class="ProjectClosureToolMVVM.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:source="clr-namespace:ProjectClosureToolMVVM"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -48,19 +49,21 @@
             HorizontalAlignment="Left"
             AutoGenerateColumns="False"
             Width="140"
+            SelectionUnit="Cell"
             SelectionChanged="DataGridLabels_SelectionChanged">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Label" Binding="{Binding Label}"></DataGridTextColumn>
                 <DataGridTemplateColumn Header="Ignored">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <CheckBox IsChecked="{Binding IsIgnored, UpdateSourceTrigger=PropertyChanged}"/>
+                            <CheckBox IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid
+            x:Name="DataGridUnit"
             ItemsSource="{Binding UnitModels}"
             HorizontalContentAlignment="Center"
             ColumnWidth="*"
@@ -69,8 +72,14 @@
             HorizontalAlignment="Left"
             AutoGenerateColumns="False" Width="140">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Unit" Binding="{Binding Label}"/>
-                <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsIgnored}"/>
+                <DataGridTextColumn Header="Unit" Binding="{Binding Label}"></DataGridTextColumn>
+                <DataGridTemplateColumn Header="Selected">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid
@@ -81,10 +90,17 @@
             VerticalContentAlignment="Center"
             Margin="330,111,0,93"
             HorizontalAlignment="Left"
-            AutoGenerateColumns="False" Width="140">
+            AutoGenerateColumns="False" Width="140" 
+            SelectionChanged="DataGridCombinations_SelectionChanged">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Combination" Binding="{Binding Label}"/>
-                <DataGridCheckBoxColumn Header="Selected" Binding="{Binding IsIgnored}"/>
+                <DataGridTextColumn Header="Combination" Binding="{Binding Label}"></DataGridTextColumn>
+                <DataGridTemplateColumn Header="Selected">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <Button
@@ -103,10 +119,10 @@
             HorizontalContentAlignment="Center"
             ColumnWidth="*"
             VerticalContentAlignment="Center"
-            Margin="585,110,0,94"
+            Margin="479,110,0,94"
             AutoGenerateColumns="False"
-            HorizontalAlignment="Center"
-            Width="202">
+            HorizontalAlignment="Left"
+            Width="314">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Unit" Binding="{Binding Unit}"/>
                 <DataGridTextColumn Header="Combination" Binding="{Binding Combination}"/>

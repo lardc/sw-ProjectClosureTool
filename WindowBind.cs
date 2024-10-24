@@ -85,6 +85,7 @@ namespace ProjectClosureToolMVVM
                 foreach (string aUnit in Download.distinctUnitsList)
                     UnitModels.Add(new Model(aUnit, Download.selectedUnits.Contains(aUnit)));
             }
+            CombinationsDownload();
         }
 
         public void CombinationsDownload()
@@ -111,35 +112,15 @@ namespace ProjectClosureToolMVVM
             for (int i = 0; i < Download.distinctUnitsList.Count(); i++)
                 for (int j = 0; j < Download.distinctCombinationsListI.Count(); j++)
                     Trl.Sum(i, j + 1);
+        }
 
-            //____________________________________________________________________
-            //Download.ignoredLabelsList.Clear();
-            //Download.ignoredLabelsListFilled = false;
-            //Download.selectedCombinations.Clear();  // 01 блужд Sel Comb
-            //CombinationModels.Clear();
-            //ResultsModels.Clear();
-            //foreach (Model aLabel in LabelModels)
-            //    if (aLabel.IsChecked)
-            //    {
-            //        Download.ignoredLabelsList.Add(new TrelloObjectLabels() 
-            //        {
-            //            CardID=Download.ignoredLabelsList.Count,
-            //            CardLabel= aLabel.Label
-            //        });
-            //        Download.ignoredLabelsListFilled = true;
-            //    }
-            //Download.LabelCombinationsI();
-            //foreach (string aCombination in Download.distinctCombinationsListI)
-            //    CombinationModels.Add(new Model(aCombination, Download.selectedCombinations.Contains(aCombination)));
-            //Trl.sums.Clear();
-            //for (int i = 0; i < Download.distinctUnitsList.Count(); i++)
-            //    for (int j = 0; j < Download.distinctCombinationsListI.Count(); j++)
-            //        Trl.Sum(i, j + 1);
-
-            //foreach (TrelloObjectSums aSum in Trl.sums)
-            //    if (Download.selectedUnits.Contains(aSum.CardUnit) && Download.selectedCombinations.Contains(aSum.LabelCombinationI))
-
-            //        ResultsModels.Add(new ResultsModel(aSum.CardUnit, aSum.LabelCombinationI, aSum.SumEstimate, aSum.SumPoint));
+        public void CombinationsDownloadCheckbox(int rowI, int columnI)
+        {
+            Download.ignoredLabelsList.Clear();
+            Download.ignoredLabelsListFilled = false;
+            Download.selectedCombinations.Clear();
+            CombinationModels.Clear();
+            ResultsModels.Clear();
         }
 
         public void Results()
@@ -177,8 +158,11 @@ namespace ProjectClosureToolMVVM
                         Download.selectedCombinations.Add(aCombination.Label);
                 Trl.sums.Clear();
                 foreach (string aUnit in Download.distinctUnitsList)
-                    foreach (string aCombination in Download.distinctCombinationsListI)
-                            Trl.Sum(Download.distinctUnitsList.IndexOf(aUnit), Download.distinctCombinationsListI.IndexOf(aCombination) + 1);
+                    for (int i = 0; i < Download.distinctCombinationsListI.Count; i++)
+                    {
+                        string aCombination = Download.distinctCombinationsListI[i];
+                        Trl.Sum(Download.distinctUnitsList.IndexOf(aUnit), Download.distinctCombinationsListI.IndexOf(aCombination) + 1);
+                    }
                 TableResp.FillExcel();
             }
         }

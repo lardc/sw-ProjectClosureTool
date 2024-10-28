@@ -24,7 +24,7 @@ namespace ProjectClosureToolMVVM
     public partial class TrelloObjectLabels : IComparable<TrelloObjectLabels>
     {
         public int CardID { get; set; }
-        public string CardLabel { get; set; }
+        public required string CardLabel { get; set; }
         public override string ToString()
         {
             return $"{CardID + 1}. {CardLabel}";
@@ -32,8 +32,7 @@ namespace ProjectClosureToolMVVM
         public override bool Equals(object obj)
         {
             if (obj == null) return false;
-            TrelloObjectLabels objAsLabel = obj as TrelloObjectLabels;
-            if (objAsLabel == null) return false;
+            if (obj is not TrelloObjectLabels objAsLabel) return false;
             else return Equals(objAsLabel);
         }
         public bool Equals(TrelloObjectLabels other)
@@ -41,7 +40,7 @@ namespace ProjectClosureToolMVVM
             if (other == null) return false;
             return this.CardLabel.Equals(other.CardLabel);
         }
-        public int SortByNameAscending(string name1, string name2)
+        public static int SortByNameAscending(string name1, string name2)
         {
             return name1.CompareTo(name2);
         }

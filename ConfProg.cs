@@ -10,16 +10,16 @@ namespace ProjectClosureToolMVVM
 {
     public partial class ConfProg
     {
-        [JsonProperty("APIKey")]
-        public string APIKey { get; set; }
+        [JsonProperty(nameof(APIKey))]
+        public required string APIKey { get; set; }
 
-        [JsonProperty("myTrelloToken")]
-        public string myTrelloToken { get; set; }
+        [JsonProperty(nameof(myTrelloToken))]
+        public required string myTrelloToken { get; set; }
 
-        [JsonProperty("boardCode")]
-        public string boardCode { get; set; }
+        [JsonProperty(nameof(boardCode))]
+        public required string boardCode { get; set; }
 
-        [JsonProperty("IgnoredLabels")]
-        public List<TrelloObjectLabels> IgnoredLabels { get; set; }
+        [JsonProperty(nameof(IgnoredLabels))]
+        public required List<TrelloObjectLabels> IgnoredLabels { get; set; }
     }
 }

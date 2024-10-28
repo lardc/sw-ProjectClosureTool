@@ -9,32 +9,25 @@ namespace ProjectClosureToolMVVM
 {
     internal class Download
     {
-        public static List<TrelloObject> cards = new List<TrelloObject>();
-        public static List<TrelloObjectLabels> labels = new List<TrelloObjectLabels>();
-        public static List<TrelloObjectLabels> labelsList = new List<TrelloObjectLabels>();
-        //public static List<TrelloObjectLabels> labelsListF = new List<TrelloObjectLabels>(labelsList);
-        public static List<TrelloObjectLabels> ignoredLabelsList = new List<TrelloObjectLabels>();
-        public static List<string> units = new List<string>();
-        public static IEnumerable<string> distinctUnits = new List<string>();
+        public static List<TrelloObject> cards = [];
+        public static List<TrelloObjectLabels> labels = [];
+        public static List<TrelloObjectLabels> labelsList = [];
+        public static List<TrelloObjectLabels> ignoredLabelsList = [];
+        public static List<string> units = [];
+        public static IEnumerable<string> distinctUnits = [];
         public static List<string> distinctUnitsList;
-        public static List<string> selectedUnits = new List<string>();
-        //static List<string> combinationsList = new List<string>();
-        static List<string> combinationsListI = new List<string>();
-        //static IEnumerable<string> distinctCombinations = new List<string>();
-        static IEnumerable<string> distinctCombinationsI = new List<string>();
-        //private static List<string> distinctCombinationsList;
-        public static List<string> distinctCombinationsListI = new List<string>();
-        //public static List<string> distinctCombinationsListIF=new List<string>(distinctCombinationsListI);
-        public static List<string> selectedCombinations = new List<string>();
+        public static List<string> selectedUnits = [];
+        private static readonly List<string> combinationsListI = [];
+        static IEnumerable<string> distinctCombinationsI = [];
+        public static List<string> distinctCombinationsListI = [];
+        public static List<string> selectedCombinations = [];
 
         public static bool distinctCombinationsListFilled = false;
         public static bool labelsListFilled = false;
-        //public static int iLabels;
         public static bool ignoredLabelsListFilled = false;
         public static bool unitsListFilled = false;
         public static string currentCardURL;
         public static string currentCardUnit;
-        public static string currentCardName;
         public static double currentCardEstimate;
         public static double currentCardPoint;
         public static double sumEstimate;
@@ -51,7 +44,6 @@ namespace ProjectClosureToolMVVM
         {
             currentCardURL = "";
             currentCardUnit = "";
-            //currentCardName = "";
             currentCardEstimate = 0;
             currentCardPoint = 0;
             for (int i = 0; i < 20; i++)
@@ -66,24 +58,8 @@ namespace ProjectClosureToolMVVM
                 reader.Read();
                 if (reader.CurrentDepth.Equals(2))
                     Trl.SearchUnitValuesM(reader.GetString().ToString());
-                //try { Trl.SearchUnitValuesM(reader.GetString().ToString()); }
-                //catch (Exception e)
-                //{
-                //    Console.WriteLine(e.Message);
-                //    Console.WriteLine("Press any key");
-                //    Console.ReadKey();
-                //    return;
-                //}
                 else if (reader.CurrentDepth.Equals(4))
                     Trl.SearchLabelsM(reader.GetString().ToString());
-                //try { Trl.SearchLabelsM(reader.GetString().ToString()); }
-                //catch (Exception e)
-                //{
-                //    Console.WriteLine(e.Message);
-                //    Console.WriteLine("Press any key");
-                //    Console.ReadKey();
-                //    return;
-                //}
             }
         }
 
@@ -104,11 +80,9 @@ namespace ProjectClosureToolMVVM
                 CardID = newCardID,
                 CardURL = currentCardURL,
                 CardUnit = currentCardUnit,
-                CardName = currentCardName,
                 CardEstimate = currentCardEstimate,
                 CardPoint = currentCardPoint
             });
-            //if (Trl.iLabels == 0) Trl.SearchLabelsM("No Labels");
             if (Trl.iLabels > 0) for (int i = 0; i < Trl.iLabels; i++)
             {
                 labels.Add(new TrelloObjectLabels()
@@ -140,11 +114,9 @@ namespace ProjectClosureToolMVVM
             cards.Clear();
             units.Clear();
             labels.Clear();
-            //combinationsList.Clear();
             combinationsListI.Clear();
-            distinctUnits = Enumerable.Empty<string>();
+            distinctUnits = [];
             ReadOnlySpan<byte> s_readToEnd_stringUtf8 = Encoding.UTF8.GetBytes(API_Req.ReadToEnd_string);
-            //System.ArgumentNullException: "Value cannot be null. Arg_ParamName_Name"
             var reader = new Utf8JsonReader(s_readToEnd_stringUtf8);
             while (reader.Read())
             {
@@ -189,7 +161,7 @@ namespace ProjectClosureToolMVVM
         {
             combinationsListI.Clear();
             distinctCombinationsListI.Clear();
-            distinctCombinationsI = Enumerable.Empty<string>();
+            distinctCombinationsI = [];
             labels.Sort();
             for (int i = 0; i < cards.Count; i++)
             {

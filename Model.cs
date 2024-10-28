@@ -7,7 +7,6 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.ComponentModel;
 using System.Windows.Input;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 
@@ -31,8 +30,6 @@ namespace ProjectClosureToolMVVM
 
         public static string ReadToEnd_string { get => readToEnd_string; set => readToEnd_string = value; }
 
-        static readonly HttpClient client = new HttpClient();
-
         /// Ключ и токен для авторизации
         /// Запрос карточек доски
         /// Получение ответа в виде потока
@@ -42,8 +39,8 @@ namespace ProjectClosureToolMVVM
         {
             System.Net.WebRequest reqGET = System.Net.WebRequest.Create(boardURL + boardCode + CardFilter + "/?key=" + APIKey + "&token=" + MyTrelloToken + CardFields);
             System.Net.WebResponse resp = reqGET.GetResponse();
-            System.IO.Stream stream = resp.GetResponseStream();
-            System.IO.StreamReader read_stream = new(stream);
+            Stream stream = resp.GetResponseStream();
+            StreamReader read_stream = new(stream);
             ReadToEnd_string = read_stream.ReadToEnd();
             string fileName = "response.json";
             File.WriteAllText(fileName, ReadToEnd_string);
@@ -57,7 +54,7 @@ namespace ProjectClosureToolMVVM
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         private string label;
-        public string Label { get => label; set { label = value; OnPropertyChanged("Label"); } }
+        public string Label { get => label; set { label = value; OnPropertyChanged(nameof(Label)); } }
         private bool isChecked;
 
         public bool IsChecked {
@@ -65,7 +62,7 @@ namespace ProjectClosureToolMVVM
             set {
                 if (isChecked == value) return;
                 isChecked = value;
-                OnPropertyChanged("IsChecked");
+                OnPropertyChanged(nameof(IsChecked));
             }
         }
 
@@ -84,16 +81,16 @@ namespace ProjectClosureToolMVVM
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         private string unit;
-        public string Unit { get => unit; set { unit = value; OnPropertyChanged("Unit"); } }
+        public string Unit { get => unit; set { unit = value; OnPropertyChanged(nameof(Unit)); } }
 
         private string combination;
-        public string Combination { get => combination; set { combination = value; OnPropertyChanged("Combination"); } }
+        public string Combination { get => combination; set { combination = value; OnPropertyChanged(nameof(Combination)); } }
 
         private double sumEst;
-        public double SumEst { get => sumEst; set { sumEst = value; OnPropertyChanged("SumEst"); } }
+        public double SumEst { get => sumEst; set { sumEst = value; OnPropertyChanged(nameof(SumEst)); } }
 
         private double sumP;
-        public double SumP { get => sumP; set { sumP = value; OnPropertyChanged("SumP"); } }
+        public double SumP { get => sumP; set { sumP = value; OnPropertyChanged(nameof(SumP)); } }
 
         public ResultsModel(string arg1, string arg2, double argE, double argP)
         {

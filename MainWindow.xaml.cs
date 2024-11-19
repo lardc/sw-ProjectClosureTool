@@ -18,10 +18,14 @@ namespace ProjectClosureToolMVVM
     /// </summary>
     public partial class MainWindow : Window
     {
+        private WindowBind windowBind;
+
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new WindowBind();
+            //DataContext = new WindowBind();
+            windowBind = new WindowBind((bool)checkBox.IsChecked);
+            this.DataContext = windowBind;
         }
 
         // Board code

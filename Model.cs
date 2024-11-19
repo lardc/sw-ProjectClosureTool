@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -48,28 +49,46 @@ namespace ProjectClosureToolMVVM
     }
     internal class Model: INotifyPropertyChanged
     {
+        //public event PropertyChangedEventHandler PropertyChanged;
+        //public void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        //{
+        //    if (PropertyChanged != null)
+        //        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+        //}
         public event PropertyChangedEventHandler? PropertyChanged;
-        public void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            //PropertyChangedEventHandler handler = PropertyChanged;
+
+            //if (handler != null)
+            //{
+            //    handler(this, new PropertyChangedEventArgs(propertyName));
+            //}
         }
+        //public void OnPropertyChanged([CallerMemberName] string propertyName = "")
+        //{
+        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        //}
         private string label;
         public string Label { get => label; set { label = value; OnPropertyChanged(nameof(Label)); } }
         private bool isChecked;
-
-        public bool IsChecked {
+        public bool IsChecked
+        {
             get { return isChecked; }
-            set {
-                if (isChecked == value) return;
+            set
+            {
                 isChecked = value;
-                OnPropertyChanged(nameof(IsChecked));
+                OnPropertyChanged();
+                //OnPropertyChanged(nameof(IsChecked));
             }
         }
 
         public Model(string arg, bool ch)
         {
             Label = arg;
-            IsChecked = ch;
+            this.IsChecked = ch;
+            //IsChecked = ch;
         }
     }
 

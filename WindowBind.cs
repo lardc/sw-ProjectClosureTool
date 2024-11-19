@@ -25,36 +25,36 @@ namespace ProjectClosureToolMVVM
         public ICommand MyCommand { get; set; }
 
         public event PropertyChangedEventHandler? PropertyChanged;
-        public ObservableCollection<Model> labelModels = new ObservableCollection<Model>();
-        public ObservableCollection<Model> unitModels = new ObservableCollection<Model>();
-        public ObservableCollection<Model> combinationModels = new ObservableCollection<Model>();
-        public ObservableCollection<ResultsModel> resultsModels = new ObservableCollection<ResultsModel>();
+        public ObservableCollection<Model> labelModels = new();
+        public ObservableCollection<Model> unitModels = new();
+        public ObservableCollection<Model> combinationModels = new();
+        public ObservableCollection<ResultsModel> resultsModels = new();
 
         public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public ObservableCollection<Model> LabelModels { get { return labelModels; } set { labelModels = value; OnPropertyChanged("LabelModels"); } }
-        public ObservableCollection<Model> UnitModels { get { return unitModels; } set { unitModels = value; OnPropertyChanged("UnitModels"); } }
-        public ObservableCollection<Model> CombinationModels { get { return combinationModels; } set { combinationModels = value; OnPropertyChanged("UnitModels"); } }
-        public ObservableCollection<ResultsModel> ResultsModels { get { return resultsModels; } set { resultsModels = value; OnPropertyChanged("ResultModels"); } }
+        public ObservableCollection<Model> LabelModels { get { return labelModels; } set { labelModels = value; OnPropertyChanged(nameof(LabelModels)); } }
+        public ObservableCollection<Model> UnitModels { get { return unitModels; } set { unitModels = value; OnPropertyChanged(nameof(UnitModels)); } }
+        public ObservableCollection<Model> CombinationModels { get { return combinationModels; } set { combinationModels = value; OnPropertyChanged(nameof(UnitModels)); } }
+        public ObservableCollection<ResultsModel> ResultsModels { get => resultsModels; set { resultsModels = value; OnPropertyChanged("ResultModels"); } }
 
         public WindowBind()
         {
-            LabelModels = new ObservableCollection<Model>();
-            UnitModels = new ObservableCollection<Model>();
-            CombinationModels = new ObservableCollection<Model>();
+            LabelModels = new();
+            UnitModels = new();
+            CombinationModels = new();
         }
 
         private string? boardCode;
-        public string BoardCode { get => boardCode; set { boardCode = value; OnPropertyChanged("BoardCode"); } }
+        public string BoardCode { get => boardCode; set { boardCode = value; OnPropertyChanged(nameof(BoardCode)); } }
         private string? apiKey;
-        public string APIKey { get => apiKey; set { apiKey = value; OnPropertyChanged("APIKey"); } }
+        public string APIKey { get => apiKey; set { apiKey = value; OnPropertyChanged(nameof(APIKey)); } }
         private string? myTrelloToken;
-        public string MyTrelloToken { get => myTrelloToken; set { myTrelloToken = value; OnPropertyChanged("MyTrelloToken"); } }
+        public string MyTrelloToken { get => myTrelloToken; set { myTrelloToken = value; OnPropertyChanged(nameof(MyTrelloToken)); } }
 
-        public void WindowBindDownload()
+        public async Task WindowBindDownloadAsync()
         {
             Download.ClearLabels();
             Download.labelsListFilled = false;
@@ -73,7 +73,7 @@ namespace ProjectClosureToolMVVM
                 { API_Req.APIKey = APIKey; }
             if (myTrelloToken != "Default" && myTrelloToken != "" && myTrelloToken != null)
                 { API_Req.myTrelloToken = myTrelloToken; }
-            API_Req.RequestAsync(API_Req.APIKey, API_Req.myTrelloToken, API_Req.CardFilter, API_Req.CardFields, API_Req.boardCode);
+            await API_Req.RequestAsync(API_Req.APIKey, API_Req.myTrelloToken, API_Req.CardFilter, API_Req.CardFields, API_Req.boardCode);
             Download.BoardM();
             foreach (TrelloObjectLabels aLabel in Download.labelsList)
                 LabelModels.Add(new Model(aLabel.CardLabel, Download.CheckIgnored(aLabel.CardLabel)));
@@ -109,12 +109,12 @@ namespace ProjectClosureToolMVVM
             foreach (string aCombination in Download.distinctCombinationsListI)
                 CombinationModels.Add(new Model(aCombination, Download.selectedCombinations.Contains(aCombination)));
             Trl.sums.Clear();
-            for (int i = 0; i < Download.distinctUnitsList.Count(); i++)
-                for (int j = 0; j < Download.distinctCombinationsListI.Count(); j++)
+            for (int i = 0; i < Download.distinctUnitsList.Count; i++)
+                for (int j = 0; j < Download.distinctCombinationsListI.Count; j++)
                     Trl.Sum(i, j + 1);
         }
 
-        public void CombinationsDownloadCheckbox(int rowI, int columnI)
+        public void CombinationsDownloadCheckbox()
         {
             Download.ignoredLabelsList.Clear();
             Download.ignoredLabelsListFilled = false;
@@ -135,8 +135,8 @@ namespace ProjectClosureToolMVVM
                 if (aCombination.IsChecked && !Download.selectedCombinations.Contains(aCombination.Label))
                     Download.selectedCombinations.Add(aCombination.Label);
             Trl.sums.Clear();
-            for (int i = 0; i < Download.distinctUnitsList.Count(); i++)
-                for (int j = 0; j < Download.distinctCombinationsListI.Count(); j++)
+            for (int i = 0; i < Download.distinctUnitsList.Count; i++)
+                for (int j = 0; j < Download.distinctCombinationsListI.Count; j++)
                     Trl.Sum(i, j + 1);
             foreach (TrelloObjectSums aSum in Trl.sums)
                 if (Download.selectedUnits.Contains(aSum.CardUnit) && Download.selectedCombinations.Contains(aSum.LabelCombinationI))

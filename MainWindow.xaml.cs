@@ -18,10 +18,14 @@ namespace ProjectClosureToolMVVM
     /// </summary>
     public partial class MainWindow : Window
     {
+        private WindowBind windowBind;
+
         public MainWindow()
         {
             InitializeComponent();
-            DataContext = new WindowBind();
+            //DataContext = new WindowBind();
+            windowBind = new WindowBind((bool)checkBox.IsChecked);
+            this.DataContext = windowBind;
         }
 
         // Board code
@@ -45,7 +49,7 @@ namespace ProjectClosureToolMVVM
         // Download
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ((WindowBind)DataContext).WindowBindDownload();
+            ((WindowBind)DataContext).WindowBindDownloadAsync();
         }
 
         private void DataGridLabels_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -71,7 +75,7 @@ namespace ProjectClosureToolMVVM
                             Download.ignoredLabelsListFilled = true;
                         }
                     }
-                ((WindowBind)DataContext).CombinationsDownloadCheckbox(iInputIgnore, iColumnIndex);
+                ((WindowBind)DataContext).CombinationsDownloadCheckbox();
             }
         }
 

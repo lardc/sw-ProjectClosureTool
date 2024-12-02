@@ -40,7 +40,7 @@ namespace ProjectClosureToolMVVM
         public ObservableCollection<Model> CombinationModels { get { return combinationModels; } set { combinationModels = value; OnPropertyChanged(nameof(UnitModels)); } }
         public ObservableCollection<ResultsModel> ResultsModels { get => resultsModels; set { resultsModels = value; OnPropertyChanged("ResultModels"); } }
 
-        public WindowBind()
+        public WindowBind(bool isChecked)
         {
             LabelModels = new();
             UnitModels = new();

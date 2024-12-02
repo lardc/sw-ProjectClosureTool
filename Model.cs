@@ -49,12 +49,6 @@ namespace ProjectClosureToolMVVM
     }
     internal class Model: INotifyPropertyChanged
     {
-        //public event PropertyChangedEventHandler PropertyChanged;
-        //public void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        //{
-        //    if (PropertyChanged != null)
-        //        PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        //}
         public event PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
@@ -66,13 +60,10 @@ namespace ProjectClosureToolMVVM
             //    handler(this, new PropertyChangedEventArgs(propertyName));
             //}
         }
-        //public void OnPropertyChanged([CallerMemberName] string propertyName = "")
-        //{
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
         private string label;
         public string Label { get => label; set { label = value; OnPropertyChanged(nameof(Label)); } }
         private bool isChecked;
+
         public bool IsChecked
         {
             get { return isChecked; }
@@ -81,6 +72,9 @@ namespace ProjectClosureToolMVVM
                 isChecked = value;
                 OnPropertyChanged();
                 //OnPropertyChanged(nameof(IsChecked));
+                var checkedLabel = from aLabel in label
+                                   where aLabel.IsChecked
+                                   select aLabel;
             }
         }
 

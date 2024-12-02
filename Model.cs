@@ -72,7 +72,7 @@ namespace ProjectClosureToolMVVM
                 isChecked = value;
                 OnPropertyChanged();
                 //OnPropertyChanged(nameof(IsChecked));
-                var checkedLabel = from aLabel in label
+                var checkedLabel = from aLabel in WindowBind.LabelModels
                                    where aLabel.IsChecked
                                    select aLabel;
             }

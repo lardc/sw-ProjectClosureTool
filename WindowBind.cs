@@ -47,6 +47,10 @@ namespace ProjectClosureToolMVVM
             CombinationModels = new();
         }
 
+        public WindowBind()
+        {
+        }
+
         private string? boardCode;
         public string BoardCode { get => boardCode; set { boardCode = value; OnPropertyChanged(nameof(BoardCode)); } }
         private string? apiKey;

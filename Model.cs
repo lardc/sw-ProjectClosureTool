@@ -10,6 +10,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
+using System.Collections.ObjectModel;
 
 namespace ProjectClosureToolMVVM
 {
@@ -53,12 +54,6 @@ namespace ProjectClosureToolMVVM
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            //PropertyChangedEventHandler handler = PropertyChanged;
-
-            //if (handler != null)
-            //{
-            //    handler(this, new PropertyChangedEventArgs(propertyName));
-            //}
         }
         private string label;
         public string Label { get => label; set { label = value; OnPropertyChanged(nameof(Label)); } }
@@ -71,10 +66,10 @@ namespace ProjectClosureToolMVVM
             {
                 isChecked = value;
                 OnPropertyChanged();
-                //OnPropertyChanged(nameof(IsChecked));
-                var checkedLabel = from aLabel in WindowBind.LabelModels
-                                   where aLabel.IsChecked
-                                   select aLabel;
+                ObservableCollection<Model> lm = new ObservableCollection<Model>();
+                var checkedLabel = from aLabel in lm
+                                  where aLabel.IsChecked
+                                  select aLabel;
             }
         }
 
@@ -82,7 +77,6 @@ namespace ProjectClosureToolMVVM
         {
             Label = arg;
             this.IsChecked = ch;
-            //IsChecked = ch;
         }
     }
 

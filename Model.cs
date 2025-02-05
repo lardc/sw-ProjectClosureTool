@@ -61,28 +61,17 @@ namespace ProjectClosureToolMVVM
 
         public bool IsChecked
         {
-            //get { return isChecked; }
-            //set
-            //{
-            //    if (isChecked == value) return;
-            //    isChecked = value;
-            //    OnPropertyChanged(nameof(IsChecked));
-            //}
             get { return isChecked; }
             set
             {
                 isChecked = value;
+                OnPropertyChanged();
                 ObservableCollection<Model> lm = new ObservableCollection<Model>();
                 foreach (TrelloObjectLabels aLabel in Download.labelsList)
-                    lm.Add(new Model(aLabel.CardLabel, isChecked)
-                    {
-                        Label = aLabel.CardLabel,
-                        IsChecked = isChecked
-                    });
+                    lm.Add(new Model(aLabel.CardLabel, Download.CheckIgnored(aLabel.CardLabel)));
                 var checkedLabel = from aLabel in lm
-                                   where aLabel.IsChecked
-                                   select aLabel;
-                OnPropertyChanged(nameof(IsChecked));
+                                  where aLabel.IsChecked
+                                  select aLabel;
             }
         }
 

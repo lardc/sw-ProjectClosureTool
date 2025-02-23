@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -10,7 +10,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
-using System.Collections.ObjectModel;
+//using System.Collections.ObjectModel;
 
 namespace ProjectClosureToolMVVM
 {
@@ -51,7 +51,7 @@ namespace ProjectClosureToolMVVM
     internal class Model: INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler? PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        public void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
@@ -64,21 +64,33 @@ namespace ProjectClosureToolMVVM
             get { return isChecked; }
             set
             {
+                if (isChecked == value) return;
                 isChecked = value;
-                OnPropertyChanged();
-                ObservableCollection<Model> lm = new ObservableCollection<Model>();
-                foreach (TrelloObjectLabels aLabel in Download.labelsList)
-                    lm.Add(new Model(aLabel.CardLabel, Download.CheckIgnored(aLabel.CardLabel)));
-                var checkedLabel = from aLabel in lm
-                                  where aLabel.IsChecked
-                                  select aLabel;
+                OnPropertyChanged(nameof(IsChecked));
+                ObservableCollection<Model> LM = null;
+                foreach (Model lm in LM ?? Enumerable.Empty<Model>())
+                    foreach (TrelloObjectLabels aLabel in Download.labelsList)
+                    {
+                        Model model = new(aLabel.CardLabel, Download.CheckIgnored(aLabel.CardLabel));
+                        LM.Add(model);
+                    }
+                var checkedLabel = from aLabel in LM
+                                   where aLabel.IsChecked
+                                   select aLabel;
+
+                //ObservableCollection<Model> lm = new ObservableCollection<Model>(); foreach (TrelloObjectLabels aLabel in Download.labelsList)
+                //    lm.Add(new Model(aLabel.CardLabel, Download.CheckIgnored(aLabel.CardLabel)));
+                //var checkedLabel = from aLabel in lm
+                //                   where aLabel.IsChecked
+                //                   select aLabel;
             }
         }
 
         public Model(string arg, bool ch)
         {
             Label = arg;
-            this.IsChecked = ch;
+            IsChecked = ch;
+            //this.IsChecked = ch;
         }
     }
 

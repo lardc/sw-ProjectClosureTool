@@ -18,8 +18,6 @@ namespace ProjectClosureToolMVVM
     /// </summary>
     public partial class MainWindow : Window
     {
-        private WindowBind windowBind;
-
         public MainWindow()
         {
             InitializeComponent();

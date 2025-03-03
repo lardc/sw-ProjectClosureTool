@@ -10,7 +10,6 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
-//using System.Collections.ObjectModel;
 
 namespace ProjectClosureToolMVVM
 {
@@ -67,6 +66,7 @@ namespace ProjectClosureToolMVVM
                 if (isChecked == value) return;
                 isChecked = value;
                 OnPropertyChanged(nameof(IsChecked));
+
                 ObservableCollection<Model> LM = null;
                 foreach (Model lm in LM ?? Enumerable.Empty<Model>())
                     foreach (TrelloObjectLabels aLabel in Download.labelsList)

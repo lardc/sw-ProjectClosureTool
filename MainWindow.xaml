@@ -45,7 +45,7 @@
             HorizontalContentAlignment="Center"
             ColumnWidth="*"
             VerticalContentAlignment="Center"
-            Margin="43,110,0,94"
+            Margin="40,111,0,93"
             HorizontalAlignment="Left"
             AutoGenerateColumns="False"
             Width="140"
@@ -58,14 +58,16 @@
                         <DataTemplate>
                             <!--<CheckBox x:Name="checkBox" IsChecked="{Binding IsChecked, Mode=TwoWay}"/>-->
                             <!--<CheckBox IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>-->
-                            <CheckBox x:Name="checkBox" IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"/>
+                            <CheckBox x:Name="checkBox" 
+                             IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}"
+                             Click="checkBox_Click"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
         <DataGrid
-            x:Name="DataGridUnit"
+            x:Name="DataGridUnits"
             ItemsSource="{Binding UnitModels}"
             HorizontalContentAlignment="Center"
             ColumnWidth="*"
@@ -110,10 +112,24 @@
             HorizontalAlignment="Left"
             Margin="40,45,0,0"
             VerticalAlignment="Top"
-            RenderTransformOrigin="0.396,1.58" Click="Button_Click"/>
-        <Button Content="Combinations" Margin="41,79,0,0" Click="Button_Click_1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="79"/>
+            RenderTransformOrigin="0.396,1.58"
+            Click="Button_Click"/>
+        <Button
+            Name="Combinations"
+            Content="Combinations"
+            Margin="41,79,0,0"
+            Click="Button_Click_1"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Width="79"
+            IsEnabled="False"/>
         <Button Margin="597,44,0,0" Click="Button_Click_1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="79">
-            <Button Content="Export" Click="Button_Click_2" Width="76"/>
+        <Button
+            Name="Export"
+            Content="Export"
+            Click="Button_Click_2"
+            Width="76"
+            IsEnabled="False"/>
         </Button>
         <DataGrid
             x:Name="DataGridResults"
@@ -132,6 +148,15 @@
                 <DataGridTextColumn Header="SumP" Binding="{Binding SumP}"/>
             </DataGrid.Columns>
         </DataGrid>
-        <Button Content="Results" HorizontalAlignment="Left" Height="24" Margin="613,76,0,0" VerticalAlignment="Top" Width="52" Click="Button_Click_3"/>
+        <Button
+            Name="Results"
+            Content="Results"
+            HorizontalAlignment="Left"
+            Height="24"
+            Margin="613,76,0,0"
+            VerticalAlignment="Top"
+            Width="52"
+            Click="Button_Click_3"
+            IsEnabled="False"/>
     </Grid>
 </Window>

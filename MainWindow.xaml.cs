@@ -46,10 +46,12 @@ namespace ProjectClosureToolMVVM
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             ((WindowBind)DataContext).WindowBindDownloadAsync();
+            Combinations.IsEnabled = false;
         }
 
         private void DataGridLabels_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+                Combinations.IsEnabled = true;
             int iInputIgnore = DataGridLabels.Items.IndexOf(DataGridLabels.CurrentItem);
             int iColumnIndex = DataGridLabels.Items.IndexOf(DataGridLabels.CurrentItem);
             if ((iInputIgnore <= Download.labelsList.Count) && (iColumnIndex == 1) && iInputIgnore >= 0)
@@ -75,14 +77,31 @@ namespace ProjectClosureToolMVVM
             }
         }
 
+        // Combinations
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             ((WindowBind)DataContext).CombinationsDownload();
+            DataGridUnits.IsEnabled = true;
+            DataGridCombinations.IsEnabled = true;
+            Results.IsEnabled = false;
+            Export.IsEnabled = false;
         }
 
+        // Export
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             ((WindowBind)DataContext).Export();
+        }
+
+        // Combinations
+        private void checkBox_Click(object sender, RoutedEventArgs e)
+        {
+            Combinations.IsEnabled = true;
+            DataGridUnits.IsEnabled = false;
+            DataGridCombinations.IsEnabled = false;
+            DataGridResults.IsEnabled = false;
+            Results.IsEnabled = false;
+            Export.IsEnabled = false;
         }
 
         private void DataGridResults_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -90,19 +109,21 @@ namespace ProjectClosureToolMVVM
 
         }
 
+        // Results
         private void Button_Click_3(object sender, RoutedEventArgs e)
         {
             ((WindowBind)DataContext).Results();
+            Export.IsEnabled = true;
         }
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            Export.IsEnabled = true;
         }
 
         private void DataGridCombinations_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-
+            Results.IsEnabled = true;
         }
     }
 }

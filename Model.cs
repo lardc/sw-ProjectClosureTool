@@ -77,12 +77,6 @@ namespace ProjectClosureToolMVVM
                 var checkedLabel = from aLabel in LM
                                    where aLabel.IsChecked
                                    select aLabel;
-
-                //ObservableCollection<Model> lm = new ObservableCollection<Model>(); foreach (TrelloObjectLabels aLabel in Download.labelsList)
-                //    lm.Add(new Model(aLabel.CardLabel, Download.CheckIgnored(aLabel.CardLabel)));
-                //var checkedLabel = from aLabel in lm
-                //                   where aLabel.IsChecked
-                //                   select aLabel;
             }
         }
 
@@ -90,7 +84,6 @@ namespace ProjectClosureToolMVVM
         {
             Label = arg;
             IsChecked = ch;
-            //this.IsChecked = ch;
         }
     }
 

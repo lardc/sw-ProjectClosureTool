@@ -46,12 +46,11 @@ namespace ProjectClosureToolMVVM
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             ((WindowBind)DataContext).WindowBindDownloadAsync();
-            Combinations.IsEnabled = false;
+            Export.IsEnabled = false;
         }
 
         private void DataGridLabels_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-                Combinations.IsEnabled = true;
             int iInputIgnore = DataGridLabels.Items.IndexOf(DataGridLabels.CurrentItem);
             int iColumnIndex = DataGridLabels.Items.IndexOf(DataGridLabels.CurrentItem);
             if ((iInputIgnore <= Download.labelsList.Count) && (iColumnIndex == 1) && iInputIgnore >= 0)
@@ -80,11 +79,11 @@ namespace ProjectClosureToolMVVM
         // Combinations
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
-            ((WindowBind)DataContext).CombinationsDownload();
-            DataGridUnits.IsEnabled = true;
-            DataGridCombinations.IsEnabled = true;
-            Results.IsEnabled = false;
-            Export.IsEnabled = false;
+            //((WindowBind)DataContext).CombinationsDownload();
+            //DataGridUnits.IsEnabled = true;
+            //DataGridCombinations.IsEnabled = true;
+            //Results.IsEnabled = false;
+            //Export.IsEnabled = false;
         }
 
         // Export
@@ -93,15 +92,26 @@ namespace ProjectClosureToolMVVM
             ((WindowBind)DataContext).Export();
         }
 
-        // Combinations
+        // Labels
         private void checkBox_Click(object sender, RoutedEventArgs e)
         {
-            Combinations.IsEnabled = true;
-            DataGridUnits.IsEnabled = false;
-            DataGridCombinations.IsEnabled = false;
-            DataGridResults.IsEnabled = false;
-            Results.IsEnabled = false;
+            ((WindowBind)DataContext).CombinationsDownload();
+            DataGridUnits.IsEnabled = true;
             Export.IsEnabled = false;
+        }
+
+        private void checkBox_Click_Combinations(object sender, RoutedEventArgs e)
+        {
+            ((WindowBind)DataContext).Results();
+            if (((WindowBind)DataContext).ResultsModels.Count > 0) Export.IsEnabled = true;
+            else Export.IsEnabled = false;
+        }
+
+        private void checkBox_Click_Units(object sender, RoutedEventArgs e)
+        {
+            ((WindowBind)DataContext).Results();
+            if (((WindowBind)DataContext).ResultsModels.Count > 0) Export.IsEnabled = true;
+            else Export.IsEnabled = false;
         }
 
         private void DataGridResults_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -123,7 +133,7 @@ namespace ProjectClosureToolMVVM
 
         private void DataGridCombinations_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Results.IsEnabled = true;
+            //Results.IsEnabled = true;
         }
     }
 }

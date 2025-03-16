@@ -127,8 +127,7 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Width="79"
-            IsEnabled="False"
-            Visibility="Hidden"/>
+            IsEnabled="False" Visibility="Hidden"/>
         <Button Margin="597,44,0,0" Click="Button_Click_1" HorizontalAlignment="Left" VerticalAlignment="Top" Width="79">
         <Button
             x:Name="Export"
@@ -163,7 +162,6 @@
             VerticalAlignment="Top"
             Width="52"
             Click="Button_Click_3"
-            IsEnabled="False"
-            Visibility="Hidden"/>
+            IsEnabled="False" Visibility="Hidden"/>
     </Grid>
 </Window>

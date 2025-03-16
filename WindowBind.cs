@@ -136,6 +136,9 @@ namespace ProjectClosureToolMVVM
             foreach (Model aCombination in CombinationModels)
                 if (aCombination.IsChecked && !Download.selectedCombinations.Contains(aCombination.Label))
                     Download.selectedCombinations.Add(aCombination.Label);
+            if (Download.selectedCombinations.Count == 0)
+                foreach (Model aCombination in CombinationModels)
+                    Download.selectedCombinations.Add(aCombination.Label);
             Trl.sums.Clear();
             for (int i = 0; i < Download.distinctUnitsList.Count; i++)
                 for (int j = 0; j < Download.distinctCombinationsListI.Count; j++)
